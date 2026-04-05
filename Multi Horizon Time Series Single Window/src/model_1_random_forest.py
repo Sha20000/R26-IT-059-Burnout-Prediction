@@ -56,6 +56,24 @@ for i in range(8):
     avg_imp[i] = model.feature_importances_[i::8].mean()
 avg_imp = avg_imp/avg_imp.sum()
 
+plt.figure(figsize=(8,5))
+colours = ['#C00000' if v == max(avg_imp) else '#5B9BD5'
+           for v in avg_imp]
+bars = plt.barh(feat_names, avg_imp,
+                color=colours, edgecolor='white')
+for bar, val in zip(bars, avg_imp):
+    plt.text(val + 0.005, bar.get_y() + bar.get_height()/2,
+             f'{val*100:.1f}%', va='center', fontsize=9)
+plt.xlabel('Average Importance')
+plt.title('Random Forest — Feature Importance\n'
+          'R26-IT-059 IT22916426', fontweight='bold')
+plt.tight_layout()
+plt.savefig(RESULTS_PATH + 'figures/rf_importance.png',
+            dpi=120, bbox_inches='tight')
+print("\nFeature importance chart saved.")
+print("\nLIMITATION: Flattened input — no temporal learning.")
+print("Cannot produce accuracy-vs-lead-time curve.")
+
 
 
 
