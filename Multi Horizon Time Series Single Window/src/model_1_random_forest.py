@@ -58,7 +58,7 @@ avg_imp = avg_imp/avg_imp.sum()
 
 plt.figure(figsize=(8,5))
 colours = ['#C00000' if v == max(avg_imp) else '#5B9BD5'
-           for v in avg_imp]
+           for v in avg_imp] 
 bars = plt.barh(feat_names, avg_imp,
                 color=colours, edgecolor='white')
 for bar, val in zip(bars, avg_imp):
