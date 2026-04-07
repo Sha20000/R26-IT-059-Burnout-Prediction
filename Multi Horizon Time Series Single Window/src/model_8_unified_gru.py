@@ -64,5 +64,37 @@ print("=" * 60)
 #Model Architecture
 
 class AttentionLayer(nn.Module):
+     
+    def __init__(self, hidden_size):
+        super().__init__()
+          # Learns to score each week's importance
+        self.attention_weights = nn.Linear(
+             hidden_size,1
+        ) 
+
+    def forward(self,gru_output):
+
+        # gru_output shape: (batch, weeks, hidden)
+
+        #Calculate importance scores for each week
+
+        scores = self.attention_weights(
+            gru_output
+        )     # (batch, weeks, 1)
+
+        #Convert to probabilities (sum to 1)
+
+        weights = torch.softmax(scores,
+                                 dim=1) # (batch, weeks, 1)
+        
+        # Weighted sum of all weekly states
+
+        attended = (weights*gru_output).sum(
+            dim=1
+        ) # (batch, hidden)
+
+        return attended, weights.squeeze(-1) # Return weights for XAI
     
+    
+
 
