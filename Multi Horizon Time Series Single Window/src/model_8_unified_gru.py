@@ -133,7 +133,10 @@ class UnifiedMultiHorizonGRU(nn.Module):
             num_layers=num_layers,
             batch_first=True,
             dropout=dropout
-        )    
+        ) 
+
+        # Attention layer 
+        #Learns which weeks matter most   
 
 
 
