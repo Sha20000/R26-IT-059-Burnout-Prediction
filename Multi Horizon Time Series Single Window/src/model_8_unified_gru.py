@@ -31,5 +31,13 @@ DROPOUT    = 0.3
 
 HORIZON_WEEKS = [4,8,12,17]
 HORIZON_INDICES = [3,7,11,16]
+HORIZON_LABELS = ['Week 4', 'Week 8', 
+                  'Week 12', 'Week 17']
 
+os.makedirs(MODELS_PATH, exist_ok=True)
+os.makedirs(os.path.join(RESULTS_PATH, 'figures'), exist_ok=True)
+os.makedirs(os.path.join(RESULTS_PATH, 'metrics'), exist_ok=True)
+
+torch.manual_seed(SEED)
+np.random.seed(SEED)
 
