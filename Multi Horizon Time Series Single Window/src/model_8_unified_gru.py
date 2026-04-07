@@ -96,6 +96,18 @@ class AttentionLayer(nn.Module):
         return attended, weights.squeeze(-1) # Return weights for XAI
     
 class PredictionHead(nn.Module):
-        
+
+    def __init__(self, hidden_size, dropout):
+        super().__init__()
+        self.head = nn.Sequential(
+            nn.Linear(hidden_size, 32),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(32, 1)
+        )
+
+    def forward(self, x):
+        return self.head(x)    
+
 
 
