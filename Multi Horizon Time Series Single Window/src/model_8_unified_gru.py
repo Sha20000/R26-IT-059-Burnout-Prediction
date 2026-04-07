@@ -48,3 +48,20 @@ elif torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
+print("=" * 60)
+print("MODEL 8: Unified Multi-Horizon GRU")
+print("R26-IT-059 | IT22916426 | Mahavitha S.M.")
+print(f"Device: {device}")
+print()
+print("NOVELTY:")
+print("  4 simultaneous prediction heads")
+print("  Attention mechanism")
+print("  XAI feature attribution")
+print("  Accuracy-vs-lead-time curve")
+print("=" * 60)
+
+#Model Architecture
+
+
+
