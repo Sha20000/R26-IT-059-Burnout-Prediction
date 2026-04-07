@@ -95,6 +95,7 @@ class AttentionLayer(nn.Module):
 
         return attended, weights.squeeze(-1) # Return weights for XAI
     
-    
+class PredictionHead(nn.Module):
+        
 
 
