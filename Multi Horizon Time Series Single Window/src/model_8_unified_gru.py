@@ -12,4 +12,24 @@ from torch.utils.data import DataLoader, TensorDataset
 from data_loader import (get_data, print_metrics, get_pos_weight, find_best_threshold)
 
 #Configuration
+SEED        = 42
+MODELS_PATH = '../models/saved/'
+RESULTS_PATH = '../results/'
+EPOCHS     = 300
+PATIENCE  = 30
+BATCH_SIZE = 64
+LR        = 0.0003
+HIDDEN_SIZE = 128
+NUM_LAYERS = 2
+DROPOUT    = 0.3
+
+# 4 prediction horizons - week indices (0 based)
+# Week 4 = index 3
+# Week 8 = index 7
+# Week 12 = index 11
+# Week 17 = index 16
+
+HORIZON_WEEKS = [4,8,12,17]
+HORIZON_INDICES = [3,7,11,16]
+
 
