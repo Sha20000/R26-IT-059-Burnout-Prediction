@@ -107,7 +107,10 @@ class PredictionHead(nn.Module):
         )
 
     def forward(self, x):
-        return self.head(x)    
+        return self.head(x)
+
+class UnifiedMultiHorizonGRU(nn.Module):
+            
 
 
 
