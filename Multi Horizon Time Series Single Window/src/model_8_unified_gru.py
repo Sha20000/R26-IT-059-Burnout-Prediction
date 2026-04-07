@@ -110,6 +110,18 @@ class PredictionHead(nn.Module):
         return self.head(x)
 
 class UnifiedMultiHorizonGRU(nn.Module):
+
+
+         def __init__(self,
+                      n_features,
+                       hidden =HIDDEN_SIZE,
+                        num_layers=NUM_LAYERS,
+                         dropout=DROPOUT,
+                          horizon_indices=HORIZON_INDICES ):
+            super().__init__()   
+
+            self.horizon_indices = horizon_indices
+            self.n_horizons = len(horizon_indices)
             
 
 
