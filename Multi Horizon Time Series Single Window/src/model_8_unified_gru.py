@@ -112,7 +112,7 @@ class PredictionHead(nn.Module):
 class UnifiedMultiHorizonGRU(nn.Module):
 
 
-         def __init__(self,
+        def __init__(self,
                       n_features,
                        hidden =HIDDEN_SIZE,
                         num_layers=NUM_LAYERS,
@@ -122,7 +122,20 @@ class UnifiedMultiHorizonGRU(nn.Module):
 
             self.horizon_indices = horizon_indices
             self.n_horizons = len(horizon_indices)
-            
+
+        #GRU Encoder 
+        # Reads weekly sequence and produces
+        # hidden state at each week
+
+        self.gru = nn.GRU(
+            input_size=n_features,
+            hidden_size=hidden,
+            num_layers=num_layers,
+            batch_first=True,
+            dropout=dropout
+        )    
+
+
 
 
 
