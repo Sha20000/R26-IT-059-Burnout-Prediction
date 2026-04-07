@@ -63,5 +63,6 @@ print("=" * 60)
 
 #Model Architecture
 
-
+class AttentionLayer(nn.Module):
+    
 
