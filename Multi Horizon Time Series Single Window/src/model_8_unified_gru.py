@@ -41,3 +41,4 @@ os.makedirs(os.path.join(RESULTS_PATH, 'metrics'), exist_ok=True)
 torch.manual_seed(SEED)
 np.random.seed(SEED)
 
+#Device setup
