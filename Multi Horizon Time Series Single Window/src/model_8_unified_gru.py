@@ -136,7 +136,13 @@ class UnifiedMultiHorizonGRU(nn.Module):
         ) 
 
         # Attention layer 
-        #Learns which weeks matter most   
+        #Learns which weeks matter most 
+        self.attention = AttentionLayer(hidden)
+
+        #Prediction heads 
+        # One head per prediction horizon
+        
+          
 
 
 
