@@ -248,6 +248,9 @@ print(f"Class weight:{weight:.2f}x")
 print(f"Horizons: {HORIZON_LABELS}")
 
 #Training Loop
+print(f"\nTraining Unified Multi-Horizon GRU...")
+print(f"Up to {EPOCHS} epochs with early stopping (patience={PATIENCE})")
+
         
 
         
