@@ -250,8 +250,25 @@ print(f"Horizons: {HORIZON_LABELS}")
 #Training Loop
 print(f"\nTraining Unified Multi-Horizon GRU...")
 print(f"Up to {EPOCHS} epochs with early stopping (patience={PATIENCE})")
+print()
+print(f"{'Epoch':>6} | {'Loss':>8}| "
+      f"{'H1-W4':>7} | {'H2-W8':>7} | "
+      f"{'H3-W12':>7} | {'H4-W17':>7} | "
+       f"{'Best':>7}")
+print("-" * 60)
 
-        
+best_val_f1 = 0
+best_epoch = 0
+no_improve = 0
+train_losses = []
+val_f1s_all = [[] for _ in range(4)]
+val_f1s_avg = []
+
+for epoch in range(EPOCHS):
+
+    #Training
+    model.train()
+    epoch_loss = 0
 
         
 
