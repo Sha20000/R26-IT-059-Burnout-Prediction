@@ -220,6 +220,21 @@ train_loader = DataLoader(
 
 #Build Model
 
+model = UnifiedMultiHorizonGRU(
+    n_features=N_FEATURES.to(device),
+    optimizer = torch.optim.Adam(model.parameters(), 
+                                 lr=LR,weight_decay=1e-5)
+
+
+)
+
+#Learning rate schedular
+#Reduce LR when validation stops improving
+schedular = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer,mode='max',
+    factor=0.5,patience=10
+)
+
         
 
         
