@@ -242,6 +242,12 @@ pos_weight = torch.tensor(
 ).to(device)
 criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
+total_params = sum(p.numel() for p in model.parameters())
+print(f"\nModel parameters: {total_params:,}")
+print(f"Class weight:{weight:.2f}x")
+print(f"Horizons: {HORIZON_LABELS}")
+
+#Training Loop
         
 
         
