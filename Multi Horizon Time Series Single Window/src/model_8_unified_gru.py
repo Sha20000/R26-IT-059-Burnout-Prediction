@@ -270,6 +270,12 @@ for epoch in range(EPOCHS):
     model.train()
     epoch_loss = 0
 
+    for X_batch, y_batch in train_loader:
+
+        optimizer.zero_grad()
+
+
+
         
 
 
