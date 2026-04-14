@@ -112,16 +112,16 @@ class PredictionHead(nn.Module):
 class UnifiedMultiHorizonGRU(nn.Module):
 
 
-        def __init__(self,
+    def __init__(self,
                       n_features,
                        hidden =HIDDEN_SIZE,
                         num_layers=NUM_LAYERS,
                          dropout=DROPOUT,
                           horizon_indices=HORIZON_INDICES ):
-            super().__init__()   
+        super().__init__()   
 
-            self.horizon_indices = horizon_indices
-            self.n_horizons = len(horizon_indices)
+        self.horizon_indices = horizon_indices
+        self.n_horizons = len(horizon_indices)
 
         #GRU Encoder 
         # Reads weekly sequence and produces
@@ -141,8 +141,112 @@ class UnifiedMultiHorizonGRU(nn.Module):
 
         #Prediction heads 
         # One head per prediction horizon
+
+        self.heads = nn.ModuleList([
+            PredictionHead(hidden,dropout)
+            for _ in range(self.n_horizons)
+        ]) 
+
+        #Dropout
+
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x): 
+        """
+        Forward pass.
+
+        INPUT:
+            x shape: (batch, 17_weeks, 13_features)
+
+        OUTPUT:
+            predictions: list of 4 tensors
+                         each shape (batch, 1)
+            attention_weights: (batch, 17_weeks)
+        """
         
+        # Step 1: GRU reads entire sequence
+        # gru_out shape: (batch, 17, hidden)
+
+        gru_out, _ = self.gru(x)
+
+        #Step 2 : Attention over all weeks
+        #attended shape: (batch, hidden)
+
+        attended, attn_weights = self.attention(gru_out)
+
+        #Step 3: Each head predicts at its horizon
+        predictions = []
+
+        for i,(head,idx) in enumerate(
+            zip(self.heads, self.horizon_indices)):
+            # Get GRU state at this specific week
+            # Combined with attention context
+
+            week_state = gru_out[:, idx, :]
+            week_state = self.dropout(week_state) # Regularize
+
+            #Predict risk at this horizon
+            pred = head(week_state)
+            predictions.append(pred)
+
+        return predictions, attn_weights
+
+
+#LOAD DATA
+
+print("\nLoading data...")
+data   = get_data()
+
+#Get actual feature count from data 
+N_FEATURES = data['X_tr'].shape[2]
+N_WEEKS = data['X_tr'].shape[1]
+
+
+        
+
+        
+
+
+
+
+
+        
+           
           
+                   
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

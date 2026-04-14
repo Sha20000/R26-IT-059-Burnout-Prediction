@@ -165,7 +165,7 @@ for epoch in range(EPOCHS):
                   f"(best={best_epoch})")
             break
 
-# ── Evaluate ───────────────────────────────────────────────
+# ── Evaluate ────
 model.load_state_dict(torch.load(
     MODELS_PATH + 'model7_bilstm_best.pt',
     weights_only=True))
