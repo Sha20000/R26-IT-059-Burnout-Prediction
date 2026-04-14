@@ -274,6 +274,9 @@ for epoch in range(EPOCHS):
 
         optimizer.zero_grad()
 
+        #Forward pass - get 4 predictions
+        predictions,_ = model(X_batch)
+
 
 
         
