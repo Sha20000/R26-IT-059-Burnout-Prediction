@@ -201,6 +201,24 @@ data   = get_data()
 N_FEATURES = data['X_tr'].shape[2]
 N_WEEKS = data['X_tr'].shape[1]
 
+print(f"Features:{N_FEATURES}")
+print(f"Weeks: {N_WEEKS}")
+
+#Convert to tensors 
+X_tr_t  = torch.FloatTensor(data['X_tr']).to(device)
+X_val_t = torch.FloatTensor(data['X_val']).to(device)
+X_te_t  = torch.FloatTensor(data['X_te']).to(device)
+y_tr_t  = torch.FloatTensor(data['y_tr']).to(device)
+y_val_t = torch.FloatTensor(data['y_val']).to(device)
+y_te_t  = torch.FloatTensor(data['y_te']).to(device)
+
+train_loader = DataLoader(
+    TensorDataset(X_tr_t, y_tr_t),
+    batch_size=BATCH_SIZE, 
+    shuffle=True
+)
+
+#Build Model
 
         
 
