@@ -235,6 +235,13 @@ schedular = torch.optim.lr_scheduler.ReduceLROnPlateau(
     factor=0.5,patience=10
 )
 
+#Class weight for imbalanced data
+weight = get_pos_weight(data['y_tr'])
+pos_weight = torch.tensor(
+    [weight], dtype=torch.float32
+).to(device)
+criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+
         
 
         
