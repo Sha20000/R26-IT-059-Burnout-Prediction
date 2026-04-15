@@ -393,7 +393,50 @@ for i, (pred,label) in enumerate(
 
     #Find best threshold on validation for this horizon
 
+    val_pred_i = torch.sigmoid(
+        model(X_val_t)[0][i]).squeeze().cpu().numpy()
     
+    best_thresh = 0.5
+    best_f1_v = 0
+    for t in np.arrange(0.2,0.71,0.05):
+        p = (val_pred_i > t).astype(int)
+        f = f1_score(data['y_val'], p,
+                      zero_division=0)
+        
+        if f > best_f1_v:
+            best_f1_v = f
+            best_thresh = t
+
+    preds = (probs > best_thresh).astype(int)
+    f1 = f1_score(y_true, preds)
+    auc = roc_auc_score(y_true, probs)
+    pre = precision_score(y_true, preds,
+                          zero_division=0)
+    rec = recall_score(y_true, preds,zero_division=0)
+
+    print(f"{label:<12}| {f1:>6.4f} | "
+          f"{auc:>6.4f} | {pre:>6.4f} | "
+          f"{rec:>6.4f} | {best_thresh:>9.2f}")    
+
+    results.append({
+        'horizon': label,
+        'f1': f1,
+        'auc': auc,
+        'precision': pre,
+        'recall': rec,
+        'threshold': best_thresh
+    })    
+
+    if f1 > best_horizon_f1:
+        best_horizon_f1 = f1
+        best_horizon_idx = i
+
+
+print()
+print(f"OPTIMAL HORIZON:"
+      f"{results[best_horizon_idx]['horizon']} ")
+print(f" OPTIMAL F1: {results[best_horizon_idx]['f1']:.4f} | ")
+print(f" AUC: {results[best_horizon_idx]['auc']:.4f} | ")
 
 
 
