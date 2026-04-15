@@ -341,8 +341,27 @@ for epoch in range(EPOCHS):
               f"{horizon_f1s[2]:>7.4f} | "
               f"{horizon_f1s[3]:>7.4f} | "
               f"{avg_f1:>7.4f}")
-        
-                
+
+    #Save best model
+    if avg_f1 > best_val_f1:
+        best_val_f1 = avg_f1
+        best_epoch = epoch + 1
+        no_improve = 0
+        torch.save(model.state_dict(),
+                   MODELS_PATH + 'model8_unified_gru_best.pt')
+
+    else:
+        no_improve += 1
+        if no_improve >= PATIENCE:
+            print(f"\nEarly stopping at epoch {epoch+1} "
+                  f"(best epoch was {best_epoch})")
+            break
+
+
+print("\nTraining complete.")
+print(f"Best avg val F1: {best_val_f1:.4f} at epoch {best_epoch}")
+
+
 
 
 
