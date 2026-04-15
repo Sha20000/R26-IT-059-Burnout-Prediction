@@ -366,6 +366,12 @@ print("\n"+"="*60)
 print("Evaluating on test set...")
 print("="*60)
 
+model.load_state_dict(torch.load(MODELS_PATH + 'model8_unified_gru_best.pt', 
+                                 weights_only=True))
+model.eval()
+
+
+
 
 
 
