@@ -320,6 +320,20 @@ for epoch in range(EPOCHS):
 
             preds = (probs > 0.5).astype(int)
 
+            f1 = f1_score(data['y_val'], preds, zero_division=0)
+
+            horizon_f1s.append(f1)
+
+            val_f1s_all[i].append(f1)
+
+    avg_f1 = np.mean(horizon_f1s)
+    val_f1s_avg.append(avg_f1)
+
+    #Update learning rate schedular
+    schedular.step(avg_f1)
+
+    #Print progress every 10 epochs        
+
 
 
 
