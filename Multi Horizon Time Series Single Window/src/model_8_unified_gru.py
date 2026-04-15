@@ -332,7 +332,17 @@ for epoch in range(EPOCHS):
     #Update learning rate schedular
     schedular.step(avg_f1)
 
-    #Print progress every 10 epochs        
+    #Print progress every 10 epochs
+    if (epoch+1) % 10 == 0:
+        print(f"{epoch+1:>6} |"
+              f"{avg_loss:>8.4f} | "
+              f"{horizon_f1s[0]:>7.4f} | "
+              f"{horizon_f1s[1]:>7.4f} | "
+              f"{horizon_f1s[2]:>7.4f} | "
+              f"{horizon_f1s[3]:>7.4f} | "
+              f"{avg_f1:>7.4f}")
+        
+                
 
 
 
