@@ -292,7 +292,12 @@ for epoch in range(EPOCHS):
 
         total_loss = total_loss / len(predictions)
 
-        total_loss.backward()    
+        total_loss.backward()  
+
+        #Gradient clipping to prevent exploding gradients
+        torch.nn.utils.clip_grad_norm_(
+            model.parameters(),max_norm=1.0
+        )  
 
 
 
