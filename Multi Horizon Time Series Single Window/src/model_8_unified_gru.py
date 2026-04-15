@@ -277,6 +277,23 @@ for epoch in range(EPOCHS):
         #Forward pass - get 4 predictions
         predictions,_ = model(X_batch)
 
+        #Calculate loss for each head
+        #All heads predict same label
+
+        total_loss = 0
+        for pred in predictions:
+            loss = criterion(
+                pred.squeeze(-1),y_batch
+            )
+            total_loss += loss
+
+
+        #Average loss across 4 heads
+
+        total_loss = total_loss / len(predictions)
+
+        total_loss.backward()    
+
 
 
         
