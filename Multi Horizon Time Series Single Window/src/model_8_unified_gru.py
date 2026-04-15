@@ -303,7 +303,13 @@ for epoch in range(EPOCHS):
         epoch_loss += total_loss.item()
 
     avg_loss = epoch_loss / len(train_loader)
-    train_losses.append(avg_loss)    
+    train_losses.append(avg_loss)
+
+    #Validation
+
+    model.eval()
+    horizon_f1s = []
+        
 
 
 
