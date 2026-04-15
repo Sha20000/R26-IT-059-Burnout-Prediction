@@ -361,7 +361,10 @@ for epoch in range(EPOCHS):
 print("\nTraining complete.")
 print(f"Best avg val F1: {best_val_f1:.4f} at epoch {best_epoch}")
 
-
+#FINAL EVALUATION - TEST SET
+print("\n"+"="*60)
+print("Evaluating on test set...")
+print("="*60)
 
 
 
