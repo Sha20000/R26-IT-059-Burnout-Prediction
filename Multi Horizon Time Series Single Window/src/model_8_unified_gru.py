@@ -299,6 +299,12 @@ for epoch in range(EPOCHS):
             model.parameters(),max_norm=1.0
         )  
 
+        optimizer.step()
+        epoch_loss += total_loss.item()
+
+    avg_loss = epoch_loss / len(train_loader)
+    train_losses.append(avg_loss)    
+
 
 
         
