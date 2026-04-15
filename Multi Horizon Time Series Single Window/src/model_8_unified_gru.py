@@ -370,6 +370,22 @@ model.load_state_dict(torch.load(MODELS_PATH + 'model8_unified_gru_best.pt',
                                  weights_only=True))
 model.eval()
 
+results = []
+all_attn_weights = []
+
+with torch.no_grad():
+    test_preds, attn_weights = model(X_te_t)
+    all_attn_weights = attn_weights.cpu().numpy()
+
+print(f"\n{'Horizon':<12}| {'F1':>6} |"
+      f"{'AUC':>6} | {'Prec':>6} | "
+      f"{'Rec':>7}| {'Threshold':>9}")
+print("-" * 60)
+
+best_horizon_idx = 0
+best_horizon_f1 = 0
+
+
 
 
 
