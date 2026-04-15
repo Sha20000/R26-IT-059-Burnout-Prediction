@@ -385,6 +385,16 @@ print("-" * 60)
 best_horizon_idx = 0
 best_horizon_f1 = 0
 
+for i, (pred,label) in enumerate(
+    zip(test_preds,HORIZON_LABELS)):
+
+    probs = torch.sigmoid(pred).squeeze().cpu().numpy()
+    y_true = data['y_te']
+
+    #Find best threshold on validation for this horizon
+
+    
+
 
 
 
