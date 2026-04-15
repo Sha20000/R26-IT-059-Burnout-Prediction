@@ -309,7 +309,17 @@ for epoch in range(EPOCHS):
 
     model.eval()
     horizon_f1s = []
-        
+
+    with torch.no_grad():
+
+        val_preds,_ = model(X_val_t)
+
+        for i,pred in enumerate(val_preds):
+
+            probs = torch.sigmoid(pred).squeeze().cpu().numpy()
+
+            preds = (probs > 0.5).astype(int)
+
 
 
 
