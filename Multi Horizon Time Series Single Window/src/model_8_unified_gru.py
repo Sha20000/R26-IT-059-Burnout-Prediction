@@ -563,6 +563,33 @@ print("Saved: model 8_comparison.png")
 
 #Chart 3 - Attention weight heatmap
 
+print("\nGenerating attention weight heatmap...")
+
+avg_attn = all_attn_weights.mean(axis=0)
+
+fig, ax  = plt.subplots(figsize=(10,3))
+im = ax.imshow(
+    avg_attn.reshape(-1,1),
+    aspect='auto',
+    cmap='Reds'
+
+)
+
+ax.set_xticks(range(N_WEEKS))
+ax.set_xticklabels([f'W{i+1}' for i in range(N_WEEKS)])
+ax.set_title('Attention Weights - Which Weeks'
+             'the Model Focuses On\n'
+             'R-26-IT-059 | IT22916426 | ',
+             fontweight='bold')
+plt.colorbar(im, ax=ax, label=' Attention Weight')
+
+plt.tight_layout()
+plt.savefig(RESULTS_PATH + 'figures/unified_gru_attention_heatmap.png',
+            dpi=150, bbox_inches='tight')
+plt.close()
+print("Saved: unified_gru_attention_heatmap.png")
+
+
 
 
 
