@@ -592,6 +592,31 @@ print("Saved: unified_gru_attention_heatmap.png")
 
 #Save Result to file
 
+import json
+
+output = {
+    'model': 'Unified Multi-Horizon GRU',
+    'student': 'IT22916426',
+    'project': 'R26-IT-059',
+    'n_weeks': N_WEEKS,
+    'n_features': N_FEATURES,
+    'horizons': results,
+    'optimal_horizon': results[best_horizon_idx],
+    'baselines': {
+        'Random Forest': 0.6647,
+        'Logistic Regression': 0.6800,
+        'XGBoost': 0.6890,
+        'Gradient Boosting': 0.6965,
+        'Simple LSTM': 0.7087,
+        'GRU': 0.7185,
+        'BiLSTM': 0.7107
+    }
+}
+
+with open(RESULTS_PATH +'metrics/model8_unified_gru_results.json', 'w') as f:
+    json.dump(output, f, indent=2)
+print("Saved : model8_results.json")
+
 
 
 
