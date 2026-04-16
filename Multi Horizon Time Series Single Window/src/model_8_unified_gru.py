@@ -502,6 +502,63 @@ print("Accuracy vs lead-time curve saved.")
 
 print("\nGenerating comparison chart with all baselines...")
 
+baseline_names = [
+    'Random\nForest',
+    'Logistic\nReg',
+    'XGBoost',
+    'Gradient\nBoosting',
+    'Simple\nLSTM',
+    'GRU',
+    'BiLSTM',
+    f'YOUR\nModel8\n(W{opt_week})'
+]
+
+#Replace last value with your best horizon
+baseline_f1s = [
+    0.6647, 0.6800, 0.6890, 0.6965,
+    0.7087, 0.7185, 0.7107,
+    results[best_horizon_idx]['f1']
+]
+
+colours = ['#BDD7EE']*7+['#C00000']
+
+fig, ax = plt.subplots(figsize=(12,6))
+bars = ax.bar(baseline_names,baseline_f1s,color=colours,edgecolor='white',linewidth=1.5)
+
+#Add value labels on bars
+for bar, val in zip(bars, baseline_f1s):
+    ax.text(bar.get_x()+bar.get_width()/2, bar.get_height()+0.005,
+            f'{val:.4f}',ha='center',va='bottom',fontsize=10,fontweight='bold')
+    
+
+#Horizontal line at best baseline 
+ax.axhline(y = max(baseline_f1s[:-1]),
+           color = 'gray',
+           linestyle = '__',
+           alpha = 0.5,
+           label=f'Best baseline: '
+                 f'{max(baseline_f1s[:-1]):.4f}'
+
+           
+           
+           )    
+    
+
+ax.set_ylabel('F1 Score',fontsize=12)
+ax.set_title('Model Comparison - F1 Score\n'
+             'R-26-IT-059 | IT22916426 |',
+             fontweight='bold')
+ax.set_ylim(0.5,0.95)
+ax.legend(fontsize=10)
+ax.grid(True, alpha=0.3, axis='y')
+
+plt.tight_layout()
+plt.savefig(RESULTS_PATH + 'figures/unified_gru_comparison.png',
+            dpi=150, bbox_inches='tight')
+plt.close()
+print("Saved: model 8_comparison.png")
+
+
 
 
 
