@@ -478,7 +478,29 @@ for r in results:
         fontweight='bold'
     )
 
-    
+ax.set_xlabel('Prediction Horizon (Weeks)',fontsize=12)
+ax.set_ylabel('Score',fontsize=12)
+
+ax.set_title('Accuracy vs Lead Time Curve\n'
+             'R-26-IT-059 | IT22916426 |',
+             'Unified Multi-Horizon GRU',
+             fontweight='bold',
+             fontsize=12)
+ax.set_xticks(weeks)
+ax.set_xticklabels([f"Weeks {w}" for w in weeks])
+ax.legend(fontsize=10)
+ax.grid(True, alpha=0.3)
+ax.set_ylim(0.5,1.0)
+
+plt.tight_layout()
+plt.savefig(RESULTS_PATH + 'figures/unified_gru_accuracy_curve.png',
+            dpi=150, bbox_inches='tight')
+plt.close()
+print("Accuracy vs lead-time curve saved.")
+
+
+
+
 
 
 
