@@ -464,7 +464,21 @@ ax.axvline( x = opt_week,
            linestyle='--',alpha=0.7,linewidth=1.5,
            label=f'Optimal Horizon: {opt_week}')
 
-ax.scatter([opt_week],[opt_f1],color='#70AD47',s=100,zorder=5, label=f'Best F1 = {opt_f1:.4f}')
+ax.scatter([opt_week],[opt_f1],color='#70AD47',s=100,
+           zorder=5, label=f'Best F1 = {opt_f1:.3f}')
+
+#Annotations
+for r in results:
+    ax.annotate(
+        f"{r['f1']:.3f}",
+        xy=(r['week'],r['f1']),
+        xytext=(0,10),
+        textcoords='offset points',
+        ha='center', fontsize=9,
+        fontweight='bold'
+    )
+
+    
 
 
 
