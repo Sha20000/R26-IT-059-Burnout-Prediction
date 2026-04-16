@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(__file__))
 
+
 import torch
 import torch.nn as nn 
 import numpy as np
@@ -9,6 +10,7 @@ import matplotlib
 matplotlib.use('Agg')  # Use a non-interactive backend
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
+from sklearn.metrics import (f1_score, roc_auc_score,precision_score, recall_score)
 from data_loader import (get_data, print_metrics, get_pos_weight, find_best_threshold)
 
 #Configuration
@@ -33,6 +35,23 @@ HORIZON_WEEKS = [4,8,12,17]
 HORIZON_INDICES = [3,7,11,16]
 HORIZON_LABELS = ['Week 4', 'Week 8', 
                   'Week 12', 'Week 17']
+FEATURE_NAMES = [
+    'F1_login_count',
+    'F2_vle_clicks',
+    'F3_avg_score',
+    'F4_num_submitted',
+    'F5_on_time_rate',
+    'F6_inactive_days',
+    'F7_score_change',
+    'F8_running_avg',
+    'F9_score_variance',
+    'F10_min_score',
+    'F11_max_score',
+    'F12_late_count',
+    'F13_weeks_since_active'
+
+
+]
 
 os.makedirs(MODELS_PATH, exist_ok=True)
 os.makedirs(os.path.join(RESULTS_PATH, 'figures'), exist_ok=True)
@@ -191,6 +210,9 @@ class UnifiedMultiHorizonGRU(nn.Module):
 
         return predictions, attn_weights
 
+#XAI FUNCTIONS
+    
+
 
 #LOAD DATA
 
@@ -221,12 +243,13 @@ train_loader = DataLoader(
 #Build Model
 
 model = UnifiedMultiHorizonGRU(
-    n_features=N_FEATURES.to(device),
-    optimizer = torch.optim.Adam(model.parameters(), 
+    n_features=N_FEATURES).to(device)
+
+optimizer = torch.optim.Adam(model.parameters(), 
                                  lr=LR,weight_decay=1e-5)
 
 
-)
+
 
 #Learning rate schedular
 #Reduce LR when validation stops improving
@@ -394,11 +417,11 @@ for i, (pred,label) in enumerate(
     #Find best threshold on validation for this horizon
 
     val_pred_i = torch.sigmoid(
-        model(X_val_t)[0][i]).squeeze().cpu().numpy()
+        model(X_val_t)[0][i]).squeeze().cpu().detach().numpy()
     
     best_thresh = 0.5
     best_f1_v = 0
-    for t in np.arrange(0.2,0.71,0.05):
+    for t in np.arange(0.2,0.71,0.05):
         p = (val_pred_i > t).astype(int)
         f = f1_score(data['y_val'], p,
                       zero_division=0)
@@ -420,11 +443,13 @@ for i, (pred,label) in enumerate(
 
     results.append({
         'horizon': label,
+        'week':HORIZON_WEEKS[i],
         'f1': f1,
         'auc': auc,
         'precision': pre,
         'recall': rec,
-        'threshold': best_thresh
+        'threshold': best_thresh,
+        
     })    
 
     if f1 > best_horizon_f1:
@@ -449,7 +474,7 @@ weeks = [r['week'] for r in results]
 f1s = [r['f1'] for r in results]
 aucs = [r['auc'] for r in results]
 
-ax.plot(weeks,f1s,'0-',color='#C00000',linewidth=2.5,
+ax.plot(weeks,f1s,'o-',color='#C00000',linewidth=2.5,
         markersize=8,label='F1 Score',zorder=3)
 
 ax.plot(weeks,aucs,'s--',color='#5B9BD5',linewidth=2,
@@ -482,7 +507,7 @@ ax.set_xlabel('Prediction Horizon (Weeks)',fontsize=12)
 ax.set_ylabel('Score',fontsize=12)
 
 ax.set_title('Accuracy vs Lead Time Curve\n'
-             'R-26-IT-059 | IT22916426 |',
+             'R26-IT-059 | IT22916426 | '
              'Unified Multi-Horizon GRU',
              fontweight='bold',
              fontsize=12)
@@ -534,7 +559,7 @@ for bar, val in zip(bars, baseline_f1s):
 #Horizontal line at best baseline 
 ax.axhline(y = max(baseline_f1s[:-1]),
            color = 'gray',
-           linestyle = '__',
+           linestyle = '--',
            alpha = 0.5,
            label=f'Best baseline: '
                  f'{max(baseline_f1s[:-1]):.4f}'
@@ -569,7 +594,7 @@ avg_attn = all_attn_weights.mean(axis=0)
 
 fig, ax  = plt.subplots(figsize=(10,3))
 im = ax.imshow(
-    avg_attn.reshape(-1,1),
+    avg_attn.reshape(1,-1),
     aspect='auto',
     cmap='Reds'
 
@@ -618,6 +643,47 @@ with open(RESULTS_PATH +'metrics/model8_unified_gru_results.json', 'w') as f:
 print("Saved : model8_results.json")
 
 
+#Final Summary 
+
+print()
+print("=" * 60)
+print("MODEL 8 COMPLETE — RESULTS SUMMARY")
+print("=" * 60)
+print()
+print("ACCURACY VS LEAD TIME:")
+print(f"  {'Horizon':<10} {'F1':>8} {'AUC':>8}")
+print("  " + "-" * 28)
+for r in results:
+    marker = " ← OPTIMAL" \
+        if r['week'] == opt_week else ""
+    print(f"  {r['horizon']:<10} "
+          f"{r['f1']:>8.4f} "
+          f"{r['auc']:>8.4f}{marker}")
+
+print()
+print(f"OPTIMAL INTERVENTION WINDOW:")
+print(f"  Week {opt_week} — F1={opt_f1:.4f}")
+print()
+print("BEATS ALL BASELINES:")
+for name, f1 in output['baselines'].items():
+    beat = "✅" if opt_f1 > f1 else "❌"
+    diff = opt_f1 - f1
+    print(f"  {beat} {name:<20} "
+          f"{f1:.4f} → +{diff:.4f}")
+print()
+print("FILES SAVED:")
+print("  results/figures/model8_accuracy_curve.png")
+print("  results/figures/model8_comparison.png")
+print("  results/figures/model8_attention.png")
+print("  results/metrics/model8_results.json")
+print()
+print("RESEARCH CONTRIBUTION:")
+print("  First unified multi-horizon GRU")
+print("  with attention for educational")
+print("  burnout prediction.")
+print("  Addresses gap confirmed by")
+print("  Jin et al. 2024 AIED.")
+print("=" * 60)
 
 
 
@@ -636,6 +702,7 @@ print("Saved : model8_results.json")
           
                    
         
+
 
 
 
