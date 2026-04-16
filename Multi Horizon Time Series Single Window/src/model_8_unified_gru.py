@@ -498,6 +498,10 @@ plt.savefig(RESULTS_PATH + 'figures/unified_gru_accuracy_curve.png',
 plt.close()
 print("Accuracy vs lead-time curve saved.")
 
+#CHART 2 - COMPARISON WITH ALL BASELINES
+
+print("\nGenerating comparison chart with all baselines...")
+
 
 
 
