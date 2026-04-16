@@ -439,6 +439,35 @@ print(f" OPTIMAL F1: {results[best_horizon_idx]['f1']:.4f} | ")
 print(f" AUC: {results[best_horizon_idx]['auc']:.4f} | ")
 
 
+#CHART 1 - ACCURACY VS LEAD TIME CURVE
+
+print("\nGenerating accuracy vs lead-time curve")
+
+fig,ax = plt.subplots(figsize=(8,5))
+
+weeks = [r['week'] for r in results]
+f1s = [r['f1'] for r in results]
+aucs = [r['auc'] for r in results]
+
+ax.plot(weeks,f1s,'0-',color='#C00000',linewidth=2.5,
+        markersize=8,label='F1 Score',zorder=3)
+
+ax.plot(weeks,aucs,'s--',color='#5B9BD5',linewidth=2,
+        markersize=7,label='AUC-ROC',zorder=3)
+
+#Mark optimal point
+opt_week = results[best_horizon_idx]['week']
+opt_f1 = results[best_horizon_idx]['f1']
+
+ax.axvline( x = opt_week,
+           color='#70AD47',
+           linestyle='--',alpha=0.7,linewidth=1.5,
+           label=f'Optimal Horizon: {opt_week}')
+
+ax.scatter([opt_week],[opt_f1],color='#70AD47',s=100,zorder=5, label=f'Best F1 = {opt_f1:.4f}')
+
+
+
 
 
 
