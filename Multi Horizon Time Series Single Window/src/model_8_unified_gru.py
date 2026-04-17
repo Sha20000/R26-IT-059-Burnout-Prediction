@@ -743,6 +743,46 @@ plt.savefig(RESULTS_PATH + 'figures/unified_gru_attention_heatmap.png',
 plt.close()
 print("Saved: unified_gru_attention_heatmap.png")
 
+#CHART 4 -XAI FEATURE IMPORTANCE
+
+print("Generating Chart 4: XAI features importance...")
+
+fig,ax = plt.subplots(figsize=(10,7))
+feat_labels = [f.replace('_'
+                         ,'\n') for f in FEATURE_NAMES]
+colours_f1 = ['#C00000' if imp == max(importance) else '#5B9BD5'
+              for imp in importance]
+
+bars = ax.barh(feat_labels, importance*100,color = colours_f1)
+
+for bar,val in zip(bars, importance*100):
+
+    ax.text(val + 0.3, bar.get_y() + bar.get_height()/2,
+            f'{val:.1f}%',
+            va='center', fontsize=9, 
+            fontweight='bold')
+    
+ax.set_xlabel('Feature Importance (%)', 
+                  fontsize=12)
+    
+ax.set_title('XAI Level 2 - Feature Attribution\n'
+                 'Which Features Drive Burnout Prediction\n'
+                 'R-26-IT-059 | IT22916426 |',
+                 fontweight='bold', fontsize=11)
+ax.grid(True, alpha=0.3, axis='x')
+plt.tight_layout()
+plt.savefig(
+    RESULTS_PATH+ 'figures'
+    'model_8_xai_features.png',
+    dpi=150, bbox_inches='tight'
+)
+plt.close()
+print("Saved: model_8_xai_features.png")
+
+
+    
+    
+
 
 #Save Result to file
 
@@ -813,6 +853,11 @@ print("  burnout prediction.")
 print("  Addresses gap confirmed by")
 print("  Jin et al. 2024 AIED.")
 print("=" * 60)
+
+
+
+
+
 
 
 
