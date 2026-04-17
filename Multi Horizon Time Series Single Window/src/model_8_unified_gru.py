@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(__file__))
 import shap 
 import torch
 import torch.nn as nn 
+import pandas as pd
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # Use a non-interactive backend
@@ -830,6 +831,48 @@ print("\nGenerating predictions CSV for IT22253194...")
 model.eval()
 with torch.no_grad():
     final_preds, _ = model(X_te_t)
+
+
+p4 = torch.sigmoid(final_preds[0]).squeeze().cpu().numpy()
+p8 = torch.sigmoid(final_preds[1]).squeeze().cpu().numpy()
+p12 = torch.sigmoid(final_preds[2]).squeeze().cpu().numpy()
+p17 = torch.sigmoid(final_preds[3]).squeeze().cpu().numpy()
+
+rows = []
+
+for i in range(len(p17)):
+    risk = float(p17[i])
+    rows.append({
+        'student_index': i,
+        'student_id':    f'OULAD_TEST_{i:04d}',
+        'actual_label':  int(data['y_te'][i]),
+        'academic_risk': round(risk, 4),
+        'week4_risk':    round(float(p4[i]),  4),
+        'week8_risk':    round(float(p8[i]),  4),
+        'week12_risk':   round(float(p12[i]), 4),
+        'week17_risk':   round(float(p17[i]), 4),
+        'alert_level': (
+            'HIGH'   if risk > 0.7 else
+            'MEDIUM' if risk > 0.4 else
+            'LOW')
+    })
+
+df_preds = pd.DataFrame(rows)
+
+csv_path = (RESULTS_PATH + 'metrics/model8_predictions.csv')
+json_path = (RESULTS_PATH + 'metrics/model8_predictions.json')
+
+df_preds.to_csv(csv_path, index=False)
+df_preds.to_json(json_path, orient='records', indent=2)
+
+print(f"  Saved {len(df_preds)} predictions.")
+print(f"  CSV:  {csv_path}")
+print(f"  JSON: {json_path}")
+print()
+print("  GIVE THESE TO IT22253194:")
+print("  results/metrics/"
+      "academic_predictions.csv")
+
 
 
 
