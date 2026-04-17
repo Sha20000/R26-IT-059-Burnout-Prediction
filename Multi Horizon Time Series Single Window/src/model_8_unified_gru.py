@@ -310,7 +310,36 @@ print("  Saved: model8_shap.png")
 def explain_single_student(model, X_tensor, 
                            student_idx,horizon_idx=3):
     " XAI Level 3 — Single Student Explanation."
-    
+
+    model.eval()
+    X_one = X_tensor[student_idx:student_idx+1].\
+    clone().requires_grad_(True)
+
+    predictions,attn = model(X_one)
+    pred = predictions[horizon_idx]
+    risk_prob = torch.sigmoid(pred).item()
+
+    pred.sum().backward()
+    gradients = X_one.grad.abs()
+    importance = gradients.mean(dim=1).squeeze().cpu().detach().numpy()
+
+    if importance.sum() > 0:
+        importance = importance / importance.sum()
+
+    attn_weights = attn[0].cpu().detach().numpy()
+
+    return {
+        'student_idx': student_idx,
+        'risk_probability': risk_prob,
+        'risk_level':('HIGH' if risk_prob > 0.7 else 'MEDIUM'
+                      if risk_prob > 0.4 else 'LOW'),
+        'feature_importance': dict(zip(FEATURE_NAMES, importance)),
+        'attention_weights': attn_weights
+
+    }  
+
+
+
     
 
 
