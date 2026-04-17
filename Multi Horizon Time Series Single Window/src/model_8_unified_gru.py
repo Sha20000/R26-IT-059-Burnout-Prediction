@@ -914,7 +914,7 @@ print("Saved : model8_results.json")
 
 print()
 print("=" * 60)
-print("MODEL 8 COMPLETE — RESULTS SUMMARY")
+print("MODEL 8 COMPLETE")
 print("=" * 60)
 print()
 print("ACCURACY VS LEAD TIME:")
@@ -928,29 +928,44 @@ for r in results:
           f"{r['auc']:>8.4f}{marker}")
 
 print()
-print(f"OPTIMAL INTERVENTION WINDOW:")
-print(f"  Week {opt_week} — F1={opt_f1:.4f}")
+print(f"OPTIMAL WINDOW: Week {opt_week} "
+      f"— F1={opt_f1:.4f}")
 print()
 print("BEATS ALL BASELINES:")
 for name, f1 in output['baselines'].items():
     beat = "✅" if opt_f1 > f1 else "❌"
     diff = opt_f1 - f1
-    print(f"  {beat} {name:<20} "
+    print(f"  {beat} {name:<22} "
           f"{f1:.4f} → +{diff:.4f}")
+
+print()
+print("XAI FINDINGS:")
+print(f"  Most important weeks:   {list(top_3)}")
+print(f"  Most important feature: {top_feature}")
+
 print()
 print("FILES SAVED:")
-print("  results/figures/model8_accuracy_curve.png")
-print("  results/figures/model8_comparison.png")
-print("  results/figures/model8_attention.png")
-print("  results/metrics/model8_results.json")
+print("  Figures:")
+print("    model8_accuracy_curve.png")
+print("    model8_comparison.png")
+print("    model8_attention.png")
+print("    model8_xai_features.png")
+print("    model8_xai_student.png")
+print("  Metrics:")
+print("    model8_results.json")
+print("    academic_predictions.csv  ← IT22253194")
+print("    academic_predictions.json ← IT22253194")
+print("  Models:")
+print("    model8_unified_gru_best.pt")
+print("    scaler.pkl  ← Streamlit app")
 print()
 print("RESEARCH CONTRIBUTION:")
 print("  First unified multi-horizon GRU")
-print("  with attention for educational")
-print("  burnout prediction.")
-print("  Addresses gap confirmed by")
-print("  Jin et al. 2024 AIED.")
+print("  with attention + XAI for")
+print("  educational burnout prediction.")
+print("  Gap confirmed: Jin et al. 2024 AIED.")
 print("=" * 60)
+
 
 
 
