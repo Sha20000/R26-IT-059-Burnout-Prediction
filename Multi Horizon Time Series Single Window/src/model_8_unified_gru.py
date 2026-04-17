@@ -211,6 +211,20 @@ class UnifiedMultiHorizonGRU(nn.Module):
         return predictions, attn_weights
 
 #XAI FUNCTIONS
+
+def get_feature_importance(model,X_tensor
+                           ,horizon_idx=3):
+    "XAI Level 2 - Feature Attribution"
+    
+    model.eval()
+    X = X_tensor.clone().requires_grad_(True)
+
+    predictions,_ = model(X)
+    pred = predictions[horizon_idx]
+    pred.sum().backward()
+
+    #Absolute gradient for feature 
+
     
 
 
