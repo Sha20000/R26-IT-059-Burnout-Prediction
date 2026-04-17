@@ -238,11 +238,79 @@ def  model_predict(x):
     predictions,_ = model(x)
     return predictions[3]  # Return predictions for week 17 horizon
 
-   
+#XAI Level 2b: SHAP VALUES
+
+#Background data
+
+background = X_tr_t[:100]
+
+#Calculate shap values
+explainer = shap.DeepExplainer(model_predict, background)
+
+#Use 200 test students for speed
+X_shap = X_te_t[:200]
+shap_vals = explainer.shap_values(X_shap)  
+
+#Average across students and weeks 
+#shap_vals shape: (200,17,13)
+
+mean_shap = np.abs(
+    np.array(shap_vals)
+).mean(axis=(0,1))
+
+#Normalise to percentage
+mean_shap = mean_shap / mean_shap.sum()
+
+#Print ranking
+print()
+print(f"  {'Rank':<5} {'Feature':<25} "
+      f"{'SHAP':>8}")
+print("  " + "-" * 40)
+shap_ranked = sorted(
+    zip(FEATURE_NAMES, mean_shap),
+    key=lambda x: x[1], reverse=True)
+for i, (name, val) in enumerate(shap_ranked):
+    print(f"  {i+1:<5} {name:<25} "
+          f"{val*100:>7.1f}%")
+
+# Save SHAP chart
+fig, ax = plt.subplots(figsize=(10, 7))
+s_names = [p[0].replace('_', '\n')
+            for p in shap_ranked]
+s_vals  = [p[1]*100 for p in shap_ranked]
+colours = ['#C00000' if v == max(s_vals)
+           else '#5B9BD5' for v in s_vals]
+
+bars = ax.barh(s_names, s_vals,
+                color=colours)
+for bar, val in zip(bars, s_vals):
+    ax.text(val + 0.3,
+            bar.get_y() + bar.get_height()/2,
+            f'{val:.1f}%',
+            va='center', fontsize=9,
+            fontweight='bold')
+
+ax.set_xlabel('Mean |SHAP Value| (%)',
+               fontsize=12)
+ax.set_title(
+    'SHAP Feature Importance\n'
+    'R26-IT-059 | IT22916426 | Week 17',
+    fontweight='bold')
+ax.grid(True, alpha=0.3, axis='x')
+plt.tight_layout()
+plt.savefig(
+    RESULTS_PATH +
+    'figures/model8_shap.png',
+    dpi=150, bbox_inches='tight')
+plt.close()
+print("  Saved: model8_shap.png")
 
 
 
-
+def explain_single_student(model, X_tensor, 
+                           student_idx,horizon_idx=3):
+    " XAI Level 3 — Single Student Explanation."
+    
     
 
 
