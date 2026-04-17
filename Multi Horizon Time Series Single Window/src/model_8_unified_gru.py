@@ -1,8 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
-
-
+import shap 
 import torch
 import torch.nn as nn 
 import numpy as np
@@ -232,7 +231,14 @@ def get_feature_importance(model,X_tensor
         
         importance = importance / importance.sum()
 
-    return importance    
+    return importance
+
+
+def  model_predict(x):
+    predictions,_ = model(x)
+    return predictions[3]  # Return predictions for week 17 horizon
+
+   
 
 
 
