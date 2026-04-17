@@ -779,6 +779,61 @@ plt.savefig(
 plt.close()
 print("Saved: model_8_xai_features.png")
 
+#CHART 5 - SINGLE STUDENT EXPLANATION
+print("\nGenerating single student explanation...")
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+fig.suptitle(f'XAI Level 3 - Single Student Explanation\n'
+             f'Risk: {explanation["risk_probability"]:.3f}'
+             f'({explanation["risk_level"]})'
+             f'| R26-IT-059 | IT22916426',
+             fontweight='bold')
+# Feature importance for this student
+
+f1 = explanation['feature_importance']
+s_pairs = sorted(f1.items(), key=lambda x: x[1],
+                  reverse=True)
+s_names = [p[0].replace('_', '\n') for p in s_pairs]
+s_vals  = [p[1]*100 for p in s_pairs]
+
+axes[0].barh(s_names, s_vals, color='#C00000',alpha=0.8)
+axes[0].set_xlabel('Importance (%)')
+axes[0].set_title('Why this student is flagged')
+axes[0].grid(True, alpha=0.3, axis='x')
+
+#Attention for this student
+s_attn = explanation['attention_weights']
+axes[1].bar(range(1,N_WEEKS+1), s_attn, color='#5B9BD5', alpha=0.8)
+
+for hw in HORIZON_WEEKS:
+    axes[1].axvline(x=hw, color='#70AD47',linestyle='--',alpha=0.6)
+
+axes[1].set_xlabel('Week')
+axes[1].set_ylabel('Attention Weight')
+axes[1].set_title('Which weeks were important')
+axes[1].set_xticks(range(1,N_WEEKS+1))
+axes[1].grid(True, alpha=0.3, axis='y')
+
+plt.tight_layout()
+plt.savefig(
+    RESULTS_PATH+'figures/'
+    'model_8_xai_student.png',
+    dpi=150, bbox_inches='tight'
+)
+plt.close()
+print("Saved: model_8_xai_student.png")
+
+# GENERATE PREDICTIONS CSV FOR IT22253194
+
+print("\nGenerating predictions CSV for IT22253194...")
+
+model.eval()
+with torch.no_grad():
+    final_preds, _ = model(X_te_t)
+
+
+
+
 
     
     
