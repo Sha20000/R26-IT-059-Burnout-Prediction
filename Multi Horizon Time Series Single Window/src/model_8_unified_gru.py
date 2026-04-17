@@ -224,6 +224,18 @@ def get_feature_importance(model,X_tensor
     pred.sum().backward()
 
     #Absolute gradient for feature 
+    gradients = X.grad.abs()
+    importance = gradients.mean(
+        dim=(0,1)).cpu().detach().numpy()
+    
+    if importance.sum() > 0:
+        
+        importance = importance / importance.sum()
+
+    return importance    
+
+
+
 
     
 
