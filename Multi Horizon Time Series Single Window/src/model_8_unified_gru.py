@@ -913,11 +913,11 @@ print("Saved: model_8_xai_student.png")
 
 # GENERATE PREDICTIONS CSV FOR IT22253194
 
-print("\nGenerating predictions CSV for IT22253194...")
+print("\nGenerating predictions CSV for IT22253194... with per student XAI")
 
 model.eval()
 with torch.no_grad():
-    final_preds, _ = model(X_te_t)
+    final_preds, final_attn = model(X_te_t)
 
 
 p4 = torch.sigmoid(final_preds[0]).squeeze().cpu().numpy()
@@ -925,10 +925,38 @@ p8 = torch.sigmoid(final_preds[1]).squeeze().cpu().numpy()
 p12 = torch.sigmoid(final_preds[2]).squeeze().cpu().numpy()
 p17 = torch.sigmoid(final_preds[3]).squeeze().cpu().numpy()
 
+attn_all = final_attn.cpu().numpy()
+
 rows = []
 
 for i in range(len(p17)):
     risk = float(p17[i])
+    max_risk = max(float(p4[i]), float(p8[i]), float(p12[i]), float(p17[i]))
+
+     # Get per-student feature importance
+    expl = explain_single_student(
+        model, X_te_t,
+        student_idx=i,
+        horizon_idx=3)
+    
+      # Get top 3 features for this student
+    sorted_feats = sorted(
+        expl['feature_importance'].items(),
+        key=lambda x: x[1],
+        reverse=True)
+    
+    top1 = sorted_feats[0][0]
+    top2 = sorted_feats[1][0]
+    top3 = sorted_feats[2][0]
+
+    top1_pct = round(float(sorted_feats[0][1]) * 100, 1)
+    top2_pct = round(float(sorted_feats[1][1]) * 100, 1)
+    top3_pct = round(float(sorted_feats[2][1]) * 100, 1)
+
+    # Get top attention week for this student
+    student_attn = attn_all[i]
+    top_week = int(
+        np.argmax(student_attn)) + 1
     rows.append({
         'student_index': i,
         'student_id':    f'OULAD_TEST_{i:04d}',
@@ -941,7 +969,22 @@ for i in range(len(p17)):
         'alert_level': (
             'HIGH'   if risk > 0.7 else
             'MEDIUM' if risk > 0.4 else
-            'LOW')
+            'LOW'),
+         # Per-student XAI
+        'top_feature_1':     top1,
+        'top_feature_1_pct': top1_pct,
+        'top_feature_2':     top2,
+        'top_feature_2_pct': top2_pct,
+        'top_feature_3':     top3,
+        'top_feature_3_pct': top3_pct,
+        'most_important_week': top_week,
+
+        # Human readable reason
+        'main_reason': (
+            f"{top1.replace('_',' ')} "
+            f"({top1_pct}%) and "
+            f"{top2.replace('_',' ')} "
+            f"({top2_pct}%)")    
 
 
     })
