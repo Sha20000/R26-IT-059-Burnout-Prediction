@@ -17,8 +17,8 @@ from data_loader import (get_data, print_metrics, get_pos_weight, find_best_thre
 SEED        = 42
 MODELS_PATH = '../models/saved/'
 RESULTS_PATH = '../results/'
-EPOCHS     = 300
-PATIENCE  = 30
+EPOCHS     = 500
+PATIENCE  = 50
 BATCH_SIZE = 64
 LR        = 0.0003
 HIDDEN_SIZE = 128
@@ -235,76 +235,6 @@ def get_feature_importance(model,X_tensor
     return importance
 
 
-def  model_predict(x):
-    predictions,_ = model(x)
-    return predictions[3]  # Return predictions for week 17 horizon
-
-#XAI Level 2b: SHAP VALUES
-
-#Background data
-
-background = X_tr_t[:100]
-
-#Calculate shap values
-explainer = shap.DeepExplainer(model_predict, background)
-
-#Use 200 test students for speed
-X_shap = X_te_t[:200]
-shap_vals = explainer.shap_values(X_shap)  
-
-#Average across students and weeks 
-#shap_vals shape: (200,17,13)
-
-mean_shap = np.abs(
-    np.array(shap_vals)
-).mean(axis=(0,1))
-
-#Normalise to percentage
-mean_shap = mean_shap / mean_shap.sum()
-
-#Print ranking
-print()
-print(f"  {'Rank':<5} {'Feature':<25} "
-      f"{'SHAP':>8}")
-print("  " + "-" * 40)
-shap_ranked = sorted(
-    zip(FEATURE_NAMES, mean_shap),
-    key=lambda x: x[1], reverse=True)
-for i, (name, val) in enumerate(shap_ranked):
-    print(f"  {i+1:<5} {name:<25} "
-          f"{val*100:>7.1f}%")
-
-# Save SHAP chart
-fig, ax = plt.subplots(figsize=(10, 7))
-s_names = [p[0].replace('_', '\n')
-            for p in shap_ranked]
-s_vals  = [p[1]*100 for p in shap_ranked]
-colours = ['#C00000' if v == max(s_vals)
-           else '#5B9BD5' for v in s_vals]
-
-bars = ax.barh(s_names, s_vals,
-                color=colours)
-for bar, val in zip(bars, s_vals):
-    ax.text(val + 0.3,
-            bar.get_y() + bar.get_height()/2,
-            f'{val:.1f}%',
-            va='center', fontsize=9,
-            fontweight='bold')
-
-ax.set_xlabel('Mean |SHAP Value| (%)',
-               fontsize=12)
-ax.set_title(
-    'SHAP Feature Importance\n'
-    'R26-IT-059 | IT22916426 | Week 17',
-    fontweight='bold')
-ax.grid(True, alpha=0.3, axis='x')
-plt.tight_layout()
-plt.savefig(
-    RESULTS_PATH +
-    'figures/model8_shap.png',
-    dpi=150, bbox_inches='tight')
-plt.close()
-print("  Saved: model8_shap.png")
 
 
 
@@ -593,6 +523,38 @@ print(f"OPTIMAL HORIZON:"
 print(f" OPTIMAL F1: {results[best_horizon_idx]['f1']:.4f} | ")
 print(f" AUC: {results[best_horizon_idx]['auc']:.4f} | ")
 
+#  Calculate XAI values BEFORE charts 
+
+# Gradient feature importance
+importance = get_feature_importance(
+    model, X_te_t, horizon_idx=3)
+
+ranked = sorted(
+    zip(FEATURE_NAMES, importance),
+    key=lambda x: x[1], reverse=True)
+
+top_feature = ranked[0][0]
+
+# Top attention weeks
+avg_attn = all_attn_weights.mean(axis=0)
+top_3    = np.argsort(avg_attn)[::-1][:3] + 1
+
+# Single student explanation
+with torch.no_grad():
+    all_probs = torch.sigmoid(
+        model(X_te_t)[0][3]
+    ).squeeze().cpu().numpy()
+
+high_risk_idx = int(all_probs.argmax())
+explanation   = explain_single_student(
+    model, X_te_t,
+    student_idx=high_risk_idx,
+    horizon_idx=3)
+
+print(f"XAI ready.")
+print(f"Most important feature: {top_feature}")
+print(f"Top attention weeks: {list(top_3)}")
+
 
 #CHART 1 - ACCURACY VS LEAD TIME CURVE
 
@@ -748,7 +710,7 @@ print("Saved: unified_gru_attention_heatmap.png")
 
 print("Generating Chart 4: XAI features importance...")
 
-fig,ax = plt.subplots(figsize=(10,7))
+fig,ax = plt.subplots(figsize=(15,8))
 feat_labels = [f.replace('_'
                          ,'\n') for f in FEATURE_NAMES]
 colours_f1 = ['#C00000' if imp == max(importance) else '#5B9BD5'
@@ -773,17 +735,100 @@ ax.set_title('XAI Level 2 - Feature Attribution\n'
 ax.grid(True, alpha=0.3, axis='x')
 plt.tight_layout()
 plt.savefig(
-    RESULTS_PATH+ 'figures'
-    'model_8_xai_features.png',
+    RESULTS_PATH+ 
+    'figures/model_8_xai_features.png',
     dpi=150, bbox_inches='tight'
 )
 plt.close()
 print("Saved: model_8_xai_features.png")
 
+# Create wrapper class — DeepExplainer needs nn.Module
+class ModelWrapper(nn.Module):
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, x):
+        predictions, _ = self.model(x)
+        return predictions[3]  # Week 17
+
+# Move to CPU for SHAP
+model.to('cpu')
+wrapper = ModelWrapper(model).to('cpu')
+wrapper.eval()
+
+background = X_tr_t[:50].cpu()
+X_shap     = X_te_t[:100].cpu()
+
+explainer = shap.DeepExplainer(wrapper, background)
+shap_vals = explainer.shap_values(X_shap,check_additivity=False)
+
+# Move model back
+model.to(device)
+
+# Average across students and weeks
+shap_array = np.array(shap_vals)
+print(f"SHAP array shape: {shap_array.shape}")
+
+# Handle different output shapes
+if shap_array.ndim == 4:
+    # Shape: (outputs, students, weeks, features)
+    mean_shap = np.abs(
+        shap_array).mean(axis=(0, 1, 2))
+elif shap_array.ndim == 3:
+    # Shape: (students, weeks, features)
+    mean_shap = np.abs(
+        shap_array).mean(axis=(0, 1))
+else:
+    mean_shap = np.abs(shap_array).mean(axis=0)
+
+mean_shap = mean_shap.flatten()
+mean_shap = mean_shap / mean_shap.sum()
+
+print(f"mean_shap shape: {mean_shap.shape}")
+
+# Print ranking
+print()
+print(f"  {'Rank':<5} {'Feature':<25} {'SHAP':>8}")
+print("  " + "-" * 40)
+shap_ranked = sorted(
+    zip(FEATURE_NAMES, mean_shap),
+    key=lambda x: x[1], reverse=True)
+for i, (name, val) in enumerate(shap_ranked):
+    print(f"  {i+1:<5} {name:<25} "
+          f"{float(val)*100:>7.1f}%")
+
+# SHAP chart
+fig, ax = plt.subplots(figsize=(16, 8))
+s_names = [p[0].replace('_', '\n')
+            for p in shap_ranked]
+s_vals = [float(p[1])*100 for p in shap_ranked]
+colours = ['#C00000' if v == max(s_vals)
+           else '#5B9BD5' for v in s_vals]
+bars = ax.barh(s_names, s_vals, color=colours)
+for bar, val in zip(bars, s_vals):
+    ax.text(val + 0.3,
+            bar.get_y() + bar.get_height()/2,
+            f'{val:.1f}%', va='center',
+            fontsize=9, fontweight='bold')
+ax.set_xlabel('Mean |SHAP Value| (%)', fontsize=12)
+ax.set_title(
+    'SHAP Feature Importance\n'
+    'R26-IT-059 | IT22916426 | Week 17',
+    fontweight='bold')
+ax.grid(True, alpha=0.3, axis='x')
+plt.tight_layout()
+plt.savefig(
+    RESULTS_PATH + 'figures/model8_shap.png',
+    dpi=150, bbox_inches='tight')
+plt.close()
+print("  Saved: model8_shap.png")
+
+
 #CHART 5 - SINGLE STUDENT EXPLANATION
 print("\nGenerating single student explanation...")
 
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+fig, axes = plt.subplots(1, 2, figsize=(16, 8))
 fig.suptitle(f'XAI Level 3 - Single Student Explanation\n'
              f'Risk: {explanation["risk_probability"]:.3f}'
              f'({explanation["risk_level"]})'
@@ -791,16 +836,58 @@ fig.suptitle(f'XAI Level 3 - Single Student Explanation\n'
              fontweight='bold')
 # Feature importance for this student
 
-f1 = explanation['feature_importance']
-s_pairs = sorted(f1.items(), key=lambda x: x[1],
+# Feature importance for this student
+fi = explanation['feature_importance']
+s_pairs = sorted(fi.items(),
+                  key=lambda x: x[1],
                   reverse=True)
-s_names = [p[0].replace('_', '\n') for p in s_pairs]
-s_vals  = [p[1]*100 for p in s_pairs]
 
-axes[0].barh(s_names, s_vals, color='#C00000',alpha=0.8)
-axes[0].set_xlabel('Importance (%)')
-axes[0].set_title('Why this student is flagged')
+# Short readable names
+short_names = {
+    'F1_login_count':         'F1 Logins',
+    'F2_vle_clicks':          'F2 Clicks',
+    'F3_avg_score':           'F3 Score',
+    'F4_num_submitted':       'F4 Submitted',
+    'F5_on_time_rate':        'F5 On Time',
+    'F6_inactive_days':       'F6 Inactive',
+    'F7_score_change':        'F7 Trend',
+    'F8_running_avg':         'F8 Cum Avg',
+    'F9_score_variance':      'F9 Variance',
+    'F10_min_score':          'F10 Min Score',
+    'F11_max_score':          'F11 Max Score',
+    'F12_late_count':         'F12 Late',
+    'F13_weeks_since_active': 'F13 Inactive Wks'
+}
+
+s_names = [short_names.get(p[0], p[0])
+            for p in s_pairs]
+s_vals  = [float(p[1]) * 100
+            for p in s_pairs]
+
+colours_s = ['#C00000' if v == max(s_vals)
+              else '#5B9BD5'
+              for v in s_vals]
+
+axes[0].barh(s_names, s_vals,
+              color=colours_s, alpha=0.8)
+
+# Add value labels
+for idx, (val, name) in enumerate(
+        zip(s_vals, s_names)):
+    axes[0].text(
+        val + 0.3, idx,
+        f'{val:.1f}%',
+        va='center', fontsize=8,
+        fontweight='bold')
+
+axes[0].set_xlabel('Importance (%)',
+                    fontsize=10)
+axes[0].set_title(
+    'Why This Student Was Flagged\n'
+    '(Feature Attribution)',
+    fontsize=10, fontweight='bold')
 axes[0].grid(True, alpha=0.3, axis='x')
+axes[0].tick_params(axis='y', labelsize=8)
 
 #Attention for this student
 s_attn = explanation['attention_weights']
@@ -855,6 +942,8 @@ for i in range(len(p17)):
             'HIGH'   if risk > 0.7 else
             'MEDIUM' if risk > 0.4 else
             'LOW')
+
+
     })
 
 df_preds = pd.DataFrame(rows)

@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Large data files
+data/raw/
+data/processed/*.npy
+
+# Large model files
+models/saved/*.pt
+models/saved/*.pth
+models/saved/*.pkl
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+anaconda_projects/
