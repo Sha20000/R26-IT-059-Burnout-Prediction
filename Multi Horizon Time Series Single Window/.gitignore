@@ -4,11 +4,13 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# Large data files
+# ALL raw data files — too large for GitHub
 data/raw/
+
+# Processed numpy files — too large
 data/processed/*.npy
 
-# Large model files
+# Model weights — too large
 models/saved/*.pt
 models/saved/*.pth
 models/saved/*.pkl
