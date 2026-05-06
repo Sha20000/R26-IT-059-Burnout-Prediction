@@ -24,6 +24,26 @@
         </div>
       </header>
 
+      <!-- MAIN LAYOUT -->
+  <main class="main">
+
+    <!-- LEFT PANEL: student list -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Student Predictions</span>
+        <div class="filter-row">
+          <select id="filterAlert" onchange="filterStudents()">
+            <option value="ALL">All levels</option>
+            <option value="HIGH">HIGH only</option>
+            <option value="MEDIUM">MEDIUM only</option>
+            <option value="LOW">LOW only</option>
+          </select>
+        </div>
+      </div>
+      <div class="student-list" id="studentList"></div>
+    </aside>
+
+
 </body>
 
 
