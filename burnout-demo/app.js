@@ -26,7 +26,6 @@ let selectedId  = null;
 let usingAPI    = false;
 
 //API Helpers 
-
 async function fetchWithTimeout(url, ms = API_TIMEOUT) {
     const controller = new AbortController();
     const timer      = setTimeout(() => controller.abort(), ms);
@@ -39,3 +38,45 @@ async function fetchWithTimeout(url, ms = API_TIMEOUT) {
       throw err;
     }
   }
+
+//Load Students
+async function loadStudents() {
+    setApiStatus('connecting');
+  
+    try {
+      // Try API first
+      const res  = await fetchWithTimeout(`${API_URL}/students`);
+      const data = await res.json();
+  
+      if (data.students && data.students.length > 0) {
+        allStudents = data.students;
+        usingAPI    = true;
+        setApiStatus('live');
+        document.getElementById('dataSource').textContent = 'Live API';
+        console.log(`Loaded ${allStudents.length} students from Flask API`);
+  
+        // Also load summary from API
+        loadSummaryFromAPI();
+      } else {
+        throw new Error('Empty response from API');
+      }
+  
+    } catch (err) {
+      // Fallback to static data.js
+      console.warn('API not available — using static data:', err.message);
+      usingAPI    = false;
+      allStudents = typeof STUDENTS !== 'undefined' ? STUDENTS : [];
+      setApiStatus('offline');
+      document.getElementById('dataSource').textContent = 'Static';
+  
+      if (allStudents.length === 0) {
+        document.getElementById('loadingMsg').textContent =
+          'No data available. Run the Flask API or check data.js';
+        return;
+      }
+    }
+}
+
+
+
+
