@@ -117,3 +117,11 @@ function setApiStatus(state) {
     }
   }
 
+
+//Risk colour
+function riskColor(value) {
+    if (value >= 0.7) return '#C00000';
+    if (value >= 0.4) return '#B86B00';
+    return '#2E7D32';
+  }  
+
