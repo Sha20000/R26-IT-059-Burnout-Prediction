@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Academic Burnout & Dropout Risk Detection — R26-IT-059</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-    <header class="header">
-        <div class="header-inner">
-          <div class="header-brand">
-            <div class="brand-badge">R26-IT-059</div>
-            <div>
-              <h1>Academic Burnout & Dropout Risk Detection</h1>
-              <p>Explainable Multi-Horizon GRU · OULAD Dataset · IT22916426 Mahavitha S.M.</p>
-            </div>
-          </div>
-          <div class="header-meta">
-            <span class="model-pill">Model 8 · Unified Multi-Horizon GRU</span>
-            <span class="model-pill accent">F1 = 0.7193 · AUC = 0.8809</span>
-          </div>
-        </div>
-      </header>
 
-      <!-- MAIN LAYOUT -->
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-badge">R26-IT-059</div>
+        <div>
+          <h1>Academic Burnout & Dropout Risk Detection</h1>
+          <p>Explainable Multi-Horizon GRU · OULAD Dataset · IT22916426 Mahavitha S.M.</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="model-pill">Model 8 · Unified Multi-Horizon GRU</span>
+        <span class="model-pill accent" id="headerStats">F1 = 0.7227 · AUC = 0.8831</span>
+        <!-- API status indicator -->
+        <span class="api-status" id="apiStatus">⏳ Connecting...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
   <main class="main">
 
     <!-- LEFT PANEL: student list -->
@@ -40,80 +43,84 @@
           </select>
         </div>
       </div>
+      <!-- Loading state -->
+      <div class="loading-msg" id="loadingMsg">Loading predictions...</div>
       <div class="student-list" id="studentList"></div>
     </aside>
 
     <!-- RIGHT PANEL: student detail -->
     <section class="detail" id="detailPanel">
-        <div class="detail-placeholder" id="placeholder">
-          <div class="placeholder-icon">⬅</div>
-          <p>Select a student from the list to view their risk profile</p>
-        </div>
-  
-        <div class="detail-content hidden" id="detailContent">
-  
-          <!-- Student header -->
-          <div class="detail-header">
-            <div>
-              <div class="student-id-label" id="dStudentId"></div>
-              <div class="risk-headline" id="dRiskHeadline"></div>
-            </div>
-            <div class="alert-badge-large" id="dAlertBadge"></div>
-          </div>
+      <div class="detail-placeholder" id="placeholder">
+        <div class="placeholder-icon">⬅</div>
+        <p>Select a student from the list to view their risk profile</p>
+      </div>
 
-           <!-- 4 horizon cards -->
+      <div class="detail-content hidden" id="detailContent">
+
+        <!-- Student header -->
+        <div class="detail-header">
+          <div>
+            <div class="student-id-label" id="dStudentId"></div>
+            <div class="risk-headline" id="dRiskHeadline"></div>
+          </div>
+          <div class="alert-badge-large" id="dAlertBadge"></div>
+        </div>
+
+        <!-- 4 horizon cards -->
         <div class="horizon-grid">
-            <div class="horizon-card" id="hw4">
-              <div class="horizon-label">Week 4</div>
-              <div class="horizon-value" id="dW4"></div>
-              <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW4"></div></div>
-            </div>
-            <div class="horizon-card" id="hw8">
-              <div class="horizon-label">Week 8</div>
-              <div class="horizon-value" id="dW8"></div>
-              <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW8"></div></div>
-            </div>
-            <div class="horizon-card" id="hw12">
-              <div class="horizon-label">Week 12</div>
-              <div class="horizon-value" id="dW12"></div>
-              <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW12"></div></div>
-            </div>
-            <div class="horizon-card active-horizon" id="hw17">
-              <div class="horizon-label">Week 17 <span class="optimal-tag">optimal</span></div>
-              <div class="horizon-value" id="dW17"></div>
-              <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW17"></div></div>
-            </div>
+          <div class="horizon-card" id="hw4">
+            <div class="horizon-label">Week 4</div>
+            <div class="horizon-value" id="dW4"></div>
+            <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW4"></div></div>
           </div>
+          <div class="horizon-card" id="hw8">
+            <div class="horizon-label">Week 8</div>
+            <div class="horizon-value" id="dW8"></div>
+            <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW8"></div></div>
+          </div>
+          <div class="horizon-card" id="hw12">
+            <div class="horizon-label">Week 12</div>
+            <div class="horizon-value" id="dW12"></div>
+            <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW12"></div></div>
+          </div>
+          <div class="horizon-card active-horizon" id="hw17">
+            <div class="horizon-label">Week 17 <span class="optimal-tag">optimal</span></div>
+            <div class="horizon-value" id="dW17"></div>
+            <div class="horizon-bar-wrap"><div class="horizon-bar" id="bW17"></div></div>
+          </div>
+        </div>
 
-          <!-- XAI section -->
+        <!-- XAI section -->
         <div class="xai-section">
-            <div class="section-title">XAI · Feature Attribution</div>
-            <div class="xai-reason" id="dReason"></div>
-            <div class="feature-bars" id="featureBars"></div>
+          <div class="section-title">XAI · Feature Attribution</div>
+          <div class="xai-reason" id="dReason"></div>
+          <div class="feature-bars" id="featureBars"></div>
         </div>
 
-         <!-- Attention week -->
-         <div class="xai-section">
-            <div class="section-title">Attention · Most Important Week</div>
-            <div class="attention-row" id="attentionRow"></div>
-          </div>
+        <!-- Attention week -->
+        <div class="xai-section">
+          <div class="section-title">Attention · Most Important Week</div>
+          <div class="attention-row" id="attentionRow"></div>
+        </div>
 
-          <!-- Actual label (ground truth) -->
+        <!-- Ground truth -->
         <div class="truth-row">
-            <span class="truth-label">Ground truth (actual label):</span>
-            <span class="truth-value" id="dActual"></span>
+          <span class="truth-label">Ground truth (actual label):</span>
+          <span class="truth-value" id="dActual"></span>
         </div>
 
-        <!-- Advisor note -->
+        <!-- Advisor box -->
         <div class="advisor-box" id="advisorBox">
-            <div class="advisor-title">Advisor Recommendation</div>
-            <div class="advisor-text" id="advisorText"></div>
+          <div class="advisor-title">Advisor Recommendation</div>
+          <div class="advisor-text" id="advisorText"></div>
         </div>
-        </div>
-     </section>
-     </main>
-     
-     <!-- MODEL SUMMARY BAR -->
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER SUMMARY BAR -->
   <footer class="summary-bar">
     <div class="summary-inner">
       <div class="summary-stat">
@@ -134,27 +141,27 @@
       </div>
       <div class="summary-divider"></div>
       <div class="summary-stat">
-        <span class="stat-num">0.7193</span>
+        <span class="stat-num" id="footerF1">0.7227</span>
         <span class="stat-label">F1 Score (W17)</span>
       </div>
       <div class="summary-stat">
-        <span class="stat-num">0.8809</span>
+        <span class="stat-num" id="footerAuc">0.8831</span>
         <span class="stat-label">AUC-ROC (W17)</span>
       </div>
       <div class="summary-stat">
         <span class="stat-num">7</span>
         <span class="stat-label">baselines beaten</span>
       </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <span class="stat-num api-mode" id="dataSource">Static</span>
+        <span class="stat-label">data source</span>
+      </div>
     </div>
   </footer>
 
+  <!-- data.js is the static fallback if API is offline -->
   <script src="data.js"></script>
   <script src="app.js"></script>
-
-
 </body>
-
-
-
-
 </html>
