@@ -1,0 +1,6 @@
+﻿models/saved/bert_burnout/
+models/saved/checkpoint-*
+*.pt
+*.pkl
+data/Combined Data.csv
+data/cleaned_data.csv
