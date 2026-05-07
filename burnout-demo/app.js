@@ -24,3 +24,18 @@ const FEATURE_NAMES = {
 let allStudents = [];
 let selectedId  = null;
 let usingAPI    = false;
+
+//API Helpers 
+
+async function fetchWithTimeout(url, ms = API_TIMEOUT) {
+    const controller = new AbortController();
+    const timer      = setTimeout(() => controller.abort(), ms);
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      return res;
+    } catch (err) {
+      clearTimeout(timer);
+      throw err;
+    }
+  }
