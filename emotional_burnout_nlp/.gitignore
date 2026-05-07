@@ -1,6 +1,5 @@
 ﻿models/saved/bert_burnout/
 models/saved/checkpoint-*
-*.pt
-*.pkl
+models/saved/model2_random_forest.pkl
 data/Combined Data.csv
 data/cleaned_data.csv
