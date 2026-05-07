@@ -1,0 +1,7 @@
+{
+    "model": "RoBERTa Zero-Shot",
+    "accuracy": 0.388,
+    "f1_score": 0.4299,
+    "training_required": false,
+    "samples_evaluated": 500
+}
