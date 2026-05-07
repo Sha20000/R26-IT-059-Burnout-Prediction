@@ -102,3 +102,18 @@ async function loadSummaryFromAPI() {
   }
 
 
+//API status indicator
+function setApiStatus(state) {
+    const el = document.getElementById('apiStatus');
+    if (state === 'live') {
+      el.textContent = '🟢 API Live';
+      el.style.color = '#6EE7B7';
+    } else if (state === 'offline') {
+      el.textContent = '🟡 Static Mode';
+      el.style.color = '#FDE68A';
+    } else {
+      el.textContent = '⏳ Connecting...';
+      el.style.color = '#9BA8B7';
+    }
+  }
+
