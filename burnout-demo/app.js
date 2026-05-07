@@ -88,4 +88,17 @@ updateSummary();
 
 }
 
+// Load summary stats from API
+async function loadSummaryFromAPI() {
+    try {
+      const res  = await fetchWithTimeout(`${API_URL}/summary`);
+      const data = await res.json();
+  
+      document.getElementById('footerF1').textContent  = data.model_f1?.toFixed(4) || '0.7227';
+      document.getElementById('footerAuc').textContent = data.model_auc?.toFixed(4) || '0.8831';
+    } catch (err) {
+      // Keep default values if summary fails
+    }
+  }
+
 

@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.metrics import (f1_score, roc_auc_score,precision_score, recall_score)
 from data_loader import (get_data, print_metrics, get_pos_weight, find_best_threshold)
 
+
 #Configuration
 SEED        = 42
 MODELS_PATH = '../models/saved/'
@@ -20,8 +21,8 @@ RESULTS_PATH = '../results/'
 EPOCHS     = 500
 PATIENCE  = 50
 BATCH_SIZE = 64
-LR        = 0.0003
-HIDDEN_SIZE = 128
+LR        = 0.0001
+HIDDEN_SIZE = 256
 NUM_LAYERS = 2
 DROPOUT    = 0.3
 
@@ -141,6 +142,7 @@ class UnifiedMultiHorizonGRU(nn.Module):
 
         self.horizon_indices = horizon_indices
         self.n_horizons = len(horizon_indices)
+        self.gate = nn.Linear(hidden * 2, hidden)
 
         #GRU Encoder 
         # Reads weekly sequence and produces
@@ -201,12 +203,10 @@ class UnifiedMultiHorizonGRU(nn.Module):
             # Get GRU state at this specific week
             # Combined with attention context
 
-            week_state = gru_out[:, idx, :]
-            week_state = self.dropout(week_state) # Regularize
-
-            #Predict risk at this horizon
-            pred = head(week_state)
-            predictions.append(pred)
+           week_state = gru_out[:, idx, :]
+           week_state = self.dropout(week_state)
+           pred       = head(week_state)
+           predictions.append(pred)
 
         return predictions, attn_weights
 
@@ -770,22 +770,41 @@ model.to(device)
 shap_array = np.array(shap_vals)
 print(f"SHAP array shape: {shap_array.shape}")
 
+
 # Handle different output shapes
+# DeepExplainer for GRU returns (students, weeks, features, 1)
+print(f"SHAP raw shape: {shap_array.shape}")
+
 if shap_array.ndim == 4:
-    # Shape: (outputs, students, weeks, features)
-    mean_shap = np.abs(
-        shap_array).mean(axis=(0, 1, 2))
+    # Check which axis is features (should be 13)
+    if shap_array.shape[-1] == 1:
+        # Shape: (students, weeks, features, 1)
+        # squeeze the output dim first, then average students+weeks
+        mean_shap = np.abs(
+            shap_array.squeeze(-1)      # → (students, weeks, features)
+        ).mean(axis=(0, 1))             # → (features,) = (13,)
+    else:
+        # Shape: (outputs, students, weeks, features)
+        mean_shap = np.abs(
+            shap_array).mean(axis=(0, 1, 2))
+
 elif shap_array.ndim == 3:
     # Shape: (students, weeks, features)
     mean_shap = np.abs(
         shap_array).mean(axis=(0, 1))
+
 else:
     mean_shap = np.abs(shap_array).mean(axis=0)
 
 mean_shap = mean_shap.flatten()
-mean_shap = mean_shap / mean_shap.sum()
 
-print(f"mean_shap shape: {mean_shap.shape}")
+# Safety check — must be 13 features
+print(f"mean_shap shape after fix: {mean_shap.shape}")
+assert mean_shap.shape[0] == len(FEATURE_NAMES), \
+    f"Expected {len(FEATURE_NAMES)} features, got {mean_shap.shape[0]}"
+
+if mean_shap.sum() > 0:
+    mean_shap = mean_shap / mean_shap.sum()
 
 # Print ranking
 print()
