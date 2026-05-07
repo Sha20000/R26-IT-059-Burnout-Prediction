@@ -75,10 +75,17 @@ async function loadStudents() {
         return;
       }
     }
-}
+
 
 //Hide Loading,build UI
+document.getElementById('loadingMsg').style.display = 'none';
+buildStudentList(allStudents);
+updateSummary();
 
+ // Auto-select first HIGH risk student
+ const firstHigh = allStudents.find(s => s.alert_level === 'HIGH');
+ if (firstHigh) selectStudent(firstHigh);
 
+}
 
 
