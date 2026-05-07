@@ -1,0 +1,7 @@
+{
+    "model": "VADER (Rule-based)",
+    "accuracy": 0.343,
+    "f1_score": 0.3332,
+    "training_required": false,
+    "note": "Rule-based, no training needed"
+}

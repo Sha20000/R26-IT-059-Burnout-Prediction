@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Item *)",
+      "Bash(git push *)",
+      "PowerShell(git push *)",
+      "PowerShell(cd \"C:\\\\Users\\\\ASUS\\\\R26-IT-059-Burnout-Prediction\"; git ls-files --others --ignored --exclude-standard | Select-Object -First 5; Write-Output \"---CSV sizes:\"; $csv1 = \\(Get-Item \"emotional_burnout_nlp/data/Combined Data.csv\" -ErrorAction SilentlyContinue\\).Length; $csv2 = \\(Get-Item \"emotional_burnout_nlp/data/cleaned_data.csv\" -ErrorAction SilentlyContinue\\).Length; Write-Output \"Combined Data.csv: $\\([math]::Round\\($csv1/1MB,2\\)\\) MB\"; Write-Output \"cleaned_data.csv: $\\([math]::Round\\($csv2/1MB,2\\)\\) MB\")",
+      "PowerShell(cd \"C:\\\\Users\\\\ASUS\\\\R26-IT-059-Burnout-Prediction\"; Get-ChildItem emotional_burnout_nlp/models/saved/ -Recurse -File | ForEach-Object { [PSCustomObject]@{File=$_.Name; SizeMB=[math]::Round\\($_.Length/1MB,2\\); FullPath=$_.FullName} } | Sort-Object SizeMB | Format-Table -AutoSize)",
+      "PowerShell(git lfs *)"
+    ]
+  }
+}
