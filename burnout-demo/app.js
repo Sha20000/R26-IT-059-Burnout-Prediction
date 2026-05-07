@@ -125,3 +125,29 @@ function riskColor(value) {
     return '#2E7D32';
   }  
 
+
+  //Advisor text
+
+function getAdvisorText(student){
+
+    const pct = (student.academic_risk * 100).toFixed(0);
+    const f1 = FEATURE_NAMES[student.top_feature_1] || student.top_feature_1;
+
+    if(student.alert_level === 'HIGH'){
+        return `This student shows a ${pct}% burnout/dropout risk at Week 17. ` +
+      `Immediate intervention is recommended. ` +
+      `The model identifies ${f1} as the strongest signal. ` +
+      `Schedule a welfare meeting within the next week and review VLE engagement urgently.`;
+    
+    } else if(student.alert_level === 'MEDIUM'){
+        return `This student shows a ${pct}% risk level — monitor closely over the next 2–3 weeks. ` +
+      `Their ${f1} pattern requires attention. ` +
+      `Consider a check-in meeting and encourage engagement with VLE resources.`;
+    } else {
+        return `Risk level is LOW (${pct}%). This student appears to be on track. ` +
+        `Continue routine monitoring. ` +
+        `The model's primary signal is ${f1}.`;
+    }
+
+
+  }
