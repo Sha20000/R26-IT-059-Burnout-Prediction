@@ -289,7 +289,22 @@ badge.style.border = `1px solid ${bc.border}`;
 
 // 4 Horizon cards
 
+[
+    { id: 'dW4',  bar: 'bW4',  val: s.week4_risk  },
+    { id: 'dW8',  bar: 'bW8',  val: s.week8_risk  },
+    { id: 'dW12', bar: 'bW12', val: s.week12_risk },
+    { id: 'dW17', bar: 'bW17', val: s.week17_risk }
+  ].forEach(h => {
+    const pct   = (h.val * 100).toFixed(1);
+    const color = riskColor(h.val);
+    document.getElementById(h.id).textContent = pct + '%';
+    document.getElementById(h.id).style.color = color;
+    const bar = document.getElementById(h.bar);
+    bar.style.width      = pct + '%';
+    bar.style.background = color;
+  });
 
+  
 
 
 
