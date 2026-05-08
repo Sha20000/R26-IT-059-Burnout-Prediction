@@ -185,13 +185,59 @@ function buildStudentList(students){
     row.addEventListener('click', () => selectStudent(s));
     list.appendChild(row);
 
-    
+
 
 
 
     });
 
+}    
+
+//Filter dropdown
+async function filterStudents() {
+
+    const level = document.getElementById('filterAlert').value;
+
+    if(usingAPI){
+        try{
+            const url = level === 'ALL'
+            ? `${API_URL}/students`
+        : `${API_URL}/students?alert=${level}`;
+        const res = await fetchWithTimeout(url);
+        const data = await res.json();
+        buildStudentList(data.students || []);
+        return;
+
+        }catch (err){
+            console.warn('API filter failed, falling back to static filter:', err.message);
+
+        }
+    }
+
+    //local filter fallback
+    const filtered = level === 'ALL'
+    ? allStudents
+    : allStudents.filter(s => s.alert_level === level);
+  
+    buildStudentList(filtered);
+    
+}
+
+//Summary footer stats
+function updateSummary(){
+
+    document.getElementById('totalStudents').textContent = allStudents.length;
+    document.getElementById('highCount').textContent = allStudents.filter(s => s.alert_level === 'HIGH').length;
+    document.getElementById('mediumCount').textContent = allStudents.filter(s => s.alert_level === 'MEDIUM').length;
+    document.getElementById('lowCount').textContent = allStudents.filter(s => s.alert_level === 'LOW').length;
+
 
 
 }
+
+
+
+
+
+
 
