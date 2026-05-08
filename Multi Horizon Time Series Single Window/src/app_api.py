@@ -43,5 +43,23 @@ except FileNotFoundError:
 print(f"API ready at http://localhost:5001")
 print("=" * 50)   
 
+#Helper
+
+def clean_row(row):
+    """Convert a DataFrame row to a clean JSON-safe dict."""
+    d = {}
+    for k,v in row.items():
+        if pd.isna(v):
+            d[k] = None
+        elif isinstance(v,float):
+            d[k] = round(float(v),4)
+        else:
+            d[k] = v
+
+    return d
+
+#Routes
+                
+
 
 
