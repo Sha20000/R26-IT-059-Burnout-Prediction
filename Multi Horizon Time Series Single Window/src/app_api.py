@@ -24,6 +24,17 @@ print("=" * 50)
 try:
     df = pd.read_csv(CSV_PATH)
     print(f"Loaded {len(df)} student predictions from CSV")
+except FileNotFoundError:
+    print(f"ERROR: CSV not found at {CSV_PATH}")
+    print("Run model_8_unified_gru.py first to generate predictions")
+    df = pd.DataFrame()
+
+#Load model result JSOM for summary stats
+
+try:
+    with open(JSON_PATH, 'r') as f:
+        model_results = json.load(f)
+    print(f"Loaded model results JSON")    
 
 except FileNotFoundError:
     model_results = {}
