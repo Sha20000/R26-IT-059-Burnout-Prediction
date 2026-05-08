@@ -330,6 +330,36 @@ const featureBars = document.getElementById('featureBars');
   });
 
 
+ //Attention chart
+ 
+const attnRow = document.getElementById('attentionRow');
+attnRow.innerHTML = '';
+const topWeek = s.most_important_week;
+for (let w = 1; w <= 17; w++) {
+    const dist   = Math.abs(w - topWeek);
+    const height = Math.max(5, 100 - dist * 14);
+    const isTop  = (w === topWeek);
+    const col    = document.createElement('div');
+    col.className = 'attn-week';
+    col.innerHTML = `
+      <div class="attn-bar-wrap">
+        <div class="attn-bar ${isTop ? 'top' : ''}" style="height:${height}%"></div>
+      </div>
+      <span class="attn-week-label">${w}</span>
+    `;
+    attnRow.appendChild(col);
+  }
+
+//Ground Truth
+const truthEl = document.getElementById('dActual');
+truthEl.textContent = s.actual_label === 1 ? 'AT-RISK (1)' : 'SAFE (0)';
+truthEl.className = `truth-value ${s.actual_label === 1 ? 'atrisk' : 'safe'}`;
+
+
+
+
+
+
 
 
 
