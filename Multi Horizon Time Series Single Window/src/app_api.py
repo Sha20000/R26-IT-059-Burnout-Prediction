@@ -59,7 +59,19 @@ def clean_row(row):
     return d
 
 #Routes
-                
+
+@app.route('/health',methods = ['GET'])
+def health_check():
+    """Health check — confirms API is running."""
+    return jsonify({
+        'status': 'ok',
+        'model': 'Model 8 — Unified Multi-Horizon GRU',
+        'project': 'R26-IT-059',
+        'student': 'IT22916426',
+        'total_predictions': len(df)
+    })
+
+
 
 
 
