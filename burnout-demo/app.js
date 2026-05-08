@@ -151,3 +151,47 @@ function getAdvisorText(student){
 
 
   }
+
+
+//Build student sidebar list
+
+function buildStudentList(students){
+
+    const list = document.getElementById('studentList');
+    list.innerHTML = '';
+
+    if(students.length === 0){
+        list.innerHTML = '<div style="padding:16px;color:#999;font-size:13px">No students found</div>';
+        return;
+    }
+
+    students.forEach(s => {
+
+        const row = document.createElement('div');
+        row.className = 'student-row' + (s.student_id === selectedId ? 'selected' : '');
+        row.dataset.id = s.student_id;
+
+        const shortId = s.student_id.replace('OULAD_TEST_','Student #');
+        const riskPct = (s.academic_risk * 100).toFixed(1);
+
+        row.innerHTML = `
+      <div class="student-row-left">
+        <span class="student-row-id">${shortId}</span>
+        <span class="student-row-sub">Risk: ${riskPct}%</span>
+      </div>
+      <span class="alert-pill ${s.alert_level}">${s.alert_level}</span>
+    `;
+
+    row.addEventListener('click', () => selectStudent(s));
+    list.appendChild(row);
+
+    
+
+
+
+    });
+
+
+
+}
+
