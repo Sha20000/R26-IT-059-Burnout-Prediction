@@ -304,7 +304,30 @@ badge.style.border = `1px solid ${bc.border}`;
     bar.style.background = color;
   });
 
-  
+//XAI Reason
+document.getElementById('dReason').textContent = 'Model flags: ' + s.main_reason;
+
+//Feature bars
+
+const featureBars = document.getElementById('featureBars');
+  featureBars.innerHTML = '';
+  [
+    { key: s.top_feature_1, pct: s.top_feature_1_pct, rank: 'rank1' },
+    { key: s.top_feature_2, pct: s.top_feature_2_pct, rank: 'rank2' },
+    { key: s.top_feature_3, pct: s.top_feature_3_pct, rank: 'rank3' }
+  ].forEach(f => {
+    const row       = document.createElement('div');
+    row.className   = 'feature-bar-row';
+    const width     = ((f.pct / 35) * 100).toFixed(1);
+    row.innerHTML = `
+      <span class="feature-bar-label">${FEATURE_NAMES[f.key] || f.key}</span>
+      <div class="feature-bar-track">
+        <div class="feature-bar-fill ${f.rank}" style="width:${width}%"></div>
+      </div>
+      <span class="feature-bar-pct">${f.pct}%</span>
+    `;
+    featureBars.appendChild(row);
+  });
 
 
 
