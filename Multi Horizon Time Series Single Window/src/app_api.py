@@ -94,7 +94,29 @@ def get_all_students():
         'total': len(students),
         'filter': alert_filter,
         'students': students
-    })        
+    })  
+
+
+@app.route('/students/<int:student_idx>', methods = ['GET'])
+def get_student(student_idx):
+    """
+    Returns full prediction for one student by index.
+    Example: /students/7
+    """
+    
+    if df.empty:
+        return jsonify({'error': 'No predictions loaded'}), 500
+    
+    if student_idx < 0 or student_idx >= len(df):
+        return jsonify({'error': f'Student index {student_idx} out of range (0-{len(df)-1})'}),404
+    
+    row = df.iloc[student_idx]
+    return jsonify(clean_row(row))
+
+    
+
+
+
 
 
 
