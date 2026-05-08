@@ -253,7 +253,7 @@ async function selectStudent(s){
         }
     }
 
-}
+
 
 //Update sidebar selection highlights
 document.querySelectorAll('.student-row').forEach(r => {
@@ -355,7 +355,26 @@ const truthEl = document.getElementById('dActual');
 truthEl.textContent = s.actual_label === 1 ? 'AT-RISK (1)' : 'SAFE (0)';
 truthEl.className = `truth-value ${s.actual_label === 1 ? 'atrisk' : 'safe'}`;
 
+//Advisor Box
+document.getElementById('advisorText').textContent = getAdvisorText(s);
+const adv = document.getElementById('advisorBox');
+const advTitle = adv.querySelector('.advisor-title');
+const advText = adv.querySelector('.advisor-text');
 
+const advColors = {
+    HIGH:   { border: '#C00000', bg: '#FCEBEB', title: '#C00000', text: '#7A0000' },
+    MEDIUM: { border: '#B86B00', bg: '#FFFBEB', title: '#B86B00', text: '#5C3A00' },
+    LOW:    { border: '#1565C0', bg: '#E3F2FD', title: '#1565C0', text: '#0D2F5C' }
+};
+
+const ac = advColors[s.alert_level] || advColors.LOW;
+adv.style.borderLeftColor  = ac.border;
+adv.style.background       = ac.bg;
+advTitle.style.color       = ac.title;
+advText.style.color        = ac.text;
+
+
+}
 
 
 
