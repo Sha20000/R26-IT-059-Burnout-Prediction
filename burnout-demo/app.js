@@ -265,6 +265,32 @@ document.querySelectorAll('.student-row').forEach(r => {
 document.getElementById('placeholder').classList.add('hidden');
 document.getElementById('detailContent').classList.remove('hidden');
 
+//Student header
+document.getElementById('dStudentId').textContent = 
+ s.student_id.replace('OULAD_','OULAD /');
+
+document.getElementById('dRiskHeadline').textContent = 
+`Week 17 Academic Risk: ${(s.academic_risk * 100).toFixed(1)}%`; 
+
+
+const badge = document.getElementById('dAlertBadge');
+badge.textContent = s.alert_level;
+badge.className = 'alert-badge-large';
+const badgeColor = {
+    HIGH:   { bg: '#FCEBEB', color: '#C00000', border: '#FECACA' },
+    MEDIUM: { bg: '#FFF3E0', color: '#B86B00', border: '#FDE68A' },
+    LOW:    { bg: '#E8F5E9', color: '#2E7D32', border: '#A7F3D0' }
+};
+
+const bc = badgeColor[s.alert_level] || badgeColor.LOW;
+badge.style.backgroundColor = bc.bg;
+badge.style.color = bc.color;
+badge.style.border = `1px solid ${bc.border}`;
+
+// 4 Horizon cards
+
+
+
 
 
 
