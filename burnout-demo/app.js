@@ -376,6 +376,9 @@ advText.style.color        = ac.text;
 
 }
 
+//Initialise
+loadStudents();
+
 
 
 
