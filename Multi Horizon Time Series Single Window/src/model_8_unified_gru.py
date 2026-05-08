@@ -818,7 +818,7 @@ for i, (name, val) in enumerate(shap_ranked):
           f"{float(val)*100:>7.1f}%")
 
 # SHAP chart
-fig, ax = plt.subplots(figsize=(16, 8))
+fig, ax = plt.subplots(figsize=(20, 12))
 s_names = [p[0].replace('_', '\n')
             for p in shap_ranked]
 s_vals = [float(p[1])*100 for p in shap_ranked]
