@@ -144,6 +144,28 @@ def get_summary():
     })    
 
 
+@app.route('/search', methods = ['GET'])
+def search_student():
+    """
+    Search student by ID string.
+    Example: /search?id=OULAD_TEST_0007
+    """
+    if df.empty:
+         return jsonify({'error': 'No predictions loaded'}), 500
+    
+    student_id = request.args.get('id','').strip()
+    if not student_id:
+        return jsonify({'error': 'Provide ?id=OULAD_TEST_XXXX'}), 400
+    
+    match = df[df['student_id'] == student_id]
+
+    if match.empty:
+        return jsonify({'error': f'{student_id} not found'}), 404
+    
+    return jsonify(clean_row(match.iloc[0]))
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5001, host='0.0.0.0')
     
          
 
