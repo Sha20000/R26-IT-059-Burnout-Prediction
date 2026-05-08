@@ -71,6 +71,31 @@ def health_check():
         'total_predictions': len(df)
     })
 
+@app.route('/students', methods = ['GET'])
+def get_all_students():
+    """
+    Returns all student predictions.
+    Optional filter: ?alert=HIGH or ?alert=MEDIUM or ?alert=LOW
+    """
+
+    if df.empty:
+        return jsonify({'error': 'No predictions loaded'}), 500
+    
+    alert_filter = request.args.get('alert','ALL').upper()
+
+    if alert_filter in ['HIGH','MEDIUM','LOW']:
+        filtered = df[df['alert_level'] == alert_filter]
+    else:
+        filtered = df
+
+    students = [clean_row(row) for _, row in filtered.iterrows()]
+
+    return jsonify({
+        'total': len(students),
+        'filter': alert_filter,
+        'students': students
+    })        
+
 
 
 
