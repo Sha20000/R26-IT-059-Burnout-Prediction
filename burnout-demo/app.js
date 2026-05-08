@@ -235,6 +235,26 @@ function updateSummary(){
 
 }
 
+//Select and render student details
+
+async function selectStudent(s){
+
+    selectedId = s.student_id;
+
+
+    if (usingAPI){
+        try{
+            const res = await fetchWithTimeout(`${API_URL}/students/${s.student_id}`);
+            const fresh = await res.json();
+            if(fresh && !fresh.error) s = fresh;
+
+        }catch (err){
+            console.warn('Could not fetch fresh student data, using cached');
+        }
+    }
+
+}
+
 
 
 
