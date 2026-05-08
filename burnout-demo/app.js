@@ -262,6 +262,10 @@ document.querySelectorAll('.student-row').forEach(r => {
 
 //Show detail panel
 
+document.getElementById('placeholder').classList.add('hidden');
+document.getElementById('detailContent').classList.remove('hidden');
+
+
 
 
 
