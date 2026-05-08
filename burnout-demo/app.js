@@ -255,6 +255,15 @@ async function selectStudent(s){
 
 }
 
+//Update sidebar selection highlights
+document.querySelectorAll('.student-row').forEach(r => {
+    r.classList.toggle('selected',r.dataset.id === selectedId);
+});
+
+//Show detail panel
+
+
+
 
 
 
