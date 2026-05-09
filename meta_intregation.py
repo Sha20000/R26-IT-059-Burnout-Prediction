@@ -304,6 +304,54 @@ for epoch in range(EPOCHS):
 
 print(f"\nBest val F1: {best_f1:.4f} at epoch {best_epoch}")
 
+#Step 10: Test
+
+print("\n" + "=" * 60)
+print("TEST SET EVALUATION")
+print("=" * 60)
+
+model.load_state_dict(torch.load(
+    os.path.join(OUTPUT_DIR, 'meta_fnn_best.pt'),
+    weights_only=True))
+model.eval()
+
+with torch.no_grad():
+    test_probs = torch.sigmoid(
+        model(X_te_t).squeeze(-1)).numpy()
+
+# Best threshold from validation
+best_thresh = 0.5
+best_tf1    = 0
+for t in np.arange(0.20, 0.71, 0.05):
+    with torch.no_grad():
+        vp = torch.sigmoid(
+            model(X_val_t).squeeze(-1)).numpy()
+    f = f1_score(y_val, (vp > t).astype(int),
+                 zero_division=0)
+    if f > best_tf1:
+        best_tf1    = f
+        best_thresh = t
+
+test_preds     = (test_probs > best_thresh).astype(int)
+f1   = f1_score(y_test,  test_preds)
+auc  = roc_auc_score(y_test, test_probs)
+prec = precision_score(y_test, test_preds, zero_division=0)
+rec  = recall_score(y_test,  test_preds,  zero_division=0)
+acc  = accuracy_score(y_test, test_preds)
+tn, fp, fn, tp = confusion_matrix(y_test, test_preds).ravel()
+
+print(f"\nThreshold:  {best_thresh:.2f}")
+print(f"Accuracy:   {acc*100:.2f}%")
+print(f"F1 Score:   {f1:.4f}")
+print(f"AUC-ROC:    {auc:.4f}")
+print(f"Precision:  {prec:.4f}")
+print(f"Recall:     {rec:.4f}")
+print()
+print(f"  TRUE  POSITIVE: {tp:>4}  at-risk caught")
+print(f"  TRUE  NEGATIVE: {tn:>4}  safe cleared")
+print(f"  FALSE POSITIVE: {fp:>4}  false alarms")
+print(f"  FALSE NEGATIVE: {fn:>4}  missed at-risk")
+
 
 
 
