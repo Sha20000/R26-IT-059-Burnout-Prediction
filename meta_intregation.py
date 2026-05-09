@@ -97,4 +97,19 @@ academic_df['student_id']   = academic_df['student_id'].astype(str)
 behavior_agg['student_id']  = behavior_agg['student_id'].astype(str)
 
 
+merged = academic_df[[
+    'student_id',
+    'academic_risk',
+    'week4_risk',
+    'week8_risk',
+    'week12_risk',
+    'week17_risk',
+    'actual_label'
+]].merge(behavior_agg, on='student_id', how='left')
+
+print(f"  Merged shape: {merged.shape}")
+print(f"\n  Missing after merge:")
+print(merged.isnull().sum())
+
+
 
