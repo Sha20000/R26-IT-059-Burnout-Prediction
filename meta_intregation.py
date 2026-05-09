@@ -197,6 +197,114 @@ train_loader = DataLoader(
     TensorDataset(X_tr_t, y_tr_t),
     batch_size=BATCH_SIZE, shuffle=True)
 
+#Step 8 : FNN
+
+class MetaFNN(nn.Module):
+
+    """
+    Meta-Integration FNN.
+    Input:  10 features (4 GRU + 6 VAE)
+    Output: final burnout risk (0.0-1.0)
+    """
+    def __init__(self,n_features = 10, hidden = HIDDEN_SIZE, dropout = DROPOUT):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(n_features, hidden),
+            nn.BatchNorm1d(hidden),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+
+            nn.Linear(hidden, hidden // 2),
+            nn.BatchNorm1d(hidden // 2),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+
+            nn.Linear(hidden // 2, hidden // 4),
+            nn.ReLU(),
+
+            nn.Linear(hidden // 4, 1)
+        )
+
+    def forward(self,x):
+        return self.net(x)
+
+
+
+model = MetaFNN(n_features=len(FEATURE_COLS))
+optimizer = torch.optim.Adam(
+    model.parameters(), lr=LR, weight_decay=1e-4)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer, mode='max', factor=0.5, patience=10
+)
+
+pos_weight = torch.tensor(
+    [(1 - y_train.mean()) / y_train.mean()],
+    dtype=torch.float32
+)
+
+criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+print(f"\nMeta FNN parameters: "
+      f"{sum(p.numel() for p in model.parameters()):,}")
+print(f"Class weight: {pos_weight.item():.2f}x")
+
+
+#Step 9 : Train
+
+
+print(f"\nTraining...")
+print(f"{'Epoch':>6} | {'Loss':>8} | "
+      f"{'Val F1':>8} | {'Best':>8}")
+print("-" * 42)
+
+best_f1 = 0
+best_epoch = 0
+no_improve = 0
+
+for epoch in range(EPOCHS):
+    model.train()
+    epoch_loss = 0
+
+    for X_b, y_b in train_loader:
+        optimizer.zero_grad()
+        loss = criterion(model(X_b).squeeze(-1), y_b)
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(
+            model.parameters(), max_norm=1.0)
+        optimizer.step()
+        epoch_loss += loss.item()
+
+    avg_loss = epoch_loss / len(train_loader)
+
+    model.eval()
+    with torch.no_grad():
+        vp = torch.sigmoid(
+            model(X_val_t).squeeze(-1)).numpy()
+        vf = f1_score(y_val, (vp > 0.5).astype(int),
+                      zero_division=0)
+
+    scheduler.step(vf)
+
+    if (epoch + 1) % 20 == 0:
+        print(f"{epoch+1:>6} | {avg_loss:>8.4f} | "
+              f"{vf:>8.4f} | {best_f1:>8.4f}")
+
+    if vf > best_f1:
+        best_f1    = vf
+        best_epoch = epoch + 1
+        no_improve = 0
+        torch.save(model.state_dict(),
+                   os.path.join(OUTPUT_DIR,
+                                'meta_fnn_best.pt'))
+    else:
+        no_improve += 1
+        if no_improve >= PATIENCE:
+            print(f"\nEarly stop epoch {epoch+1} "
+                  f"(best: {best_epoch})")
+            break
+
+print(f"\nBest val F1: {best_f1:.4f} at epoch {best_epoch}")
+
+
 
 
 
