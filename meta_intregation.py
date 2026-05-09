@@ -42,4 +42,17 @@ ACADEMIC_CSV  = os.path.join(
 BEHAVIOR_CSV  = os.path.join(
     DATA_DIR, 'behavior_prediction.csv')
 
+print("=" * 60)
+print("R26-IT-059 | Meta-Integration Layer")
+print("GRU Academic Risk + VAE Behavioural Risk")
+print("=" * 60)
 
+#Step 1: Load CSVS
+
+print("\n Loading CSVs...")
+academic_df = pd.read_csv(ACADEMIC_CSV)
+behavior_df = pd.read_csv(BEHAVIOR_CSV)
+
+print(f"  Academic  (IT22916426): {len(academic_df)} rows")
+print(f"  Behaviour (IT22215710): {len(behavior_df)} rows")
+print(f"\n  Behaviour columns: {list(behavior_df.columns)}")
