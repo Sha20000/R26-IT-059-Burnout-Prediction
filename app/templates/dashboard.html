@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Burnout Risk Command Center</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-lg-7">
+              <p class="eyebrow">Explainable Multi-Modal AI</p>
+              <h1>Burnout Risk Command Center</h1>
+              <p class="lead">
+                Centralized dashboard for early academic burnout detection with
+                weighted meta-integration and explainable insights.
+              </p>
+              <div class="d-flex gap-3 flex-wrap">
+                <a class="btn btn-dark" href="/api/export/csv">Export CSV</a>
+                <button class="btn btn-outline-dark" onclick="window.print()">Print / Save PDF</button>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="hero-card">
+                <h6>System Snapshot</h6>
+                <div class="stat-grid">
+                  <div>
+                    <span class="stat-label">Students tracked</span>
+                    <span class="stat-value">{{ total }}</span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Average score</span>
+                    <span class="stat-value">{{ avg_score if avg_score is not none else 'N/A' }}</span>
+                  </div>
+                  <div>
+                    <span class="stat-label">High risk</span>
+                    <span class="stat-value">{{ counts['High'] }}</span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Medium risk</span>
+                    <span class="stat-value">{{ counts['Medium'] }}</span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Low risk</span>
+                    <span class="stat-value">{{ counts['Low'] }}</span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Override rule</span>
+                    <span class="stat-value">Active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="container-fluid">
+        <div class="row g-4">
+          <div class="col-xl-7">
+            <section class="panel">
+              <div class="panel-header">
+                <h3>Student Risk List</h3>
+                <p>Click a student to view explainability and recommendations.</p>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Student ID</th>
+                      <th>Final score</th>
+                      <th>Risk level</th>
+                      <th>Override</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in records %}
+                    <tr
+                      class="student-row"
+                      data-student="{{ row.student_id }}"
+                      data-final-score="{{ row.final_score }}"
+                      data-final-risk="{{ row.final_risk }}"
+                      data-academic="{{ row.academic_score }}"
+                      data-emotion="{{ row.emotion_score }}"
+                      data-behavior="{{ row.behavior_score }}"
+                      data-engagement="{{ row.engagement_score }}"
+                      data-explanation="{{ row.summary | e }}"
+                      data-override="{{ row.override_applied }}"
+                      data-recommendation="{{ row.advisor_recommendation | e }}"
+                    >
+                      <td>{{ row.student_id }}</td>
+                      <td>{{ '%.2f' | format(row.final_score) if row.final_score is not none else 'N/A' }}</td>
+                      <td>
+                        <span class="badge risk-{{ row.final_risk | lower }}">
+                          {{ row.final_risk }}
+                        </span>
+                      </td>
+                      <td>{{ 'Yes' if row.override_applied else 'No' }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <div class="col-xl-5">
+            <section class="panel">
+              <div class="panel-header">
+                <h3>Student Insight Panel</h3>
+                <p>Model-level contributions and explainability summary.</p>
+              </div>
+              <div class="insight-card">
+                <div class="insight-header">
+                  <div>
+                    <h4 id="selected-student">Select a student</h4>
+                    <p id="selected-risk">Risk level: --</p>
+                  </div>
+                  <div class="badge risk-high" id="selected-override">Override: --</div>
+                </div>
+                <div class="chart-shell">
+                  <canvas id="modelChart" height="220"></canvas>
+                </div>
+                <div class="explain-block">
+                  <h6>Explainability</h6>
+                  <p id="selected-explanation">No student selected.</p>
+                </div>
+                <div class="explain-block">
+                  <h6>Advisor Recommendation</h6>
+                  <p id="selected-recommendation">Select a student to view guidance.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel mt-4">
+              <div class="panel-header">
+                <h3>Risk Distribution</h3>
+                <p>Overview of students by final risk level.</p>
+              </div>
+              <div class="chart-shell">
+                <canvas id="distributionChart" height="200"></canvas>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const distributionData = {
+        low: {{ counts['Low'] }},
+        medium: {{ counts['Medium'] }},
+        high: {{ counts['High'] }}
+      };
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>
