@@ -1,7 +1,8 @@
 {
-    "model": "RoBERTa Zero-Shot",
-    "accuracy": 0.388,
-    "f1_score": 0.4299,
-    "training_required": false,
-    "samples_evaluated": 500
+  "model": "RoBERTa Zero-Shot",
+  "accuracy": 0.328,
+  "f1_weighted": 0.3439,
+  "f1_macro": 0.3071,
+  "training_required": false,
+  "samples_evaluated": 500
 }
