@@ -111,5 +111,42 @@ print(f"  Merged shape: {merged.shape}")
 print(f"\n  Missing after merge:")
 print(merged.isnull().sum())
 
+#step 4 : handld missing values
+
+behavior_cols = [
+    'behavior_risk_mean', 'behavior_risk_max',
+    'anomaly_weeks', 'compliance_mean',
+    'compliance_min', 'anomaly_score_mean',
+    'anomaly_score_max', 'confidence_mean'
+]
+
+for col in behavior_cols:
+    median_val     = merged[col].median()
+    merged[col]    = merged[col].fillna(median_val)
+
+
+merged['total_weeks'] = merged['total_weeks'].fillna(0)
+
+print("\n  After imputation — missing values:")
+print(merged[behavior_cols].isnull().sum())
+
+#Step 5: feature matrix
+
+FEATURE_COLS = [
+    # ── GRU signals (IT22916426) ──────────────────────────
+    'academic_risk',      # overall Week 17 risk
+    'week4_risk',         # early signal
+    'week8_risk',         # mid signal
+    'week12_risk',        # late signal
+
+    # ── VAE signals (IT22215710) ──────────────────────────
+    'behavior_risk_mean', # avg behaviour risk all weeks
+    'behavior_risk_max',  # worst week behaviour risk
+    'anomaly_score_mean', # avg raw anomaly score
+    'compliance_mean',    # avg curriculum compliance
+    'compliance_min',     # worst compliance week
+    'anomaly_weeks',      # count of high anomaly weeks
+]
+
 
 
