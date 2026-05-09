@@ -148,5 +148,55 @@ FEATURE_COLS = [
     'anomaly_weeks',      # count of high anomaly weeks
 ]
 
+X = merged[FEATURE_COLS].values.astype(np.float32)
+y = merged['actual_label'].values.astype(np.float32)
+
+print(f"\nFeature matrix: {X.shape}")
+print(f"  {len(FEATURE_COLS)} features: 4 GRU + 6 VAE")
+print(f"\nLabel distribution:")
+print(f"  At-risk (1): {int(y.sum())}  ({y.mean()*100:.1f}%)")
+print(f"  Safe    (0): {int((1-y).sum())}  ({(1-y).mean()*100:.1f}%)")
+
+
+#Step 6 Split
+
+X_tmp,  X_test, y_tmp,  y_test = train_test_split(
+    X, y, test_size=0.15,
+    random_state=SEED, stratify=y)
+
+X_train, X_val, y_train, y_val = train_test_split(
+    X_tmp, y_tmp, test_size=0.15,
+    random_state=SEED, stratify=y_tmp)
+
+print(f"\nSplit:")
+print(f"  Train: {len(X_train)}")
+print(f"  Val:   {len(X_val)}")
+print(f"  Test:  {len(X_test)}")
+
+
+
+#Step 7 : Scale
+
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)
+X_val_s   = scaler.transform(X_val)
+X_test_s = scaler.transform(X_test)
+
+#Save scaler for API use
+with open(os.path.join(
+        OUTPUT_DIR, 'meta_scaler.pkl'), 'wb') as f:
+    pickle.dump(scaler, f)
+
+X_tr_t  = torch.FloatTensor(X_train_s)
+X_val_t = torch.FloatTensor(X_val_s)
+X_te_t  = torch.FloatTensor(X_test_s)
+y_tr_t  = torch.FloatTensor(y_train)
+y_val_t = torch.FloatTensor(y_val)
+
+train_loader = DataLoader(
+    TensorDataset(X_tr_t, y_tr_t),
+    batch_size=BATCH_SIZE, shuffle=True)
+
+
 
 
