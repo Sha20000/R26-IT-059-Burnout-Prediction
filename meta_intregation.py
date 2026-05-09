@@ -36,4 +36,10 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 OUTPUT_DIR = os.path.join(BASE_DIR, "meta_results")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+#CSV paths
+ACADEMIC_CSV  = os.path.join(
+    DATA_DIR, 'model8_predictions.csv')
+BEHAVIOR_CSV  = os.path.join(
+    DATA_DIR, 'behavior_prediction.csv')
+
 
