@@ -85,5 +85,16 @@ behavior_agg = behavior_df.groupby('student_id').agg(
 
 print(f"  Aggregated: {len(behavior_agg)} unique students")
 
+#Step 3 Merge on student id
+print("\nMerging academic + behaviour...")
+
+# Check types
+print(f"  Academic student_id type:  {academic_df['student_id'].dtype}")
+print(f"  Behaviour student_id type: {behavior_agg['student_id'].dtype}")
+
+# Convert both to string for safe merge
+academic_df['student_id']   = academic_df['student_id'].astype(str)
+behavior_agg['student_id']  = behavior_agg['student_id'].astype(str)
+
 
 
