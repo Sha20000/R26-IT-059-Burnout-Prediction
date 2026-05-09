@@ -1,0 +1,29 @@
+{
+  "feature_cols": [
+    "academic_risk",
+    "week4_risk",
+    "week8_risk",
+    "week12_risk",
+    "week17_risk",
+    "behavior_risk_mean",
+    "behavior_risk_max",
+    "compliance_mean",
+    "anomaly_mean",
+    "high_anomaly_weeks"
+  ],
+  "threshold": 0.49999999999999994,
+  "n_features": 10,
+  "hidden_size": 32,
+  "vae_real_data": false,
+  "results": {
+    "f1": 0.6914,
+    "auc": 0.8522,
+    "accuracy": 0.7827,
+    "precision": 0.6242,
+    "recall": 0.775
+  },
+  "component_contribution": {
+    "GRU_IT22916426_pct": 65.0,
+    "VAE_IT22215710_pct": 35.0
+  }
+}
