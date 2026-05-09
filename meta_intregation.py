@@ -56,3 +56,34 @@ behavior_df = pd.read_csv(BEHAVIOR_CSV)
 print(f"  Academic  (IT22916426): {len(academic_df)} rows")
 print(f"  Behaviour (IT22215710): {len(behavior_df)} rows")
 print(f"\n  Behaviour columns: {list(behavior_df.columns)}")
+
+# Step 2: Aggregate behaviour per student
+
+
+print("\nAggregating behaviour per student...")
+
+behavior_agg = behavior_df.groupby('student_id').agg(
+    # Average behavioural risk across all weeks
+    behavior_risk_mean  = ('behavioral_risk_score', 'mean'),
+    # Peak behavioural risk (worst week)
+    behavior_risk_max   = ('behavioral_risk_score', 'max'),
+    # How many weeks flagged as high anomaly
+    anomaly_weeks       = ('high_anomaly_flag', 'sum'),
+    # Average compliance with curriculum
+    compliance_mean     = ('curriculum_compliance', 'mean'),
+    # Minimum compliance (worst week compliance)
+    compliance_min      = ('curriculum_compliance', 'min'),
+    # Average raw anomaly score
+    anomaly_score_mean  = ('anomaly_score', 'mean'),
+    # Peak raw anomaly score
+    anomaly_score_max   = ('anomaly_score', 'max'),
+    # Total weeks observed
+    total_weeks         = ('week', 'count'),
+    # Confidence average
+    confidence_mean     = ('confidence_score', 'mean'),
+).reset_index()
+
+print(f"  Aggregated: {len(behavior_agg)} unique students")
+
+
+
