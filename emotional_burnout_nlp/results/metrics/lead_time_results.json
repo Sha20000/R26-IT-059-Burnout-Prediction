@@ -1,0 +1,28 @@
+{
+    "analysis": "Lead-Time Analysis - Emotional Burnout Detection",
+    "model": "BERT Fine-tuned",
+    "researcher": "IT22196392 - Induwara K.P.Y.",
+    "results": {
+        "Week 2": {
+            "accuracy": 0.91,
+            "f1_score": 0.9505,
+            "weeks_remaining": 14
+        },
+        "Week 4": {
+            "accuracy": 0.89,
+            "f1_score": 0.9344,
+            "weeks_remaining": 12
+        },
+        "Week 8": {
+            "accuracy": 0.91,
+            "f1_score": 0.9515,
+            "weeks_remaining": 8
+        },
+        "Week 12": {
+            "accuracy": 0.89,
+            "f1_score": 0.9382,
+            "weeks_remaining": 4
+        }
+    },
+    "conclusion": "Model detects burnout at Week 2 with 91% accuracy - 14 weeks before academic decline!"
+}

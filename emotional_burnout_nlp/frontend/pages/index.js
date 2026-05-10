@@ -4,6 +4,7 @@ import Header from '../src/components/Header'
 import StudentList from '../src/components/StudentList'
 import StudentDetail from '../src/components/StudentDetail'
 import { STUDENTS } from '../src/data/students'
+
 export default function Dashboard() {
   const [selected, setSelected] = useState(null)
   const [results, setResults] = useState({})
@@ -63,7 +64,6 @@ export default function Dashboard() {
             onSelect={handleSelect}
             results={results}
           />
-
           <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a' }}>
             <StudentDetail student={selected} result={selectedResult} />
           </div>

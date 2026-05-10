@@ -1,3 +1,17 @@
+function getTokenStyle(intensity) {
+  if (intensity < 0.2) {
+    return { bg: 'rgba(51,65,85,0.7)',   border: 'rgba(51,65,85,0.5)',    text: '#475569', glow: null }
+  } else if (intensity < 0.4) {
+    return { bg: 'rgba(59,130,246,0.55)', border: 'rgba(59,130,246,0.35)', text: '#93c5fd', glow: 'rgba(59,130,246,0.5)' }
+  } else if (intensity < 0.6) {
+    return { bg: 'rgba(234,179,8,0.55)',  border: 'rgba(234,179,8,0.35)',  text: '#fde047', glow: 'rgba(234,179,8,0.5)' }
+  } else if (intensity < 0.8) {
+    return { bg: 'rgba(249,115,22,0.65)', border: 'rgba(249,115,22,0.4)',  text: '#fdba74', glow: 'rgba(249,115,22,0.6)' }
+  } else {
+    return { bg: 'rgba(239,68,68,0.85)',  border: 'rgba(239,68,68,0.6)',   text: '#ffffff', glow: 'rgba(239,68,68,0.7)' }
+  }
+}
+
 export default function AttentionHeatmap({ tokens, prediction }) {
   if (!tokens || tokens.length === 0) return null
 
@@ -19,25 +33,19 @@ export default function AttentionHeatmap({ tokens, prediction }) {
         </div>
       </div>
 
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 6,
-        lineHeight: 2,
-      }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, lineHeight: 2 }}>
         {tokens.map(({ token, weight }, i) => {
           const intensity = maxWeight > 0 ? weight / maxWeight : 0
-          const alpha = 0.12 + intensity * 0.88
-          const isHigh = intensity > 0.6
+          const s = getTokenStyle(intensity)
 
           return (
             <span
               key={i}
               title={`"${token}" — attention: ${(weight * 100).toFixed(2)}%`}
               style={{
-                background: `rgba(239, 68, 68, ${alpha})`,
-                color: isHigh ? '#fff' : '#cbd5e1',
-                border: `1px solid rgba(239, 68, 68, ${alpha * 0.5})`,
+                background: s.bg,
+                color: s.text,
+                border: `1px solid ${s.border}`,
                 borderRadius: 5,
                 padding: '3px 8px',
                 fontSize: 13,
@@ -45,15 +53,15 @@ export default function AttentionHeatmap({ tokens, prediction }) {
                 cursor: 'default',
                 userSelect: 'none',
                 transition: 'transform 0.15s, box-shadow 0.15s',
-                boxShadow: isHigh ? `0 0 8px rgba(239,68,68,${alpha * 0.6})` : 'none',
+                boxShadow: s.glow ? `0 0 8px ${s.glow}` : 'none',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.transform = 'scale(1.12)'
-                e.currentTarget.style.boxShadow = `0 0 14px rgba(239,68,68,0.7)`
+                e.currentTarget.style.boxShadow = s.glow ? `0 0 16px ${s.glow}` : '0 0 8px rgba(100,116,139,0.4)'
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.transform = 'scale(1)'
-                e.currentTarget.style.boxShadow = isHigh ? `0 0 8px rgba(239,68,68,${alpha * 0.6})` : 'none'
+                e.currentTarget.style.boxShadow = s.glow ? `0 0 8px ${s.glow}` : 'none'
               }}
             >
               {token}
@@ -62,17 +70,32 @@ export default function AttentionHeatmap({ tokens, prediction }) {
         })}
       </div>
 
-      <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ fontSize: 10, color: '#475569' }}>LOW ATTENTION</div>
+      <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ fontSize: 10, color: '#475569' }}>LOW</div>
         <div style={{
           height: 8,
-          width: 160,
+          width: 200,
           borderRadius: 4,
-          background: 'linear-gradient(to right, rgba(239,68,68,0.12), rgba(239,68,68,1))',
+          background: 'linear-gradient(to right, #334155, #3b82f6, #eab308, #f97316, #ef4444)',
           border: '1px solid #334155',
         }} />
         <div style={{ fontSize: 10, color: '#f87171' }}>HIGH ATTENTION</div>
-        <div style={{ fontSize: 10, color: '#475569', marginLeft: 8 }}>Hover token for exact %</div>
+        <div style={{ fontSize: 10, color: '#475569', marginLeft: 4 }}>Hover token for exact %</div>
+      </div>
+
+      <div style={{ marginTop: 8, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        {[
+          { label: '0–20%',  color: '#475569', bg: 'rgba(51,65,85,0.7)' },
+          { label: '20–40%', color: '#93c5fd', bg: 'rgba(59,130,246,0.55)' },
+          { label: '40–60%', color: '#fde047', bg: 'rgba(234,179,8,0.55)' },
+          { label: '60–80%', color: '#fdba74', bg: 'rgba(249,115,22,0.65)' },
+          { label: '80–100%',color: '#ffffff', bg: 'rgba(239,68,68,0.85)' },
+        ].map(({ label, color, bg }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <div style={{ width: 10, height: 10, borderRadius: 2, background: bg }} />
+            <span style={{ fontSize: 10, color }}>{label}</span>
+          </div>
+        ))}
       </div>
     </div>
   )

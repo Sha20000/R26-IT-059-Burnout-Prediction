@@ -1,0 +1,50 @@
+{
+    "Week 2": {
+        "text": "I am feeling a bit tired lately, classes are getting harder but I am managing okay",
+        "prediction": "Normal",
+        "confidence": 0.8253,
+        "risk_level": "Low",
+        "risk_score": 1,
+        "top_words": [
+            ",",
+            "am",
+            "i"
+        ]
+    },
+    "Week 4": {
+        "text": "I am struggling to keep up with assignments, feeling stressed and overwhelmed most days",
+        "prediction": "Stress",
+        "confidence": 0.6342,
+        "risk_level": "Medium",
+        "risk_score": 3,
+        "top_words": [
+            "am",
+            "i",
+            ","
+        ]
+    },
+    "Week 8": {
+        "text": "I feel exhausted all the time, I can not focus, everything feels pointless and hopeless",
+        "prediction": "Depression",
+        "confidence": 0.7704,
+        "risk_level": "High",
+        "risk_score": 7,
+        "top_words": [
+            "feel",
+            "i",
+            "feels"
+        ]
+    },
+    "Week 12": {
+        "text": "I want to give up everything, I feel worthless and I can not continue anymore, nothing matters",
+        "prediction": "Suicidal",
+        "confidence": 0.6332,
+        "risk_level": "Critical",
+        "risk_score": 10,
+        "top_words": [
+            "i",
+            "continue",
+            "i"
+        ]
+    }
+}
