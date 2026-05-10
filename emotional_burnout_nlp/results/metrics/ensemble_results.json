@@ -1,0 +1,45 @@
+{
+    "model": "BERT + RoBERTa Ensemble (Soft Voting)",
+    "accuracy": 0.8232,
+    "f1_score": 0.8232,
+    "bert_weight": 0.5,
+    "roberta_weight": 0.5,
+    "test_samples": 7659,
+    "per_class": {
+        "Normal": {
+            "precision": 0.95,
+            "recall": 0.96,
+            "f1": 0.96
+        },
+        "Depression": {
+            "precision": 0.79,
+            "recall": 0.74,
+            "f1": 0.76
+        },
+        "Suicidal": {
+            "precision": 0.7,
+            "recall": 0.75,
+            "f1": 0.73
+        },
+        "Anxiety": {
+            "precision": 0.85,
+            "recall": 0.89,
+            "f1": 0.87
+        },
+        "Bipolar": {
+            "precision": 0.86,
+            "recall": 0.82,
+            "f1": 0.84
+        },
+        "Stress": {
+            "precision": 0.7,
+            "recall": 0.74,
+            "f1": 0.72
+        },
+        "Personality disorder": {
+            "precision": 0.69,
+            "recall": 0.61,
+            "f1": 0.65
+        }
+    }
+}

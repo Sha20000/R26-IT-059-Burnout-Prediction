@@ -3,3 +3,4 @@
 *.pyc
 .env
 **/.claude/
+emotional_burnout_nlp/models/saved/
