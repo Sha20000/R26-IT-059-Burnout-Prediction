@@ -50,7 +50,14 @@ export default function Header() {
           fontSize: 12,
           padding: '4px 12px',
           borderRadius: 6,
-        }}>BERT Fine-tuned</span>
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          lineHeight: 1.3,
+        }}>
+          <span style={{ fontWeight: 700, color: '#c4b5fd' }}>BERT+RoBERTa Ensemble</span>
+          <span style={{ fontSize: 10, color: '#64748b' }}>Accuracy: 82.32%</span>
+        </span>
 
         <span style={{
           display: 'flex',

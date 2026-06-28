@@ -38,12 +38,12 @@ def predict(text):
     }
 
     stress_score = round(float(
-        probabilities.get("Suicidal", 0) * 1.0 +
-        probabilities.get("Depression", 0) * 0.8 +
-        probabilities.get("Bipolar", 0) * 0.75 +
-        probabilities.get("Personality disorder", 0) * 0.7 +
-        probabilities.get("Anxiety", 0) * 0.6 +
-        probabilities.get("Stress", 0) * 0.5
+        probabilities.get("Suicidal", 0)             * 1.0 +
+        probabilities.get("Depression", 0)            * 0.8 +
+        probabilities.get("Bipolar", 0)               * 0.75 +
+        probabilities.get("Personality disorder", 0)  * 0.7 +
+        probabilities.get("Anxiety", 0)               * 0.6 +
+        probabilities.get("Stress", 0)                * 0.5
     ) * 100, 1)
 
     all_attentions = torch.stack(outputs.attentions)

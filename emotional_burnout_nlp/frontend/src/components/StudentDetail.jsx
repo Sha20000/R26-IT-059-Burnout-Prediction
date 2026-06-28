@@ -1,8 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import MetricCards from './MetricCards'
 import RiskBadge from './RiskBadge'
 import AttentionHeatmap from './AttentionHeatmap'
 import ProbabilityBars from './ProbabilityBars'
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const WEEK_NUMS = [2, 4, 8, 18]
+
+const RISK_COLOR = { Low: '#22c55e', Medium: '#fbbf24', High: '#f97316', Critical: '#ef4444', Unknown: '#94a3b8' }
+const RISK_SCORE = { Low: 1, Medium: 3, High: 7, Critical: 10, Unknown: 0 }
+const RISK_LEFT  = { Low: 14, Medium: 12, High: 8, Critical: 4, Unknown: 0 }
 
 const ADVISOR_MAP = {
   Normal:               { text: '✅ Student appears emotionally stable. Continue routine monitoring.',                                                                                          color: '#22d3ee', bg: '#22d3ee0d', border: '#22d3ee30' },
@@ -14,268 +22,380 @@ const ADVISOR_MAP = {
   'Personality disorder': { text: '🔴 HIGH RISK: Student showing personality disorder indicators. Recommend professional evaluation.',                                                         color: '#f87171', bg: '#f871710d', border: '#f8717130' },
 }
 
+// ─── Small helpers ─────────────────────────────────────────────────────────────
+
+function Spinner({ label = 'Running BERT inference…' }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, minHeight: 200 }}>
+      <div style={{ width: 40, height: 40, border: '3px solid #1e293b', borderTop: '3px solid #6366f1', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ fontSize: 13, color: '#475569' }}>{label}</div>
+    </div>
+  )
+}
+
 function AdvisorRecommendation({ prediction }) {
   const rec = ADVISOR_MAP[prediction]
   if (!rec) return null
   return (
-    <div style={{
-      background: rec.bg,
-      border: `1px solid ${rec.border}`,
-      borderRadius: 10,
-      padding: '16px 20px',
-    }}>
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 8 }}>
-        ADVISOR RECOMMENDATION
-      </div>
-      <div style={{ fontSize: 13, color: rec.color, lineHeight: 1.6, fontWeight: 500 }}>
-        {rec.text}
-      </div>
+    <div style={{ background: rec.bg, border: `1px solid ${rec.border}`, borderRadius: 10, padding: '16px 20px' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 8 }}>ADVISOR RECOMMENDATION</div>
+      <div style={{ fontSize: 13, color: rec.color, lineHeight: 1.6, fontWeight: 500 }}>{rec.text}</div>
     </div>
   )
 }
 
-function Spinner() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, height: '100%', minHeight: 300 }}>
-      <div style={{
-        width: 40, height: 40,
-        border: '3px solid #1e293b',
-        borderTop: '3px solid #6366f1',
-        borderRadius: '50%',
-        animation: 'spin 0.8s linear infinite',
-      }} />
-      <div style={{ fontSize: 13, color: '#475569' }}>Running BERT inference…</div>
-    </div>
-  )
-}
+// ─── Risk Chart ────────────────────────────────────────────────────────────────
 
-function EmptyState() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, height: '100%', minHeight: 300 }}>
-      <div style={{ fontSize: 32 }}>←</div>
-      <div style={{ fontSize: 14, color: '#475569', textAlign: 'center', maxWidth: 280 }}>
-        Select a student from the list to view their mental health analysis
-      </div>
-    </div>
-  )
-}
-
-const WEEKLY_DATA = [
-  { week: 2,  prediction: 'Normal',    confidence: 82.5, riskLevel: 'Low',      riskScore: 1,  weeksLeft: 14, f1: 0.9505, color: '#22c55e' },
-  { week: 4,  prediction: 'Stress',    confidence: 63.8, riskLevel: 'Medium',   riskScore: 3,  weeksLeft: 12, f1: 0.9344, color: '#fbbf24' },
-  { week: 8,  prediction: 'Depression',confidence: 77.8, riskLevel: 'High',     riskScore: 7,  weeksLeft: 8,  f1: 0.9515, color: '#f97316' },
-  { week: 12, prediction: 'Suicidal',  confidence: 63.3, riskLevel: 'Critical', riskScore: 10, weeksLeft: 4,  f1: 0.9382, color: '#ef4444' },
-]
-
-const RISK_TO_WEEK = { Low: 2, Medium: 4, High: 8, Critical: 12 }
-
-function RiskChart({ activeRiskLevel }) {
+function RiskChart({ data }) {
   const W = 520, H = 200
   const padL = 44, padR = 24, padT = 36, padB = 36
   const chartW = W - padL - padR
   const chartH = H - padT - padB
-
-  const weeks = WEEKLY_DATA.map(d => d.week)
-  const minWeek = weeks[0], maxWeek = weeks[weeks.length - 1]
-
+  const minWeek = WEEK_NUMS[0], maxWeek = WEEK_NUMS[WEEK_NUMS.length - 1]
   const xOf = w => padL + ((w - minWeek) / (maxWeek - minWeek)) * chartW
   const yOf = s => padT + (1 - s / 10) * chartH
-
-  const activeWeek = RISK_TO_WEEK[activeRiskLevel]
-  const points = WEEKLY_DATA.map(d => ({ x: xOf(d.week), y: yOf(d.riskScore), ...d, isActive: d.week === activeWeek }))
-
-  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')
-  const areaPath = `${linePath} L${points[points.length-1].x},${padT + chartH} L${points[0].x},${padT + chartH} Z`
-
-  const gradId = 'riskLineGrad'
-  const areaId = 'riskAreaGrad'
-
   const yTicks = [0, 2, 4, 6, 8, 10]
+
+  const points = data.map(d => ({ x: xOf(d.week), y: yOf(d.riskScore), color: d.color, riskScore: d.riskScore, week: d.week }))
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')
+  const areaPath = `${linePath} L${points[points.length-1].x},${padT+chartH} L${points[0].x},${padT+chartH} Z`
+  const maxScore = Math.max(...data.map(d => d.riskScore))
+  const areaColor = maxScore >= 7 ? '#ef4444' : maxScore >= 3 ? '#f97316' : '#22c55e'
 
   return (
     <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '16px 20px' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 4 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 12 }}>
         EMOTIONAL BURNOUT RISK PROGRESSION
       </div>
-      <div style={{ fontSize: 11, color: '#4ade80', marginBottom: 12, fontWeight: 500 }}>
-        🎯 Early detection at Week 2 — 14 weeks to intervene!
-      </div>
-
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
         <defs>
-          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#22c55e" />
-            <stop offset="33%"  stopColor="#fbbf24" />
-            <stop offset="66%"  stopColor="#f97316" />
-            <stop offset="100%" stopColor="#ef4444" />
+          <linearGradient id="chartLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            {points.map((p, i) => <stop key={i} offset={`${(i/(points.length-1))*100}%`} stopColor={p.color} />)}
           </linearGradient>
-          <linearGradient id={areaId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor="#ef4444" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#ef4444" stopOpacity="0.02" />
+          <linearGradient id="chartAreaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor={areaColor} stopOpacity="0.25" />
+            <stop offset="100%" stopColor={areaColor} stopOpacity="0.02" />
           </linearGradient>
         </defs>
-
         {yTicks.map(v => (
           <g key={v}>
-            <line x1={padL} y1={yOf(v)} x2={padL + chartW} y2={yOf(v)}
-              stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-            <text x={padL - 6} y={yOf(v) + 4} textAnchor="end"
-              fontSize="9" fill="#475569">{v}</text>
+            <line x1={padL} y1={yOf(v)} x2={padL+chartW} y2={yOf(v)} stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
+            <text x={padL-6} y={yOf(v)+4} textAnchor="end" fontSize="9" fill="#475569">{v}</text>
           </g>
         ))}
-
-        <line x1={padL} y1={padT} x2={padL} y2={padT + chartH} stroke="#334155" strokeWidth="1" />
-        <line x1={padL} y1={padT + chartH} x2={padL + chartW} y2={padT + chartH} stroke="#334155" strokeWidth="1" />
-
-        {WEEKLY_DATA.map(d => (
-          <text key={d.week} x={xOf(d.week)} y={padT + chartH + 16}
-            textAnchor="middle" fontSize="9" fill="#475569">
-            Wk {d.week}
-          </text>
+        <line x1={padL} y1={padT} x2={padL} y2={padT+chartH} stroke="#334155" strokeWidth="1" />
+        <line x1={padL} y1={padT+chartH} x2={padL+chartW} y2={padT+chartH} stroke="#334155" strokeWidth="1" />
+        {WEEK_NUMS.map(w => (
+          <text key={w} x={xOf(w)} y={padT+chartH+16} textAnchor="middle" fontSize="9" fill="#475569">Wk {w}</text>
         ))}
-
-        <path d={areaPath} fill={`url(#${areaId})`} />
-
-        <path d={linePath} fill="none" stroke={`url(#${gradId})`} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-
+        <path d={areaPath} fill="url(#chartAreaGrad)" />
+        <path d={linePath} fill="none" stroke="url(#chartLineGrad)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
         {points.map((p, i) => (
           <g key={i}>
-            {p.isActive && (
-              <>
-                <circle cx={p.x} cy={p.y} r="18" fill={p.color} fillOpacity="0.12">
-                  <animate attributeName="r" values="14;20;14" dur="1.6s" repeatCount="indefinite" />
-                  <animate attributeName="fill-opacity" values="0.18;0.04;0.18" dur="1.6s" repeatCount="indefinite" />
-                </circle>
-                <circle cx={p.x} cy={p.y} r="11" fill="none" stroke={p.color} strokeWidth="1.5" strokeOpacity="0.5">
-                  <animate attributeName="r" values="9;13;9" dur="1.6s" repeatCount="indefinite" />
-                  <animate attributeName="stroke-opacity" values="0.6;0.1;0.6" dur="1.6s" repeatCount="indefinite" />
-                </circle>
-              </>
-            )}
-            <circle cx={p.x} cy={p.y} r={p.isActive ? 9 : 7} fill="#0f172a" stroke={p.color} strokeWidth={p.isActive ? 3 : 2.5} />
-            <circle cx={p.x} cy={p.y} r={p.isActive ? 4 : 3} fill={p.color} />
-            <text x={p.x} y={p.y - (p.isActive ? 17 : 13)} textAnchor="middle" fontSize={p.isActive ? 12 : 10} fontWeight="700" fill={p.color}>
-              {p.riskScore}
-            </text>
-            {p.isActive && (
-              <text x={p.x} y={p.y + 22} textAnchor="middle" fontSize="8" fill={p.color} fontWeight="600">
-                ▲ NOW
-              </text>
-            )}
+            <circle cx={p.x} cy={p.y} r="7" fill="#0f172a" stroke={p.color} strokeWidth="2.5" />
+            <circle cx={p.x} cy={p.y} r="3" fill={p.color} />
+            <text x={p.x} y={p.y-13} textAnchor="middle" fontSize="10" fontWeight="700" fill={p.color}>{p.riskScore}</text>
           </g>
         ))}
-
-        <text x={padL - 2} y={padT - 10} fontSize="9" fill="#475569" textAnchor="middle">Score</text>
+        <text x={padL-2} y={padT-10} fontSize="9" fill="#475569" textAnchor="middle">Score</text>
       </svg>
     </div>
   )
 }
 
-function WeeklyProgression({ riskLevel }) {
+// ─── Add New Student Form (inside Weekly Progression tab) ─────────────────────
+
+function AddStudentForm({ onSaved }) {
+  const [name, setName]         = useState('')
+  // Each week holds an array of text strings (1 or 2 entries)
+  const [texts, setTexts]       = useState({ 2: [''], 4: [''], 8: [''], 18: [''] })
+  const [saving, setSaving]     = useState(false)
+  const [progress, setProgress] = useState('')
+  const [error, setError]       = useState('')
+
+  const hasValidEntry = (w) => texts[w].some(t => t.trim().split(/\s+/).length >= 3)
+  const canSave = name.trim().length > 0 && WEEK_NUMS.some(w => hasValidEntry(w))
+
+  const addSecondEntry = (w) => {
+    setTexts(p => ({ ...p, [w]: [p[w][0], ''] }))
+  }
+  const removeSecondEntry = (w) => {
+    setTexts(p => ({ ...p, [w]: [p[w][0]] }))
+  }
+  const updateText = (w, idx, val) => {
+    setTexts(p => {
+      const arr = [...p[w]]
+      arr[idx] = val
+      return { ...p, [w]: arr }
+    })
+  }
+
+  const handleSave = async () => {
+    if (!canSave) return
+    setSaving(true)
+    setError('')
+    const weeks = {}
+
+    for (const w of WEEK_NUMS) {
+      const entries = texts[w].filter(t => t.trim().split(/\s+/).length >= 3)
+      if (entries.length === 0) { weeks[w] = null; continue }
+
+      setProgress(`Analyzing Week ${w}…`)
+      const results = []
+      for (let i = 0; i < entries.length; i++) {
+        if (entries.length > 1) setProgress(`Analyzing Week ${w} — entry ${i + 1} of ${entries.length}…`)
+        try {
+          const res = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: entries[i].trim() }),
+          })
+          const data = await res.json()
+          results.push({ text: entries[i].trim(), result: data })
+        } catch {
+          results.push({ text: entries[i].trim(), result: null })
+        }
+      }
+
+      // Use the worst result (highest risk score) among the entries for this week
+      const validResults = results.filter(r => r.result && !r.result.error)
+      if (validResults.length === 0) { weeks[w] = null; continue }
+      const worstEntry = validResults.sort(
+        (a, b) => (RISK_SCORE[b.result.risk_level] ?? 0) - (RISK_SCORE[a.result.risk_level] ?? 0)
+      )[0]
+      weeks[w] = { text: worstEntry.text, result: worstEntry.result, entries: results }
+    }
+
+    const filled = WEEK_NUMS.filter(w => weeks[w]?.result)
+    if (filled.length === 0) {
+      setError('All analyses failed. Check the server is running.')
+      setSaving(false)
+      setProgress('')
+      return
+    }
+
+    const latestResult = weeks[filled[filled.length - 1]].result
+    const worstResult  = filled
+      .map(w => weeks[w].result)
+      .sort((a, b) => (RISK_SCORE[b.risk_level] ?? 0) - (RISK_SCORE[a.risk_level] ?? 0))[0]
+
+    const student = {
+      id: `s_${Date.now()}`,
+      name: name.trim(),
+      weeks,
+      latestResult,
+      worstResult,
+    }
+
+    setSaving(false)
+    setProgress('')
+    onSaved(student)
+  }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{
-        background: '#1e3a1e',
-        border: '1px solid #22c55e40',
-        borderRadius: 10,
-        padding: '14px 18px',
-        fontSize: 13,
-        color: '#4ade80',
-        fontWeight: 600,
-        lineHeight: 1.5,
-      }}>
-        🎯 Model detects burnout at Week 2 — 14 weeks before academic decline becomes measurable!
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '24px' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>ADD NEW STUDENT</div>
+      <div style={{ fontSize: 13, color: '#475569' }}>
+        Enter the student's name and their written text from each week. Each week supports up to 2 submissions.
       </div>
 
-      <RiskChart activeRiskLevel={riskLevel} />
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', letterSpacing: 1, marginBottom: 6 }}>STUDENT NAME</div>
+        <input
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="e.g. John Silva"
+          style={{
+            width: '100%', boxSizing: 'border-box',
+            background: '#1e293b', border: '1px solid #334155',
+            color: '#f1f5f9', fontSize: 13, padding: '10px 12px',
+            borderRadius: 8, outline: 'none', fontFamily: 'inherit',
+          }}
+        />
+      </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {WEEKLY_DATA.map((w, i) => {
-          const isActive = w.week === RISK_TO_WEEK[riskLevel]
-          return (
-          <div key={w.week} style={{ display: 'flex', gap: 0 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 40, flexShrink: 0 }}>
-              <div style={{
-                width: isActive ? 18 : 14, height: isActive ? 18 : 14, borderRadius: '50%',
-                background: w.color,
-                boxShadow: isActive ? `0 0 14px ${w.color}, 0 0 28px ${w.color}60` : `0 0 8px ${w.color}80`,
-                marginTop: isActive ? 16 : 18, flexShrink: 0,
-                transition: 'all 0.3s',
-              }} />
-              {i < WEEKLY_DATA.length - 1 && (
-                <div style={{ width: 2, flex: 1, background: '#1e293b', minHeight: 20 }} />
-              )}
+      {WEEK_NUMS.map(w => (
+        <div key={w} style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '14px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', letterSpacing: 1 }}>
+              WEEK {w} <span style={{ color: '#334155', fontWeight: 400 }}>(optional)</span>
             </div>
-
-            <div style={{
-              flex: 1,
-              background: isActive ? `${w.color}0d` : '#1e293b',
-              border: `1px solid ${isActive ? w.color : `${w.color}30`}`,
-              borderRadius: 10,
-              padding: '14px 16px',
-              marginBottom: i < WEEKLY_DATA.length - 1 ? 10 : 0,
-              marginLeft: 12,
-              boxShadow: isActive ? `0 0 16px ${w.color}30` : 'none',
-              transition: 'all 0.3s',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: isActive ? '#f1f5f9' : '#64748b', letterSpacing: 1 }}>WEEK {w.week}</div>
-                  {isActive && <div style={{ fontSize: 9, fontWeight: 700, color: w.color, background: `${w.color}20`, border: `1px solid ${w.color}50`, borderRadius: 3, padding: '1px 6px', letterSpacing: 1 }}>CURRENT</div>}
+            {texts[w].length === 1
+              ? (
+                <button
+                  onClick={() => addSecondEntry(w)}
+                  title="Add second submission for this week"
+                  style={{
+                    background: '#0f172a', border: '1px solid #334155',
+                    color: '#64748b', fontSize: 12, fontWeight: 700,
+                    width: 24, height: 24, borderRadius: 6,
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    lineHeight: 1, padding: 0,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#6366f1'; e.currentTarget.style.color = '#a5b4fc' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#64748b' }}
+                >
+                  +
+                </button>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 10, color: '#6366f1', fontWeight: 600 }}>2 submissions</span>
+                  <button
+                    onClick={() => removeSecondEntry(w)}
+                    title="Remove second submission"
+                    style={{
+                      background: '#0f172a', border: '1px solid #334155',
+                      color: '#64748b', fontSize: 14, fontWeight: 700,
+                      width: 24, height: 24, borderRadius: 6,
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      lineHeight: 1, padding: 0,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#ef4444'; e.currentTarget.style.color = '#f87171' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#64748b' }}
+                  >
+                    ×
+                  </button>
                 </div>
-                <div style={{
-                  fontSize: 10, fontWeight: 700, color: w.color,
-                  background: `${w.color}15`, border: `1px solid ${w.color}40`,
-                  borderRadius: 4, padding: '2px 8px', letterSpacing: 1,
-                }}>{w.riskLevel.toUpperCase()}</div>
-              </div>
+              )
+            }
+          </div>
 
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {[
-                  { label: 'PREDICTION',        value: w.prediction },
-                  { label: 'CONFIDENCE',         value: `${w.confidence}%` },
-                  { label: 'RISK SCORE',         value: `${w.riskScore}/10` },
-                  { label: 'WEEKS TO INTERVENE', value: `${w.weeksLeft} wks` },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{
-                    background: '#0f172a',
-                    border: '1px solid #334155',
-                    borderRadius: 6,
-                    padding: '8px 12px',
-                    flex: 1, minWidth: 90,
-                  }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: '#475569', marginBottom: 4 }}>{label}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9' }}>{value}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {texts[w].map((val, idx) => (
+              <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {texts[w].length > 1 && (
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', letterSpacing: 1 }}>
+                    SUBMISSION {idx + 1}
                   </div>
-                ))}
+                )}
+                <textarea
+                  value={val}
+                  onChange={e => updateText(w, idx, e.target.value)}
+                  placeholder={`Enter student's written text from Week ${w}… (min 3 words)`}
+                  rows={2}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    background: '#0f172a', border: '1px solid #334155',
+                    color: '#e2e8f0', fontSize: 12, padding: '8px 10px',
+                    borderRadius: 6, resize: 'vertical',
+                    fontFamily: 'inherit', outline: 'none',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {error && <div style={{ fontSize: 12, color: '#f87171' }}>{error}</div>}
+
+      {saving
+        ? <Spinner label={progress || 'Analyzing…'} />
+        : (
+          <button
+            onClick={handleSave}
+            disabled={!canSave}
+            style={{
+              background: canSave ? '#312e81' : '#1e293b',
+              border: `1px solid ${canSave ? '#6366f1' : '#334155'}`,
+              color: canSave ? '#a5b4fc' : '#475569',
+              fontSize: 13, fontWeight: 700,
+              padding: '12px 20px', borderRadius: 8,
+              cursor: canSave ? 'pointer' : 'not-allowed',
+            }}
+          >
+            Analyze & Save Student
+          </button>
+        )
+      }
+    </div>
+  )
+}
+
+// ─── Weekly Progression for a saved student ───────────────────────────────────
+
+function SavedProgression({ student }) {
+  const chartData = WEEK_NUMS.map(w => {
+    const r = student.weeks?.[w]?.result
+    const rl = r?.risk_level || 'Unknown'
+    return {
+      week: w,
+      prediction: r?.prediction || '—',
+      confidence: r ? (r.confidence * 100).toFixed(1) : '—',
+      riskLevel: rl,
+      riskScore: RISK_SCORE[rl] ?? 0,
+      weeksLeft: RISK_LEFT[rl] ?? 0,
+      color: RISK_COLOR[rl],
+    }
+  })
+
+  const hasAny = chartData.some(d => d.riskScore > 0)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {hasAny && <RiskChart data={chartData} />}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {chartData.map((w, i) => {
+          const hasData = student.weeks?.[w.week]?.result
+          const col = w.color
+          return (
+            <div key={w.week} style={{ display: 'flex', gap: 0 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 36, flexShrink: 0 }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: hasData ? col : '#334155', boxShadow: hasData ? `0 0 6px ${col}80` : 'none', marginTop: 16, flexShrink: 0 }} />
+                {i < chartData.length - 1 && <div style={{ width: 2, flex: 1, background: '#1e293b', minHeight: 16 }} />}
+              </div>
+              <div style={{ flex: 1, background: '#1e293b', border: `1px solid ${hasData ? `${col}30` : '#1e293b'}`, borderRadius: 10, padding: '12px 14px', marginLeft: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: hasData ? 8 : 0 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: hasData ? '#94a3b8' : '#334155', letterSpacing: 1 }}>WEEK {w.week}</div>
+                  {hasData
+                    ? <div style={{ fontSize: 10, fontWeight: 700, color: col, background: `${col}15`, border: `1px solid ${col}40`, borderRadius: 4, padding: '2px 8px', letterSpacing: 1 }}>{w.riskLevel.toUpperCase()}</div>
+                    : <div style={{ fontSize: 10, color: '#334155' }}>No data</div>
+                  }
+                </div>
+                {hasData && (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {[['PREDICTION', w.prediction], ['CONFIDENCE', `${w.confidence}%`], ['RISK SCORE', `${w.riskScore}/10`], ['WEEKS TO INTERVENE', `${w.weeksLeft} wks`]].map(([label, value]) => (
+                      <div key={label} style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 6, padding: '8px 12px', flex: 1, minWidth: 90 }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: '#475569', marginBottom: 4 }}>{label}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9' }}>{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
           )
         })}
       </div>
 
       <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ padding: '12px 16px', borderBottom: '1px solid #334155' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>F1 SCORE BY WEEK</div>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>RESULTS BY WEEK</div>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#0f172a' }}>
-              {['Week', 'Prediction', 'F1 Score', 'Weeks Remaining'].map(h => (
+              {['Week', 'Prediction', 'Confidence', 'Risk Score', 'F1 Score', 'Weeks Left'].map(h => (
                 <th key={h} style={{ padding: '10px 16px', fontSize: 10, fontWeight: 700, color: '#475569', letterSpacing: 1, textAlign: 'left' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {WEEKLY_DATA.map((w, i) => (
-              <tr key={w.week} style={{ borderTop: '1px solid #1e293b', background: i % 2 === 0 ? 'transparent' : '#0f172a08' }}>
-                <td style={{ padding: '10px 16px', fontSize: 13, color: '#94a3b8', fontWeight: 600 }}>Week {w.week}</td>
-                <td style={{ padding: '10px 16px', fontSize: 13, color: w.color, fontWeight: 600 }}>{w.prediction}</td>
-                <td style={{ padding: '10px 16px', fontSize: 13, color: '#f1f5f9', fontFamily: 'monospace' }}>{w.f1.toFixed(4)}</td>
-                <td style={{ padding: '10px 16px', fontSize: 13, color: '#94a3b8' }}>{w.weeksLeft}</td>
-              </tr>
-            ))}
+            {chartData.map((w, i) => {
+              const F1_MAP = { Normal: '92%', Stress: '75%', Anxiety: '82%', Depression: '85%', Bipolar: '82%', 'Personality disorder': '77%', Suicidal: '86%' }
+              const f1 = F1_MAP[w.prediction] || '—'
+              return (
+                <tr key={w.week} style={{ borderTop: '1px solid #1e293b', background: i % 2 === 0 ? 'transparent' : '#0f172a08' }}>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#94a3b8', fontWeight: 600 }}>Week {w.week}</td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: w.color, fontWeight: 600 }}>{w.prediction}</td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#f1f5f9', fontFamily: 'monospace' }}>{w.confidence !== '—' ? `${w.confidence}%` : '—'}</td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: w.color, fontWeight: 700 }}>{w.riskScore > 0 ? `${w.riskScore}/10` : '—'}</td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: w.riskScore > 0 ? '#c4b5fd' : '#475569', fontFamily: 'monospace', fontWeight: 600 }}>{f1}</td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#94a3b8' }}>{w.weeksLeft > 0 ? w.weeksLeft : '—'}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
@@ -283,13 +403,231 @@ function WeeklyProgression({ riskLevel }) {
   )
 }
 
-export default function StudentDetail({ student, result }) {
+// ─── Analysis Tab ─────────────────────────────────────────────────────────────
+
+function WeekAnalysisCard({ weekNum, weekData, isLatest }) {
+  const [open, setOpen] = useState(false)
+  const result = weekData?.result
+  const text   = weekData?.text
+  if (!result) return null
+
+  const col = RISK_COLOR[result.risk_level] || '#94a3b8'
+
+  return (
+    <div style={{
+      background: '#1e293b',
+      border: `1px solid ${open ? `${col}50` : '#334155'}`,
+      borderRadius: 10,
+      overflow: 'hidden',
+      transition: 'border-color 0.2s',
+    }}>
+      {/* Card header — always visible, clickable */}
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', cursor: 'pointer', userSelect: 'none' }}
+      >
+        {/* Week label */}
+        <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 1, minWidth: 52 }}>
+          WEEK {weekNum}
+          {isLatest && <span style={{ marginLeft: 6, fontSize: 9, color: '#6366f1', background: '#6366f115', border: '1px solid #6366f130', borderRadius: 4, padding: '1px 5px', letterSpacing: 0.5 }}>LATEST</span>}
+        </div>
+
+        {/* Risk badge */}
+        <div style={{ fontSize: 10, fontWeight: 700, color: col, background: `${col}15`, border: `1px solid ${col}40`, borderRadius: 4, padding: '2px 8px', letterSpacing: 1 }}>
+          {result.risk_level?.toUpperCase()}
+        </div>
+
+        {/* Prediction */}
+        <div style={{ fontSize: 13, fontWeight: 700, color: col }}>{result.prediction}</div>
+
+        {/* Confidence */}
+        <div style={{ fontSize: 12, color: '#64748b', marginLeft: 2 }}>{(result.confidence * 100).toFixed(1)}%</div>
+
+        {/* Text preview */}
+        <div style={{ flex: 1, fontSize: 12, color: '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontStyle: 'italic' }}>
+          "{text}"
+        </div>
+
+        {/* Chevron */}
+        <div style={{ fontSize: 12, color: '#475569', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }}>▼</div>
+      </div>
+
+      {/* Expanded content */}
+      {open && (
+        <div style={{ borderTop: `1px solid ${col}30`, padding: '16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* Full text */}
+          <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, padding: '12px 14px' }}>
+            <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: '#475569', marginBottom: 6 }}>STUDENT TEXT</div>
+            <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.7, fontStyle: 'italic' }}>"{text}"</div>
+          </div>
+
+          <MetricCards prediction={result.prediction} confidence={result.confidence} stressScore={result.stress_score} />
+          <AttentionHeatmap tokens={result.attention} prediction={result.prediction} />
+          <ProbabilityBars probabilities={result.probabilities} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AnalysisTab({ student, latest, worst }) {
+  if (!latest) {
+    return <div style={{ fontSize: 13, color: '#475569', padding: 20 }}>No analysis data available for this student.</div>
+  }
+
+  const filledWeeks = WEEK_NUMS.filter(w => student.weeks?.[w]?.result)
+  const latestWeek  = filledWeeks[filledWeeks.length - 1]
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+      {/* Overall summary row */}
+      <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '14px 18px' }}>
+        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 10 }}>OVERALL SUMMARY</div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[
+            ['WEEKS ANALYZED', `${filledWeeks.length} / ${WEEK_NUMS.length}`],
+            ['WORST PREDICTION', worst.prediction],
+            ['WORST RISK', worst.risk_level],
+            ['LATEST STRESS SCORE', `${latest.stress_score} / 100`],
+          ].map(([label, value]) => (
+            <div key={label} style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, padding: '10px 14px', flex: 1, minWidth: 110 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: '#475569', marginBottom: 4 }}>{label}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9' }}>{value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Advisor recommendation based on worst week */}
+      <AdvisorRecommendation prediction={worst.prediction} />
+
+      {/* Per-week collapsible cards */}
+      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>
+        WEEKLY SUBMISSIONS — click any week to view XAI heatmap
+      </div>
+      {WEEK_NUMS.map(w => (
+        <WeekAnalysisCard
+          key={w}
+          weekNum={w}
+          weekData={student.weeks?.[w]}
+          isLatest={w === latestWeek}
+        />
+      ))}
+
+      {/* Model performance */}
+      <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>MODEL PERFORMANCE</div>
+          <div style={{ fontSize: 10, color: '#334155', fontWeight: 600, letterSpacing: 1 }}>IT22196392 — R26-IT-059</div>
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: '#6366f1', marginBottom: 12 }}>BERT Fine-tuned + RoBERTa Ensemble</div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {[['ACCURACY', '82.32%', 'Test set'], ['F1 SCORE', '82.32%', 'Weighted avg'], ['DATASET', '51,055', 'Training samples'], ['CLASSES', '7', 'Mental health categories']].map(([label, value, sub]) => (
+            <div key={label} style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, padding: '12px 16px', flex: 1, minWidth: 100 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 6 }}>{label}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#f1f5f9' }}>{value}</div>
+              <div style={{ fontSize: 10, color: '#475569', marginTop: 3 }}>{sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CSV export */}
+      <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 4 }}>EXPORT DATA</div>
+          <div style={{ fontSize: 11, color: '#475569' }}>Export for Meta-Integration Layer</div>
+        </div>
+        <button
+          onClick={() => {
+            const rows = [
+              'student_name,week,predicted_label,confidence,risk_level,stress_score',
+              ...WEEK_NUMS.flatMap(w => {
+                const r = student.weeks?.[w]?.result
+                if (!r) return []
+                return [`${student.name},${w},${r.prediction},${r.confidence},${r.risk_level},${r.stress_score}`]
+              }),
+            ].join('\n')
+            const a = document.createElement('a')
+            a.href = URL.createObjectURL(new Blob([rows], { type: 'text/csv' }))
+            a.download = `stress_scores_${student.name.replace(/\s+/g, '_')}.csv`
+            a.click()
+          }}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#14532d', border: '1px solid #22c55e50', color: '#4ade80', fontSize: 13, fontWeight: 700, padding: '10px 20px', borderRadius: 8, cursor: 'pointer', boxShadow: '0 0 12px #22c55e20' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#166534'}
+          onMouseLeave={e => e.currentTarget.style.background = '#14532d'}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download Stress Scores CSV
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Empty state ───────────────────────────────────────────────────────────────
+
+function WelcomeState({ onAddNew }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, height: '100%', minHeight: 400, padding: 40 }}>
+      <div style={{ fontSize: 48 }}>👤</div>
+      <div style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9' }}>No student selected</div>
+      <div style={{ fontSize: 14, color: '#475569', textAlign: 'center', maxWidth: 340, lineHeight: 1.7 }}>
+        Select a student from the left panel, or add a new student to begin analyzing their emotional progression.
+      </div>
+      <button
+        onClick={onAddNew}
+        style={{
+          background: '#1e3a5f', border: '1px solid #3b82f640',
+          color: '#93c5fd', fontSize: 13, fontWeight: 700,
+          padding: '10px 24px', borderRadius: 8, cursor: 'pointer',
+          marginTop: 8,
+        }}
+      >
+        + Add New Student
+      </button>
+    </div>
+  )
+}
+
+// ─── Main StudentDetail ────────────────────────────────────────────────────────
+
+export default function StudentDetail({ student, addingNew, forcedTab, onTabChange, onStudentSaved }) {
   const [tab, setTab] = useState('analysis')
 
-  if (!student) return <EmptyState />
-  if (!result || result === 'loading') return <Spinner />
+  useEffect(() => {
+    if (forcedTab) setTab(forcedTab)
+  }, [forcedTab, student?.id])
 
-  const isCritical = result.risk_level === 'Critical'
+  const switchTab = (t) => {
+    setTab(t)
+    onTabChange?.(t)
+  }
+
+  // No student selected and not adding new → welcome screen
+  if (!student && !addingNew) {
+    return <WelcomeState onAddNew={() => { switchTab('progression'); onStudentSaved?.({ id: '__new__' }) }} />
+  }
+
+  // Adding new student → go straight to the form
+  if (addingNew || !student) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
+        <div style={{ padding: '16px 24px 0' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>NEW STUDENT</div>
+        </div>
+        <AddStudentForm onSaved={onStudentSaved} />
+      </div>
+    )
+  }
+
+  // Saved student selected
+  const latest = student.latestResult
+  const worst  = student.worstResult || latest
+  const isCritical = worst?.risk_level === 'Critical'
 
   const TABS = [
     { id: 'analysis',    label: 'Analysis' },
@@ -298,49 +636,39 @@ export default function StudentDetail({ student, result }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '24px', flex: 1, overflowY: 'auto' }}>
+
+      {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div style={{ fontSize: 22, fontWeight: 800, color: '#f1f5f9' }}>{student.name}</div>
           <div style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>ID: {student.id}</div>
         </div>
-        <RiskBadge riskLevel={result.risk_level} />
+        {worst && <RiskBadge riskLevel={worst.risk_level} />}
       </div>
 
+      {/* Critical alert */}
       {isCritical && (
-        <div style={{
-          background: '#ff000012',
-          border: '1px solid #ff000040',
-          borderRadius: 10,
-          padding: '12px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-        }}>
+        <div style={{ background: '#ff000012', border: '1px solid #ff000040', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 18 }}>⚠</span>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#ff4444' }}>Immediate Attention Required</div>
-            <div style={{ fontSize: 12, color: '#f87171', marginTop: 2 }}>
-              This student's text indicates critical distress. Please contact a mental health professional immediately.
-            </div>
+            <div style={{ fontSize: 12, color: '#f87171', marginTop: 2 }}>This student's text indicates critical distress. Contact a mental health professional immediately.</div>
           </div>
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #1e293b', paddingBottom: 0 }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #1e293b' }}>
         {TABS.map(t => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => switchTab(t.id)}
             style={{
-              background: 'none',
-              border: 'none',
+              background: 'none', border: 'none',
               borderBottom: tab === t.id ? '2px solid #6366f1' : '2px solid transparent',
               color: tab === t.id ? '#f1f5f9' : '#475569',
-              fontSize: 13,
-              fontWeight: tab === t.id ? 700 : 400,
-              padding: '8px 16px',
-              cursor: 'pointer',
-              marginBottom: -1,
+              fontSize: 13, fontWeight: tab === t.id ? 700 : 400,
+              padding: '8px 16px', cursor: 'pointer', marginBottom: -1,
               transition: 'color 0.15s',
             }}
           >
@@ -349,141 +677,11 @@ export default function StudentDetail({ student, result }) {
         ))}
       </div>
 
-      {tab === 'analysis' && <>
-        <div style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          borderRadius: 10,
-          padding: '14px 20px',
-        }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 8 }}>
-            STUDENT INPUT TEXT
-          </div>
-          <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.6, fontStyle: 'italic' }}>
-            "{student.text}"
-          </div>
-        </div>
+      {/* ── Analysis tab ── */}
+      {tab === 'analysis' && <AnalysisTab student={student} latest={latest} worst={worst} />}
 
-        <MetricCards
-          prediction={result.prediction}
-          confidence={result.confidence}
-          stressScore={result.stress_score}
-        />
-
-        <AttentionHeatmap tokens={result.attention} prediction={result.prediction} />
-
-        <AdvisorRecommendation prediction={result.prediction} />
-
-        <ProbabilityBars probabilities={result.probabilities} />
-
-        <div style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          borderRadius: 10,
-          padding: '16px 20px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b' }}>MODEL PERFORMANCE</div>
-            <div style={{ fontSize: 10, color: '#334155', fontWeight: 600, letterSpacing: 1 }}>IT22196392 — R26-IT-059</div>
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#6366f1', marginBottom: 12 }}>
-            BERT Fine-tuned + RoBERTa Ensemble
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {[
-              { label: 'ACCURACY', value: '82.32%', sub: 'Test set' },
-              { label: 'F1 SCORE', value: '82.32%', sub: 'Weighted avg' },
-              { label: 'DATASET',  value: '51,055', sub: 'Training samples' },
-              { label: 'CLASSES',  value: '7',      sub: 'Mental health categories' },
-            ].map(({ label, value, sub }) => (
-              <div key={label} style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, padding: '12px 16px', flex: 1, minWidth: 100 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 6 }}>{label}</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: '#f1f5f9' }}>{value}</div>
-                <div style={{ fontSize: 10, color: '#475569', marginTop: 3 }}>{sub}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          borderRadius: 10,
-          padding: '16px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 12,
-        }}>
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 4 }}>
-              EXPORT DATA
-            </div>
-            <div style={{ fontSize: 11, color: '#475569' }}>
-              Export for Meta-Integration Layer
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              const rows = [
-                'student_id,predicted_label,confidence,risk_level,stress_score',
-                'Student #0001,Normal,0.993,Low,1',
-                'Student #0002,Depression,0.85,High,7',
-                'Student #0003,Stress,0.92,Medium,3',
-                'Student #0004,Anxiety,0.78,Medium,4',
-                'Student #0005,Depression,0.889,High,7',
-                'Student #0006,Normal,0.998,Low,1',
-                'Student #0007,Suicidal,0.95,Critical,10',
-                'Student #0008,Normal,0.991,Low,1',
-                'Student #0009,Depression,0.87,High,7',
-                'Student #0010,Depression,0.82,High,7',
-                'Student #0011,Depression,0.79,High,7',
-                'Student #0012,Stress,0.88,Medium,3',
-              ].join('\n')
-              const blob = new Blob([rows], { type: 'text/csv' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = 'stress_scores_R26-IT-059.csv'
-              a.click()
-              URL.revokeObjectURL(url)
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#14532d',
-              border: '1px solid #22c55e50',
-              color: '#4ade80',
-              fontSize: 13,
-              fontWeight: 700,
-              padding: '10px 20px',
-              borderRadius: 8,
-              cursor: 'pointer',
-              transition: 'background 0.15s, box-shadow 0.15s',
-              boxShadow: '0 0 12px #22c55e20',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = '#166534'
-              e.currentTarget.style.boxShadow = '0 0 18px #22c55e40'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = '#14532d'
-              e.currentTarget.style.boxShadow = '0 0 12px #22c55e20'
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Download Stress Scores CSV
-          </button>
-        </div>
-      </>}
-
-      {tab === 'progression' && <WeeklyProgression riskLevel={result.risk_level} />}
+      {/* ── Weekly Progression tab ── */}
+      {tab === 'progression' && <SavedProgression student={student} />}
     </div>
   )
 }
