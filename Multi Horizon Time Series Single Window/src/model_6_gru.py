@@ -53,7 +53,7 @@ print(f"Device: {device}")
 print("=" * 52)
 
 
-# ── Model Architecture ─────────────────────────────────────
+# ── Model Architecture 
 class SimpleGRU(nn.Module):
     """
     GRU — simpler than LSTM.

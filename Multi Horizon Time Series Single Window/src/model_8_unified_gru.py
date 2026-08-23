@@ -627,7 +627,7 @@ baseline_names = [
     'Simple\nLSTM',
     'GRU',
     'BiLSTM',
-    f'YOUR\nModel8\n(W{opt_week})'
+    f'\nUnified Multi Horizon GRU\n(W{opt_week})'
 ]
 
 #Replace last value with your best horizon
@@ -710,9 +710,9 @@ print("Saved: unified_gru_attention_heatmap.png")
 
 print("Generating Chart 4: XAI features importance...")
 
-fig,ax = plt.subplots(figsize=(15,8))
+fig,ax = plt.subplots(figsize=(20,10))
 feat_labels = [f.replace('_'
-                         ,'\n') for f in FEATURE_NAMES]
+                         ,' ') for f in FEATURE_NAMES]
 colours_f1 = ['#C00000' if imp == max(importance) else '#5B9BD5'
               for imp in importance]
 

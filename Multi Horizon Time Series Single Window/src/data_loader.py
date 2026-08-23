@@ -39,7 +39,7 @@ def get_data(verbose=True):
     Return everything in a dictionary.
     """
 
-    # ── Step 1: Load saved numpy files ────────────────────
+    # ── Step 1: Load saved numpy files 
     try:
         X = np.load(PROCESSED_PATH + 'X_sequences.npy')
         y = np.load(PROCESSED_PATH + 'y_labels.npy')
@@ -91,7 +91,7 @@ def get_data(verbose=True):
               f"Test={y_te.mean()*100:.1f}%")
         print()
 
-    # ── Step 3: Normalise features ─────────────────────────
+    # Step 3: Normalise features 
     # Flatten 3D to 2D for scaling
     # Fit scaler on TRAIN only
     # Then apply to val and test
@@ -121,7 +121,7 @@ def get_data(verbose=True):
     X_flat_val = X_val.reshape(len(X_val), -1)
     X_flat_te  = X_te.reshape(len(X_te), -1)
 
-    # ── Return everything ──────────────────────────────────
+    #  Return everything 
     return {
         # 3D arrays for LSTM/GRU/BiLSTM models
         'X_tr':  X_tr,   'X_val':  X_val,   'X_te':  X_te,
