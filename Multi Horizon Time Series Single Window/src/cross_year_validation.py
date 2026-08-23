@@ -417,7 +417,36 @@ for epoch in range(EPOCHS):
     else: 
         no_improve += 1
         if no_improve >= PATIENCE:
-            print(f"\nEarly ")
+            print(f"\nEarly stopping at epoch {epoch+1} (best epoch {best_epoch})")
+            break
+
+print(f"\nTraining complete. Best val F1: {best_val_f1:.4f} at epoch {best_epoch}")
+
+model_cy.load_state_dict(torch.load(MODELS_PATH + 'model8_cross_year_2013train.pt', weights_only=True))
+model_cy.eval()
+
+with torch.no_grad():
+    test_preds,_ = model_cy(X_test_t)
+
+
+HORIZON_LABELS = ['Week 4','Week 8','Week 12','Week 17']
+print(f"\n{'Horizon':<10}| {'F1':>6} | {'AUC':>6} | {'Prec':>6} | {'Rec':>6}")
+print("-"*45)
+
+for i, label in enumerate(HORIZON_LABELS):
+
+    probs = torch.sigmoid(test_preds[i]).squeeze().cpu().numpy()
+    preds = (probs > 0.5).astype(int)
+    f1 = f1_score(y_test, preds)
+    auc = roc_auc_score(y_test, probs)
+    prec = precision_score(y_test, preds,zero_division=0)
+    rec =  recall_score(y_test, preds,zero_division=0)
+    print(f"{label:<10}| {f1:>6.4f} | {auc:>6.4f} | {prec:>6.4f} | {rec:>6.4f}")
+
+    
+
+
+
 
 
 
