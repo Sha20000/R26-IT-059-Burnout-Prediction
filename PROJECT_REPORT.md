@@ -10,9 +10,9 @@
 
 ## 1. Executive Summary
 
-This project builds an AI system that reads student-written text and classifies it into **7 mental-health categories**, then **explains its reasoning** using attention visualization. The goal is to give academic advisors an early-warning tool that detects emotional burnout from a student's own words — weeks before it shows up in grades.
+This project builds an AI system that reads student-written text and classifies it into **7 mental-health categories**, then **explains its reasoning** using attention visualization. The goal is to give academic advisors an early-warning tool that detects emotional burnout from a student's own words, ideally before it becomes visible in grades.
 
-I built and compared **9 models** spanning classical machine learning, deep learning, and transformers. The best model — a **BERT + RoBERTa ensemble** — reached **82.32% accuracy**. A separate lead-time study showed the system can flag burnout as early as **Week 2 of a semester with 91% accuracy**. The trained model is deployed in a full-stack web dashboard.
+I built and compared **9 models** spanning classical machine learning, deep learning, and transformers. The best model — a **BERT + RoBERTa ensemble** — reached **82.32% accuracy**. A **simulated** lead-time study showed the model separates ordinary from distressed language at **89-91% accuracy** at every simulated point in a semester; as the corpus holds no time-stamped student writing, this demonstrates detection capability rather than validated early warning. The trained model is deployed in a full-stack web dashboard.
 
 ---
 
@@ -150,16 +150,21 @@ For *"I feel exhausted and hopeless,"* the words **exhausted** and **hopeless** 
 
 ## 9. Lead-Time Analysis — The Research Contribution
 
-I tested how *early* in a semester the model can detect burnout:
+I tested how reliably the model separates ordinary from distressed language at four notional
+points in a semester. **This is a controlled simulation, not a longitudinal study.** The corpus
+contains no time-stamped writing from students tracked over a semester, so each "week" below is an
+independent random sample of Normal and Depression texts drawn from the same dataset. The
+intervention-window column expresses how much time early detection would afford; it is a framing
+device, not a measured outcome.
 
-| Week | Accuracy | F1 | Lead time before decline |
-|------|----------|----|--------------------------|
+| Week | Accuracy | F1 | Framed intervention window |
+|------|----------|----|----------------------------|
 | Week 2 | 91% | 95.05% | **14 weeks** |
 | Week 4 | 89% | 93.44% | 12 weeks |
 | Week 8 | 91% | 95.15% | 8 weeks |
 | Week 12 | 89% | 93.82% | 4 weeks |
 
-**Conclusion:** The model detects burnout at **Week 2 with 91% accuracy — 14 weeks before academic decline.** This early-warning capability is the headline finding.
+**Conclusion:** The model separates Normal from Depression at **89-91% accuracy at every simulated point**. That stability implies the earlier distress language appears in a student's writing, the larger the intervention window — up to roughly 14 weeks. This demonstrates detection capability; it is not validated longitudinal evidence of early warning.
 
 ---
 
@@ -243,6 +248,8 @@ emotional_burnout_nlp/
 9. Ensemble model
 10. Lead-time analysis
 
+
+
 ---
 
 ## 15. Key Findings
@@ -250,7 +257,7 @@ emotional_burnout_nlp/
 1. **Fine-tuning is essential** — zero-shot/rule-based baselines scored 25–33%; fine-tuned transformers scored 80–84%.
 2. **Ensembling helps** — combining BERT + RoBERTa beat either model alone (82.32%).
 3. **Class imbalance is the core difficulty** — the rarest class (Personality disorder) remained hardest even after weighted loss.
-4. **Early detection works** — 91% accuracy at Week 2, a 14-week lead time.
+4. **Early detection is plausible** — 89-91% accuracy at every simulated point, implying an intervention window of up to ~14 weeks (simulated, not longitudinal).
 5. **Explainability is achievable** — attention heatmaps make every prediction transparent.
 
 ---
