@@ -1,8 +1,8 @@
-function Card({ label, value, sub }) {
+﻿function Card({ label, value, sub }) {
   return (
     <div style={{
-      background: '#1e293b',
-      border: '1px solid #334155',
+      background: '#ffffff',
+      border: '1px solid #e2e8f0',
       borderRadius: 10,
       padding: '16px 24px',
       flex: 1,
@@ -11,7 +11,7 @@ function Card({ label, value, sub }) {
       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: '#64748b', marginBottom: 8 }}>
         {label}
       </div>
-      <div style={{ fontSize: 26, fontWeight: 800, color: '#f1f5f9' }}>{value}</div>
+      <div style={{ fontSize: 26, fontWeight: 800, color: '#0f172a' }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{sub}</div>}
     </div>
   )

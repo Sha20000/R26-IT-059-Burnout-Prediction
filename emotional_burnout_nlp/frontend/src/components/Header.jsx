@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 
 export default function Header() {
   const [apiLive, setApiLive] = useState(true)
@@ -11,8 +11,8 @@ export default function Header() {
 
   return (
     <header style={{
-      background: '#0f172a',
-      borderBottom: '1px solid #1e293b',
+      background: '#f8fafc',
+      borderBottom: '1px solid #ffffff',
       padding: '0 24px',
       height: 56,
       display: 'flex',
@@ -33,7 +33,7 @@ export default function Header() {
           letterSpacing: 1,
         }}>R26-IT-059</span>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9', lineHeight: 1.2 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>
             Emotional Burnout Detection System
           </div>
           <div style={{ fontSize: 11, color: '#64748b' }}>
@@ -44,9 +44,9 @@ export default function Header() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          color: '#94a3b8',
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          color: '#64748b',
           fontSize: 12,
           padding: '4px 12px',
           borderRadius: 6,
@@ -63,7 +63,7 @@ export default function Header() {
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          background: '#1e293b',
+          background: '#ffffff',
           border: `1px solid ${apiLive ? '#22c55e40' : '#ef444440'}`,
           color: apiLive ? '#22c55e' : '#ef4444',
           fontSize: 12,

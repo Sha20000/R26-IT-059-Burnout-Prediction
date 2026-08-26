@@ -1,7 +1,8 @@
 {
-    "analysis": "Lead-Time Analysis - Emotional Burnout Detection",
+    "analysis": "Lead-Time Analysis (SIMULATED proof-of-concept - NOT real longitudinal data)",
     "model": "BERT Fine-tuned",
     "researcher": "IT22196392 - Induwara K.P.Y.",
+    "method": "Each 'week' is an independent random sample of Normal/Depression texts drawn from the same dataset. The analysis measures how reliably the model separates Normal vs Depression. 'weeks_remaining' is a framing device to express intervention lead-time, not a measured outcome. No students were tracked over real time.",
     "results": {
         "Week 2": {
             "accuracy": 0.91,
@@ -24,5 +25,5 @@
             "weeks_remaining": 4
         }
     },
-    "conclusion": "Model detects burnout at Week 2 with 91% accuracy - 14 weeks before academic decline!"
+    "conclusion": "In simulation, the model separates Normal vs Depression at ~89-91% at every time point. Stable early detection implies that the earlier distress language appears in student writing, the larger the intervention window (up to ~14 weeks). This is a capability demonstration, not validated longitudinal evidence."
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Header from '../src/components/Header'
 import StudentList from '../src/components/StudentList'
@@ -57,7 +57,7 @@ export default function Dashboard() {
 
       <div style={{
         display: 'flex', flexDirection: 'column', height: '100vh',
-        background: '#0f172a', color: '#f1f5f9',
+        background: '#f8fafc', color: '#0f172a',
         fontFamily: "'Inter','Segoe UI',system-ui,sans-serif",
         overflow: 'hidden',
       }}>
@@ -71,7 +71,7 @@ export default function Dashboard() {
             onAddNew={handleAddNew}
             onClearAll={handleClearAll}
           />
-          <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a' }}>
+          <div style={{ flex: 1, overflowY: 'auto', background: '#f8fafc' }}>
             <StudentDetail
               student={selectedStudent}
               addingNew={!selected}
