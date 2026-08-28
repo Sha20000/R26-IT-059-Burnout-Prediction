@@ -1,8 +1,8 @@
 const CLASS_COLORS = {
-  Normal:                '#22d3ee',
-  Anxiety:               '#fbbf24',
+  Normal:                '#0891b2',
+  Anxiety:               '#b45309',
   Stress:                '#f97316',
-  Depression:            '#f87171',
+  Depression:            '#dc2626',
   Bipolar:               '#a855f7',
   'Personality disorder': '#ec4899',
   Suicidal:              '#ff2020',
@@ -14,8 +14,8 @@ export default function ProbabilityBars({ probabilities }) {
 
   return (
     <div style={{
-      background: '#1e293b',
-      border: '1px solid #334155',
+      background: '#ffffff',
+      border: '1px solid #cbd5e1',
       borderRadius: 10,
       padding: '20px 24px',
     }}>
@@ -27,15 +27,15 @@ export default function ProbabilityBars({ probabilities }) {
         {sorted.map(([label, prob]) => (
           <div key={label}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-              <span style={{ fontSize: 12, color: '#94a3b8' }}>{label}</span>
-              <span style={{ fontSize: 12, fontWeight: 600, color: CLASS_COLORS[label] || '#94a3b8' }}>
+              <span style={{ fontSize: 12, color: '#475569' }}>{label}</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: CLASS_COLORS[label] || '#475569' }}>
                 {(prob * 100).toFixed(1)}%
               </span>
             </div>
-            <div style={{ background: '#0f172a', borderRadius: 999, height: 8, overflow: 'hidden' }}>
+            <div style={{ background: '#f1f5f9', borderRadius: 999, height: 8, overflow: 'hidden' }}>
               <div style={{
                 width: `${prob * 100}%`,
-                background: CLASS_COLORS[label] || '#94a3b8',
+                background: CLASS_COLORS[label] || '#cbd5e1',
                 height: '100%',
                 borderRadius: 999,
                 transition: 'width 0.7s cubic-bezier(0.4, 0, 0.2, 1)',

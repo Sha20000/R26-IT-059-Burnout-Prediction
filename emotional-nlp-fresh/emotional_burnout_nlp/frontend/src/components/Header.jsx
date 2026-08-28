@@ -11,8 +11,8 @@ export default function Header() {
 
   return (
     <header style={{
-      background: '#0f172a',
-      borderBottom: '1px solid #1e293b',
+      background: '#f1f5f9',
+      borderBottom: '1px solid #e2e8f0',
       padding: '0 24px',
       height: 56,
       display: 'flex',
@@ -33,7 +33,7 @@ export default function Header() {
           letterSpacing: 1,
         }}>R26-IT-059</span>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9', lineHeight: 1.2 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>
             Emotional Burnout Detection System
           </div>
           <div style={{ fontSize: 11, color: '#64748b' }}>
@@ -44,9 +44,9 @@ export default function Header() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          color: '#94a3b8',
+          background: '#ffffff',
+          border: '1px solid #cbd5e1',
+          color: '#475569',
           fontSize: 12,
           padding: '4px 12px',
           borderRadius: 6,
@@ -55,7 +55,7 @@ export default function Header() {
           alignItems: 'center',
           lineHeight: 1.3,
         }}>
-          <span style={{ fontWeight: 700, color: '#c4b5fd' }}>BERT+RoBERTa Ensemble</span>
+          <span style={{ fontWeight: 700, color: '#6d28d9' }}>BERT+RoBERTa Ensemble</span>
           <span style={{ fontSize: 10, color: '#64748b' }}>Accuracy: 82.32%</span>
         </span>
 
@@ -63,9 +63,9 @@ export default function Header() {
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          background: '#1e293b',
+          background: '#ffffff',
           border: `1px solid ${apiLive ? '#22c55e40' : '#ef444440'}`,
-          color: apiLive ? '#22c55e' : '#ef4444',
+          color: apiLive ? '#16a34a' : '#ef4444',
           fontSize: 12,
           padding: '4px 12px',
           borderRadius: 6,
@@ -73,8 +73,8 @@ export default function Header() {
           <span style={{
             width: 8, height: 8,
             borderRadius: '50%',
-            background: apiLive ? '#22c55e' : '#ef4444',
-            boxShadow: apiLive ? '0 0 6px #22c55e' : '0 0 6px #ef4444',
+            background: apiLive ? '#16a34a' : '#ef4444',
+            boxShadow: apiLive ? '0 0 6px #16a34a' : '0 0 6px #ef4444',
           }} />
           {apiLive ? 'API Live' : 'API Down'}
         </span>

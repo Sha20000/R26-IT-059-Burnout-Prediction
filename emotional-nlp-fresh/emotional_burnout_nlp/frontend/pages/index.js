@@ -57,7 +57,7 @@ export default function Dashboard() {
 
       <div style={{
         display: 'flex', flexDirection: 'column', height: '100vh',
-        background: '#0f172a', color: '#f1f5f9',
+        background: '#f1f5f9', color: '#0f172a',
         fontFamily: "'Inter','Segoe UI',system-ui,sans-serif",
         overflow: 'hidden',
       }}>
@@ -71,7 +71,7 @@ export default function Dashboard() {
             onAddNew={handleAddNew}
             onClearAll={handleClearAll}
           />
-          <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a' }}>
+          <div style={{ flex: 1, overflowY: 'auto', background: '#f1f5f9' }}>
             <StudentDetail
               student={selectedStudent}
               addingNew={!selected}

@@ -28,49 +28,49 @@ function Box({ label, color, bg, border, star, sub }) {
 function Arrow({ down, label }) {
   return down ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, margin: '4px 0' }}>
-      <div style={{ width: 2, height: 20, background: '#334155' }} />
-      <div style={{ width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '7px solid #334155' }} />
-      {label && <div style={{ fontSize: 9, color: '#475569', marginTop: 3 }}>{label}</div>}
+      <div style={{ width: 2, height: 20, background: '#cbd5e1' }} />
+      <div style={{ width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '7px solid #cbd5e1' }} />
+      {label && <div style={{ fontSize: 9, color: '#64748b', marginTop: 3 }}>{label}</div>}
     </div>
   ) : (
     <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0, padding: '0 4px' }}>
-      <div style={{ height: 2, width: 20, background: '#334155' }} />
-      <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '7px solid #334155' }} />
+      <div style={{ height: 2, width: 20, background: '#cbd5e1' }} />
+      <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '7px solid #cbd5e1' }} />
     </div>
   )
 }
 
 function SectionLabel({ children }) {
   return (
-    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: '#475569', textAlign: 'center', marginBottom: 6 }}>
+    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: '#64748b', textAlign: 'center', marginBottom: 6 }}>
       {children}
     </div>
   )
 }
 
 const THEME = {
-  input:      { color: '#93c5fd', bg: '#1e3a5f', border: '#3b82f640' },
-  baseline:   { color: '#94a3b8', bg: '#1e293b', border: '#33415580' },
-  pretrained: { color: '#fde047', bg: '#422006', border: '#ca8a0440' },
-  finetuned:  { color: '#86efac', bg: '#14532d', border: '#22c55e40' },
-  ensemble:   { color: '#e9d5ff', bg: '#3b0764', border: '#a855f7'   },
-  xai:        { color: '#fdba74', bg: '#431407', border: '#f9731640' },
-  output:     { color: '#fca5a5', bg: '#450a0a', border: '#ef444440' },
+  input:      { color: '#1d4ed8', bg: '#dbeafe', border: '#3b82f640' },
+  baseline:   { color: '#475569', bg: '#ffffff', border: '#cbd5e1' },
+  pretrained: { color: '#a16207', bg: '#fef9c3', border: '#ca8a0440' },
+  finetuned:  { color: '#15803d', bg: '#dcfce7', border: '#22c55e40' },
+  ensemble:   { color: '#7e22ce', bg: '#f3e8ff', border: '#a855f7'   },
+  xai:        { color: '#c2410c', bg: '#ffedd5', border: '#f9731640' },
+  output:     { color: '#b91c1c', bg: '#fee2e2', border: '#ef444440' },
 }
 
 export default function ArchitectureDiagram() {
   return (
     <div style={{
       padding: '32px 40px',
-      background: '#0f172a',
+      background: '#f1f5f9',
       minHeight: '100%',
       fontFamily: "'Inter','Segoe UI',system-ui,sans-serif",
     }}>
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <div style={{ fontSize: 20, fontWeight: 800, color: '#f1f5f9', marginBottom: 6 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', marginBottom: 6 }}>
           Emotional Burnout Detection System Architecture
         </div>
-        <div style={{ fontSize: 12, color: '#475569' }}>
+        <div style={{ fontSize: 12, color: '#64748b' }}>
           IT22196392 — Induwara K.P.Y. &nbsp;·&nbsp; R26-IT-059
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function ArchitectureDiagram() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {/* Baseline row */}
             <div style={{ display: 'flex', gap: 8 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>BASELINE ML</div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>BASELINE ML</div>
               <Box label="Logistic Regression" sub="Model 1 · 72.4%" {...THEME.baseline} />
               <Box label="Random Forest" sub="Model 2 · 62.0%" {...THEME.baseline} />
               <Box label="SVM" sub="Model 3 · 73.0%" {...THEME.baseline} />
@@ -105,14 +105,14 @@ export default function ArchitectureDiagram() {
 
             {/* Pretrained / Zero-shot row */}
             <div style={{ display: 'flex', gap: 8 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>ZERO-SHOT</div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>ZERO-SHOT</div>
               <Box label="VADER" sub="Model 5 · 34.3%" {...THEME.pretrained} />
               <Box label="RoBERTa Zero-Shot" sub="Model 6 · 38.8%" {...THEME.pretrained} />
             </div>
 
             {/* Fine-tuned row */}
             <div style={{ display: 'flex', gap: 8 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>FINE-TUNED</div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>FINE-TUNED</div>
               <Box label="BERT Fine-tuned" sub="Model 7 · 82.3%" {...THEME.finetuned} />
               <Box label="RoBERTa Fine-tuned" sub="Model 8 · 81.7%" {...THEME.finetuned} />
               <Box label="Mental-RoBERTa" sub="Model 9 · domain-adapted" {...THEME.finetuned} />
@@ -120,7 +120,7 @@ export default function ArchitectureDiagram() {
 
             {/* Ensemble row */}
             <div style={{ display: 'flex', gap: 8 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>ENSEMBLE</div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#64748b', writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)', letterSpacing: 1, alignSelf: 'center', marginRight: 2 }}>ENSEMBLE</div>
               <Box label="BERT + RoBERTa Ensemble" sub="Model 10 · 82.32% · Weighted Soft Voting" {...THEME.ensemble} star />
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function ArchitectureDiagram() {
       <div style={{
         display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center',
         marginTop: 36, padding: '14px 20px',
-        background: '#1e293b', border: '1px solid #334155', borderRadius: 10,
+        background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 10,
         maxWidth: 960, margin: '36px auto 0',
       }}>
         {[

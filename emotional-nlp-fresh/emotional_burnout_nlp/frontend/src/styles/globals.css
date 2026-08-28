@@ -1,15 +1,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #0f172a;
-  color: #e2e8f0;
+  background: #f1f5f9;
+  color: #0f172a;
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   min-height: 100vh;
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #1e293b; }
-::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #e2e8f0; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
 @keyframes pulse-critical {
   0%, 100% { box-shadow: 0 0 12px #ff000080, 0 0 24px #ff000040; }
