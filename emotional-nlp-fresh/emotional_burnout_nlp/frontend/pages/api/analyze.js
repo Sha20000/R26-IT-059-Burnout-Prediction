@@ -1,7 +1,14 @@
-import { spawn } from 'child_process'
-import path from 'path'
+// Proxies to the warm inference service (serve_model.py, port 5004), which
+// keeps BERT loaded in memory. Previously this spawned a fresh Python process
+// per request, which reloaded 418 MB of weights every time (~20-30s per call,
+// and it ran the machine out of memory under any real load).
+//
+// Start the service first:
+//   cd emotional_burnout_nlp && .venv/Scripts/python serve_model.py
 
-export default function handler(req, res) {
+const MODEL_API = process.env.MODEL_API_URL || 'http://localhost:5004'
+
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
@@ -19,32 +26,20 @@ export default function handler(req, res) {
     return res.status(400).json({ error: 'Please enter at least a few words.' })
   }
 
-  const scriptPath = path.join(process.cwd(), '..', 'predict.py')
-  const pythonPath = process.platform === 'win32'
-    ? 'C:\\Users\\ASUS\\anaconda3\\python.exe'
-    : 'python'
+  try {
+    const upstream = await fetch(`${MODEL_API}/api/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text.trim() }),
+    })
 
-  const py = spawn(pythonPath, [scriptPath, text.trim()], {
-    cwd: path.join(process.cwd(), '..'),
-  })
-
-  let stdout = ''
-  let stderr = ''
-
-  py.stdout.on('data', (data) => { stdout += data.toString() })
-  py.stderr.on('data', (data) => { stderr += data.toString() })
-
-  py.on('close', (code) => {
-    if (code !== 0) {
-      console.error('predict.py stderr:', stderr)
-      return res.status(500).json({ error: 'Model inference failed.', detail: stderr.slice(-2000) })
-    }
-    try {
-      const result = JSON.parse(stdout.trim())
-      if (result.error) return res.status(400).json(result)
-      return res.status(200).json(result)
-    } catch {
-      return res.status(500).json({ error: 'Failed to parse model output.' })
-    }
-  })
+    const data = await upstream.json()
+    return res.status(upstream.status).json(data)
+  } catch (e) {
+    console.error('Model service unreachable:', e.message)
+    return res.status(503).json({
+      error: `Model service not running (${MODEL_API}).`,
+      detail: 'Start it with: .venv/Scripts/python serve_model.py',
+    })
+  }
 }

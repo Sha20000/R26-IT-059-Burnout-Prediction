@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Burnout & Dropout Risk Detection — R26-IT-059 | API-Enabled</title>
+  <!-- Emotional Analysis tab (IT22196392) — scoped .emo-* styles -->
+  <link rel="stylesheet" href="emotion-tab.css" />
   <style>
     * {
       margin: 0;
@@ -596,36 +598,36 @@
       </div>
     </div>
 
-    <!-- Emotional Analysis Tab -->
+    <!-- Emotional Analysis Tab — IT22196392 (Induwara K.P.Y.) -->
+    <!-- Rendering lives in emotion-tab.js / emotion-app.js; talks to serve_model.py on :5004 -->
     <div id="emotion" class="tab-content">
-      <div class="controls">
-        <div class="control-group">
-          <label>Analyze Student Text</label>
-          <input type="text" id="emotionText" placeholder="Enter student feedback or text..." style="width: 300px;" />
-          <button onclick="analyzeEmotion()" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 6px;">Analyze</button>
-        </div>
-      </div>
-
       <div id="emotionError"></div>
-      <div id="emotionResult"></div>
 
-      <div class="table-wrapper">
-        <table id="emotionTable">
-          <thead>
-            <tr>
-              <th>Emotion Class</th>
-              <th>Stress Score</th>
-              <th>Confidence</th>
-              <th>Risk Level</th>
-              <th>Top Words</th>
-            </tr>
-          </thead>
-          <tbody id="emotionBody">
-            <tr>
-              <td colspan="5" class="loading">Enter text above to analyze emotional state...</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="emo-layout">
+        <!-- Student list sidebar -->
+        <aside id="emotionSidebar" class="emo-sidebar"></aside>
+
+        <!-- Detail pane -->
+        <main class="emo-main">
+          <div id="emotionHeader"></div>
+          <div id="emotionTabs"></div>
+
+          <!-- Quick Analysis input (static so typing never loses focus) -->
+          <div id="emotionQuick" class="emo-quick">
+            <label for="emotionText" class="emo-quick-label">
+              Analyze Student Text
+              <span id="emoApiStatus" class="emo-status">● checking…</span>
+            </label>
+            <div class="emo-quick-row">
+              <input type="text" id="emotionText" class="emo-input"
+                     placeholder="e.g. I feel so exhausted and hopeless about my studies..." />
+              <button id="emotionAnalyzeBtn" class="emo-btn emo-btn-solid">Analyze</button>
+            </div>
+          </div>
+
+          <div id="emotionBody"></div>
+          <div id="emotionResult"></div>
+        </main>
       </div>
     </div>
 
@@ -1180,63 +1182,10 @@
       tbody.innerHTML = rows.join('');
     }
 
-    // ========== NEW: Emotional Analysis Tab ==========
-    async function analyzeEmotion() {
-      const text = document.getElementById('emotionText').value.trim();
-      if (!text) {
-        alert('Please enter some text to analyze');
-        return;
-      }
-
-      try {
-        // Try calling emotional-nlp predict endpoint (if it exists)
-        const res = await fetch('http://localhost:3000/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: text })
-        });
-
-        if (!res.ok) throw new Error(`API Error: ${res.status}`);
-        const data = await res.json();
-        displayEmotionResult(data);
-      } catch (e) {
-        document.getElementById('emotionError').innerHTML =
-          `<div class="error">⚠️ Emotional-NLP API not available (localhost:3000)<br/>${e.message}</div>`;
-      }
-    }
-
-    function displayEmotionResult(data) {
-      const tbody = document.getElementById('emotionBody');
-      tbody.innerHTML = '';
-
-      const stressScore = parseFloat(data.stress_score || 0);
-      const confidence = parseFloat(data.confidence || 0);
-      const riskMap = {
-        'Normal': 'Low', 'Stress': 'Medium', 'Anxiety': 'Medium',
-        'Depression': 'High', 'Bipolar': 'High', 'Personality disorder': 'High', 'Suicidal': 'Critical'
-      };
-      const riskLevel = riskMap[data.prediction] || 'Unknown';
-      const topWords = data.attention ? data.attention.slice(0, 3).map(a => a.token).join(', ') : '—';
-
-      const row = `
-        <tr>
-          <td><strong>${data.prediction || '—'}</strong></td>
-          <td class="risk-score">${stressScore.toFixed(1)}</td>
-          <td>${(confidence * 100).toFixed(1)}%</td>
-          <td><span class="badge badge-${riskLevel.toLowerCase()}">${riskLevel}</span></td>
-          <td class="feature">${topWords}</td>
-        </tr>
-      `;
-      tbody.innerHTML = row;
-
-      document.getElementById('emotionResult').innerHTML = `
-        <div style="background: #f9f9f9; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-          <p><strong>Prediction:</strong> ${data.prediction}</p>
-          <p><strong>Stress Score:</strong> ${stressScore.toFixed(1)} / 100</p>
-          <p><strong>Risk Level:</strong> ${riskLevel}</p>
-        </div>
-      `;
-    }
+    // ========== Emotional Analysis Tab — IT22196392 ==========
+    // Ported to emotion-tab.js + emotion-app.js (attention heatmap, probability
+    // bars, advisor, weekly progression, lead-time analysis). Loaded at the end
+    // of this file; window.analyzeEmotion is defined there.
 
     // ========== NEW: Academic Risk Tab ==========
     async function loadAcademicRisk() {
@@ -1501,5 +1450,12 @@
     // Refresh API status every 5 seconds
     setInterval(checkAPIStatus, 5000);
   </script>
+
+  <!-- Emotional Analysis tab — IT22196392 (Induwara K.P.Y.)
+       emotion-tab.js: rendering primitives (heatmap, probability bars, risk chart)
+       emotion-app.js: state, student persistence, sub-tabs, progression form -->
+  <script src="emotion-demo-data.js"></script>
+  <script src="emotion-tab.js"></script>
+  <script src="emotion-app.js"></script>
 </body>
 </html>

@@ -1,0 +1,441 @@
+/* ============================================================================
+ * Emotional Analysis tab styles — R26-IT-059 / IT22196392
+ * Scoped to .emo-* so it cannot affect the other members' tabs.
+ * ========================================================================== */
+
+.emo-stack { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+
+/* ─── Cards ───────────────────────────────────────────────────────────────── */
+
+.emo-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.emo-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.emo-card-sub {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+/* ─── Metric cards ────────────────────────────────────────────────────────── */
+
+.emo-metrics { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.emo-metric {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 14px 20px;
+  flex: 1;
+  min-width: 130px;
+}
+
+.emo-metric-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  color: #64748b; margin-bottom: 6px;
+}
+.emo-metric-value { font-size: 24px; font-weight: 800; color: #0f172a; }
+.emo-metric-sub   { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+/* ─── Small tiles (timeline / summary) ────────────────────────────────────── */
+
+.emo-tiles { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.emo-tile {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  flex: 1;
+  min-width: 100px;
+}
+.emo-tile-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  color: #64748b; margin-bottom: 4px;
+}
+.emo-tile-value { font-size: 13px; font-weight: 700; color: #0f172a; }
+
+/* ─── Attention heatmap ───────────────────────────────────────────────────── */
+
+.emo-tokens {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  line-height: 2; margin: 12px 0 14px;
+}
+
+.emo-token {
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  cursor: default;
+  user-select: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.emo-token:hover { transform: scale(1.12); }
+
+.emo-scale { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.emo-scale-end { font-size: 10px; color: #64748b; }
+.emo-scale-bar {
+  height: 8px; width: 200px; border-radius: 4px; border: 1px solid #cbd5e1;
+  background: linear-gradient(to right, #cbd5e1, #3b82f6, #eab308, #f97316, #ef4444);
+}
+.emo-scale-hint { font-size: 10px; color: #94a3b8; margin-left: 4px; }
+
+.emo-bands { margin-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+.emo-band { display: flex; align-items: center; gap: 5px; font-size: 10px; }
+.emo-band-swatch { width: 10px; height: 10px; border-radius: 2px; }
+
+/* ─── Probability bars ────────────────────────────────────────────────────── */
+
+.emo-probs { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.emo-prob-head {
+  display: flex; justify-content: space-between;
+  margin-bottom: 5px; font-size: 12px; color: #475569;
+}
+.emo-prob-track {
+  background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden;
+}
+.emo-prob-fill {
+  height: 100%; border-radius: 999px;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Advisor + critical alert ────────────────────────────────────────────── */
+
+.emo-advisor { border-radius: 10px; padding: 16px 20px; }
+
+.emo-critical {
+  background: #fef2f2;
+  border: 1px solid #ff000040;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* ─── Quote block ─────────────────────────────────────────────────────────── */
+
+.emo-quote {
+  background: #f1f5f9; border: 1px solid #cbd5e1;
+  border-radius: 8px; padding: 12px 14px;
+}
+.emo-quote-body {
+  font-size: 13px; color: #475569; line-height: 1.7; font-style: italic;
+}
+
+/* ─── Pills / badges ──────────────────────────────────────────────────────── */
+
+.emo-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  border-radius: 4px; padding: 2px 8px; white-space: nowrap;
+}
+
+.emo-latest {
+  font-size: 9px; color: #4f46e5; background: #6366f115;
+  border: 1px solid #6366f130; border-radius: 4px;
+  padding: 1px 5px; letter-spacing: 0.5px; margin-left: 6px;
+}
+
+/* ─── Timeline ────────────────────────────────────────────────────────────── */
+
+.emo-timeline { display: flex; flex-direction: column; gap: 10px; }
+.emo-tl-row { display: flex; }
+.emo-tl-rail {
+  display: flex; flex-direction: column; align-items: center;
+  width: 36px; flex-shrink: 0;
+}
+.emo-tl-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  margin-top: 16px; flex-shrink: 0;
+}
+.emo-tl-line { width: 2px; flex: 1; background: #e2e8f0; min-height: 16px; }
+.emo-tl-body {
+  flex: 1; background: #ffffff; border: 1px solid #e2e8f0;
+  border-radius: 10px; padding: 12px 14px; margin-left: 10px;
+}
+.emo-tl-head {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 8px;
+}
+.emo-tl-week {
+  font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 1px;
+}
+.emo-tl-nodata { font-size: 10px; color: #94a3b8; }
+
+/* ─── Collapsible week cards ──────────────────────────────────────────────── */
+
+.emo-week-card {
+  background: #ffffff; border: 1px solid #cbd5e1;
+  border-radius: 10px; overflow: hidden;
+}
+.emo-week-card-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; cursor: pointer; user-select: none;
+}
+.emo-week-card-head:hover { background: #f8fafc; }
+.emo-week-preview {
+  flex: 1; font-size: 12px; color: #64748b; font-style: italic;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.emo-chevron {
+  font-size: 12px; color: #64748b; flex-shrink: 0; transition: transform 0.2s;
+}
+.emo-week-card-body {
+  border-top: 1px solid #e2e8f0; padding: 16px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* ─── Two-pane layout: sidebar + detail ───────────────────────────────────── */
+
+.emo-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.emo-main { flex: 1; min-width: 0; }
+
+/* ─── Sidebar (StudentList) ───────────────────────────────────────────────── */
+
+.emo-sidebar {
+  width: 268px; min-width: 268px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  max-height: 74vh;
+  position: sticky;
+  top: 12px;
+}
+
+.emo-sidebar-top { padding: 12px 12px 8px; }
+
+.emo-add-btn {
+  width: 100%;
+  background: #dbeafe; border: 1px solid #3b82f640;
+  color: #1d4ed8; font-size: 12px; font-weight: 700;
+  padding: 8px 12px; border-radius: 7px; cursor: pointer;
+  margin-bottom: 8px; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.emo-add-btn:hover { background: #bfdbfe; }
+
+.emo-select {
+  width: 100%;
+  background: #ffffff; border: 1px solid #cbd5e1; color: #475569;
+  font-size: 12px; padding: 6px 10px; border-radius: 6px;
+  cursor: pointer; outline: none; font-family: inherit;
+}
+
+.emo-sidebar-list { flex: 1; overflow-y: auto; padding: 4px 8px; }
+
+.emo-student-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 2px;
+  cursor: pointer; border: 1px solid transparent;
+  transition: background 0.15s;
+}
+.emo-student-row:hover { background: #e2e8f0; }
+.emo-student-row.active { background: #ffffff; border-color: #cbd5e1; }
+
+.emo-student-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.emo-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #ffffff; border: 1px solid #cbd5e1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #64748b; flex-shrink: 0;
+}
+.emo-student-name {
+  font-size: 13px; font-weight: 600; color: #1e293b;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.emo-student-pred { font-size: 11px; margin-top: 1px; font-weight: 600; }
+.emo-student-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.emo-sidebar-empty {
+  padding: 24px 12px; text-align: center;
+  font-size: 12px; color: #64748b; line-height: 1.6;
+}
+
+.emo-sidebar-foot {
+  padding: 10px 12px; border-top: 1px solid #e2e8f0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.emo-counts { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.emo-clear-btn {
+  background: none; border: 1px solid #ef444430; color: #dc2626;
+  font-size: 11px; font-weight: 600; padding: 5px 10px;
+  border-radius: 6px; cursor: pointer; width: 100%; font-family: inherit;
+}
+.emo-clear-btn:hover { background: #fef2f2; }
+
+.emo-restore-btn {
+  background: none; border: 1px solid #667eea40; color: #4338ca;
+  font-size: 11px; font-weight: 600; padding: 5px 10px;
+  border-radius: 6px; cursor: pointer; width: 100%; font-family: inherit;
+}
+.emo-restore-btn:hover { background: #eef2ff; }
+
+/* ─── Detail header + risk badge ──────────────────────────────────────────── */
+
+.emo-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+}
+.emo-head-name { font-size: 24px; font-weight: 800; color: #0f172a; }
+.emo-head-id   { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+.emo-riskbadge {
+  border-radius: 12px; padding: 18px 26px;
+  text-align: center; min-width: 168px;
+}
+.emo-riskbadge.critical { animation: emo-pulse 1.5s ease-in-out infinite; }
+.emo-riskbadge-label { font-size: 21px; font-weight: 800; letter-spacing: 1px; }
+.emo-riskbadge-note  { font-size: 11px; color: #dc2626; margin-top: 8px; line-height: 1.4; }
+
+@keyframes emo-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.68; }
+}
+
+/* ─── Quick-analysis input row ────────────────────────────────────────────── */
+
+.emo-quick { margin: 14px 0 4px; }
+.emo-quick-label {
+  display: block; font-size: 12px; font-weight: 600; color: #666;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+}
+.emo-quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.emo-quick-row .emo-input { flex: 1; min-width: 240px; }
+
+.emo-btn-solid {
+  background: #667eea; color: #ffffff; border-color: #667eea;
+  white-space: nowrap;
+}
+.emo-btn-solid:hover { background: #5a6fd8; }
+
+/* ─── Sub-tabs ────────────────────────────────────────────────────────────── */
+
+.emo-subtabs { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; }
+.emo-subtab {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  color: #64748b; font-size: 13px; padding: 8px 16px;
+  cursor: pointer; margin-bottom: -1px; font-family: inherit;
+}
+.emo-subtab:hover:not(:disabled) { color: #0f172a; }
+.emo-subtab.active { border-bottom-color: #667eea; color: #0f172a; font-weight: 700; }
+.emo-subtab:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ─── Form controls ───────────────────────────────────────────────────────── */
+
+.emo-input, .emo-textarea {
+  width: 100%; box-sizing: border-box;
+  background: #ffffff; border: 1px solid #cbd5e1;
+  color: #0f172a; font-size: 13px; padding: 10px 12px;
+  border-radius: 8px; outline: none; font-family: inherit;
+}
+.emo-input:focus, .emo-textarea:focus { border-color: #667eea; }
+.emo-textarea { resize: vertical; margin-bottom: 8px; line-height: 1.5; }
+
+.emo-week-block {
+  background: #f8fafc; border: 1px solid #cbd5e1;
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+}
+.emo-week-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.emo-btn {
+  border-radius: 8px; padding: 10px 20px; font-size: 13px;
+  font-weight: 700; cursor: pointer; font-family: inherit;
+  border: 1px solid transparent;
+}
+.emo-btn-primary { background: #eef2ff; border-color: #667eea; color: #4338ca; }
+.emo-btn-primary:hover { background: #e0e7ff; }
+.emo-btn-green { background: #dcfce7; border-color: #22c55e50; color: #15803d; }
+.emo-btn-green:hover { background: #bbf7d0; }
+
+.emo-mini-btn {
+  background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b;
+  font-size: 12px; font-weight: 700; border-radius: 6px;
+  padding: 3px 9px; cursor: pointer; font-family: inherit; line-height: 1.4;
+}
+.emo-mini-btn:hover { border-color: #667eea; color: #4338ca; }
+
+.emo-progress { font-size: 12px; color: #4338ca; margin-top: 10px; min-height: 16px; }
+
+/* ─── Export row ──────────────────────────────────────────────────────────── */
+
+.emo-export {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+
+/* ─── Model performance ───────────────────────────────────────────────────── */
+
+.emo-perf-head {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+}
+.emo-perf-author {
+  font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 1px;
+}
+.emo-perf-model {
+  font-size: 12px; font-weight: 600; color: #4f46e5; margin-bottom: 12px;
+}
+
+/* ─── Empty + loading states ──────────────────────────────────────────────── */
+
+.emo-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 10px; padding: 48px 24px; text-align: center;
+}
+.emo-empty-icon  { font-size: 40px; }
+.emo-empty-title { font-size: 17px; font-weight: 700; color: #0f172a; }
+.emo-empty-sub   {
+  font-size: 13px; color: #64748b; max-width: 420px; line-height: 1.7;
+}
+
+.emo-spinner-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; padding: 40px; font-size: 13px; color: #64748b;
+}
+.emo-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid #e2e8f0; border-top-color: #667eea;
+  border-radius: 50%; animation: emo-spin 0.8s linear infinite;
+}
+@keyframes emo-spin { to { transform: rotate(360deg); } }
+
+/* ─── API status ──────────────────────────────────────────────────────────── */
+
+.emo-status { font-size: 11px; font-weight: 600; margin-left: 10px; }
+.emo-status-live { color: #16a34a; }
+.emo-status-down { color: #dc2626; }
+
+@media (max-width: 1100px) {
+  .emo-layout { flex-direction: column; }
+  .emo-sidebar {
+    width: 100%; min-width: 0; max-height: 300px; position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .emo-week-preview { display: none; }
+  .emo-metrics, .emo-tiles { flex-direction: column; }
+  .emo-head-name { font-size: 20px; }
+}
