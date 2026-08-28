@@ -1,0 +1,16 @@
+# Data files - too large for GitHub
+**/data/raw/
+*.csv
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Models
+*.pt
+*.pkl

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BurnoutGuard Meta-Integration — R26-IT-059</title>
+  <style>
+    :root {
+      --red:    #C00000;
+      --amber:  #B86B00;
+      --green:  #2E7D32;
+      --navy:   #0D1B2A;
+      --blue:   #1565C0;
+      --white:  #FFFFFF;
+      --gray:   #444444;
+      --light:  #F0F2F5;
+      --border: #E0E0E0;
+      --muted:  #888888;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--light);
+      color: var(--gray);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      padding: 16px 32px;
+      border-bottom: 3px solid var(--red);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .badge {
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    .header h1 {
+      font-size: 18px;
+      color: #fff;
+      font-weight: 400;
+      font-family: Georgia, serif;
+    }
+    .header p { font-size: 11px; color: #9BA8B7; margin-top: 2px; }
+    .header-right { display: flex; gap: 8px; align-items: center; }
+    .pill {
+      font-size: 11px;
+      padding: 3px 11px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      color: #CBD5E0;
+    }
+    .pill.red {
+      background: rgba(192,0,0,0.2);
+      border-color: rgba(192,0,0,0.4);
+      color: #FCA5A5;
+    }
+    .api-dot {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #9BA8B7;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px 24px 0;
+      gap: 18px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 290px;
+      flex-shrink: 0;
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 140px);
+      overflow: hidden;
+    }
+    .sidebar-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: #F8F8F8;
+    }
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .sidebar-head select {
+      width: 100%;
+      padding: 5px 9px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      background: var(--white);
+    }
+    .student-list { overflow-y: auto; flex: 1; }
+    .loading {
+      padding: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .srow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 14px;
+      border-bottom: 1px solid #F0F0F0;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .srow:hover { background: #F5F8FF; }
+    .srow.selected {
+      background: #EBF0FF;
+      border-left: 3px solid var(--blue);
+    }
+    .srow-left { display: flex; flex-direction: column; gap: 2px; }
+    .srow-id  { font-size: 12px; font-weight: 600; }
+    .srow-sub { font-size: 10px; color: var(--muted); }
+    .badge-pill {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 9px;
+      text-transform: uppercase;
+    }
+    .HIGH   { background:#FCEBEB; color:var(--red);   border:1px solid #FECACA; }
+    .MEDIUM { background:#FFF3E0; color:var(--amber); border:1px solid #FDE68A; }
+    .LOW    { background:#E8F5E9; color:var(--green); border:1px solid #A7F3D0; }
+
+    /* ── DETAIL ── */
+    .detail {
+      flex: 1;
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(100vh - 140px);
+    }
+    .placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      gap: 10px;
+      font-size: 13px;
+    }
+    .placeholder-icon { font-size: 28px; opacity: 0.3; }
+    .hidden { display: none !important; }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .det-id   { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+    .det-head { font-family: Georgia, serif; font-size: 20px; }
+    .alert-big {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── SCORE CARDS ── */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .score-card {
+      background: #F8F8F8;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .score-card.final {
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+    .sc-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .score-card.final .sc-label { color: #9BA8B7; }
+    .sc-value {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .score-card.final .sc-value { color: var(--white); }
+    .sc-bar-wrap {
+      background: #E0E0E0;
+      border-radius: 3px;
+      height: 4px;
+      overflow: hidden;
+    }
+    .sc-bar { height: 100%; border-radius: 3px; transition: width 0.4s; }
+    .sc-source {
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .score-card.final .sc-source { color: #9BA8B7; }
+
+    /* ── COMPONENT SECTION ── */
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .comp-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .comp-label {
+      font-size: 11px;
+      width: 200px;
+      flex-shrink: 0;
+    }
+    .comp-track {
+      flex: 1;
+      background: #EEE;
+      border-radius: 3px;
+      height: 7px;
+      overflow: hidden;
+    }
+    .comp-fill { height: 100%; border-radius: 3px; }
+    .gru-fill  { background: var(--red); }
+    .vae-fill  { background: var(--blue); }
+    .comp-pct {
+      font-size: 11px;
+      color: var(--muted);
+      width: 38px;
+      text-align: right;
+    }
+
+    /* ── HORIZON SECTION ── */
+    .horizon-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .hz-card {
+      background: #F8F8F8;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+    }
+    .hz-label { font-size: 9px; color: var(--muted); font-weight: 600;
+                text-transform: uppercase; margin-bottom: 4px; }
+    .hz-val   { font-size: 18px; font-weight: 700; }
+
+    /* ── TRUTH + ADVISOR ── */
+    .truth-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+    .truth-val {
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .atrisk { background: #FCEBEB; color: var(--red); }
+    .safe   { background: #E8F5E9; color: var(--green); }
+    .advisor {
+      border-radius: 8px;
+      padding: 14px 18px;
+      border-left: 4px solid var(--blue);
+      background: #E3F2FD;
+    }
+    .adv-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .adv-text { font-size: 12px; line-height: 1.6; color: #1A3A5C; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--navy);
+      padding: 12px 32px;
+      margin-top: 20px;
+    }
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .fstat { display: flex; align-items: baseline; gap: 5px; }
+    .fnum  { font-size: 16px; font-weight: 700; color: #fff; }
+    .flbl  { font-size: 10px; color: #9BA8B7; }
+    .fstat.high   .fnum { color: #FCA5A5; }
+    .fstat.medium .fnum { color: #FDE68A; }
+    .fstat.low    .fnum { color: #6EE7B7; }
+    .fdiv  { width:1px; height:24px; background:rgba(255,255,255,0.12); }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background:#CCC; border-radius:4px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <span class="badge">R26-IT-059</span>
+      <div>
+        <h1>BurnoutGuard — Meta-Integration Dashboard</h1>
+        <p>GRU Academic Risk (IT22916426) + VAE Behavioural Anomaly (IT22215710)</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="pill">Meta-Integration FNN</span>
+      <span class="pill red" id="headerStats">Loading...</span>
+      <span class="api-dot" id="apiStatus">⏳ Connecting...</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-title">Student Risk Profiles</span>
+      <select id="filterAlert" onchange="filterStudents()">
+        <option value="ALL">All levels</option>
+        <option value="HIGH">HIGH only</option>
+        <option value="MEDIUM">MEDIUM only</option>
+        <option value="LOW">LOW only</option>
+      </select>
+    </div>
+    <div class="loading" id="loadingMsg">Connecting to API...</div>
+    <div class="student-list" id="studentList"></div>
+  </aside>
+
+  <!-- DETAIL -->
+  <section class="detail">
+    <div class="placeholder" id="placeholder">
+      <div class="placeholder-icon">⬅</div>
+      <p>Select a student to view their integrated risk profile</p>
+    </div>
+
+    <div class="hidden" id="detailContent">
+
+      <div class="detail-header">
+        <div>
+          <div class="det-id" id="dId"></div>
+          <div class="det-head" id="dHead"></div>
+        </div>
+        <div class="alert-big" id="dBadge"></div>
+      </div>
+
+      <!-- 3 score cards -->
+      <div class="score-grid" style="margin-bottom:20px">
+        <div class="score-card final">
+          <div class="sc-label">Final Burnout Risk</div>
+          <div class="sc-value" id="dFinal"></div>
+          <div class="sc-bar-wrap">
+            <div class="sc-bar" id="bFinal"
+                 style="background:#FCA5A5"></div>
+          </div>
+          <div class="sc-source">Meta-Integration FNN</div>
+        </div>
+        <div class="score-card">
+          <div class="sc-label">Academic Risk (GRU)</div>
+          <div class="sc-value" id="dAcad"
+               style="color:var(--red)"></div>
+          <div class="sc-bar-wrap">
+            <div class="sc-bar gru-fill" id="bAcad"></div>
+          </div>
+          <div class="sc-source">IT22916426 — Week 17</div>
+        </div>
+        <div class="score-card">
+          <div class="sc-label">Behavioural Risk (VAE)</div>
+          <div class="sc-value" id="dBehav"
+               style="color:var(--blue)"></div>
+          <div class="sc-bar-wrap">
+            <div class="sc-bar vae-fill" id="bBehav"></div>
+          </div>
+          <div class="sc-source">IT22215710 — Avg anomaly</div>
+        </div>
+      </div>
+
+      <!-- GRU horizon breakdown -->
+      <div class="section-title"
+           style="margin-bottom:10px">
+        GRU — Prediction Horizons
+      </div>
+      <div class="horizon-row" style="margin-bottom:20px">
+        <div class="hz-card">
+          <div class="hz-label">Week 4</div>
+          <div class="hz-val" id="hW4"></div>
+        </div>
+        <div class="hz-card">
+          <div class="hz-label">Week 8</div>
+          <div class="hz-val" id="hW8"></div>
+        </div>
+        <div class="hz-card">
+          <div class="hz-label">Week 12</div>
+          <div class="hz-val" id="hW12"></div>
+        </div>
+        <div class="hz-card"
+             style="border-color:#93C5FD;background:#E3F2FD">
+          <div class="hz-label"
+               style="color:var(--blue)">Week 17 ★</div>
+          <div class="hz-val" id="hW17"
+               style="color:var(--blue)"></div>
+        </div>
+      </div>
+
+      <!-- Component signals -->
+      <div class="section-title">Component Signal Breakdown</div>
+      <div style="margin-bottom:20px">
+        <div class="comp-row">
+          <span class="comp-label">
+            [GRU] Academic Risk (W17)
+          </span>
+          <div class="comp-track">
+            <div class="comp-fill gru-fill"
+                 id="cAcad"></div>
+          </div>
+          <span class="comp-pct" id="pAcad"></span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-label">
+            [GRU] Early Risk (W4)
+          </span>
+          <div class="comp-track">
+            <div class="comp-fill gru-fill"
+                 id="cW4"></div>
+          </div>
+          <span class="comp-pct" id="pW4"></span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-label">
+            [VAE] Avg Behaviour Risk
+          </span>
+          <div class="comp-track">
+            <div class="comp-fill vae-fill"
+                 id="cBehav"></div>
+          </div>
+          <span class="comp-pct" id="pBehav"></span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-label">
+            [VAE] Curriculum Compliance
+          </span>
+          <div class="comp-track">
+            <div class="comp-fill vae-fill"
+                 id="cComp"></div>
+          </div>
+          <span class="comp-pct" id="pComp"></span>
+        </div>
+      </div>
+
+      <!-- Ground truth -->
+      <div class="truth-row">
+        <span style="color:var(--muted);font-size:12px">
+          Ground truth (actual label):
+        </span>
+        <span class="truth-val" id="dActual"></span>
+      </div>
+
+      <!-- Advisor box -->
+      <div class="advisor" id="advisorBox">
+        <div class="adv-title">Advisor Recommendation</div>
+        <div class="adv-text" id="advisorText"></div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="fstat">
+      <span class="fnum" id="fTotal">—</span>
+      <span class="flbl">students</span>
+    </div>
+    <div class="fstat high">
+      <span class="fnum" id="fHigh">—</span>
+      <span class="flbl">HIGH risk</span>
+    </div>
+    <div class="fstat medium">
+      <span class="fnum" id="fMed">—</span>
+      <span class="flbl">MEDIUM risk</span>
+    </div>
+    <div class="fstat low">
+      <span class="fnum" id="fLow">—</span>
+      <span class="flbl">LOW risk</span>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fstat">
+      <span class="fnum" id="fF1">—</span>
+      <span class="flbl">Meta F1</span>
+    </div>
+    <div class="fstat">
+      <span class="fnum" id="fAuc">—</span>
+      <span class="flbl">AUC-ROC</span>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fstat">
+      <span class="fnum" id="fGRU">—</span>
+      <span class="flbl">GRU contribution</span>
+    </div>
+    <div class="fstat">
+      <span class="fnum" id="fVAE">—</span>
+      <span class="flbl">VAE contribution</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const API = 'http://localhost:5002';
+const TIMEOUT = 3000;
+
+let allStudents = [];
+let selectedId  = null;
+
+// ── Fetch with timeout ────────────────────────────────────
+async function apiFetch(url) {
+  const ctrl  = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT);
+  try {
+    const res = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(timer);
+    return res;
+  } catch(e) {
+    clearTimeout(timer);
+    throw e;
+  }
+}
+
+// ── Risk colour ───────────────────────────────────────────
+function riskColor(v) {
+  return v >= 0.7 ? '#C00000'
+       : v >= 0.4 ? '#B86B00'
+       : '#2E7D32';
+}
+
+// ── Advisor text ──────────────────────────────────────────
+function advisorText(s) {
+  const pct = (s.final_burnout_risk * 100).toFixed(0);
+  if (s.final_alert === 'HIGH')
+    return `This student has a ${pct}% integrated burnout risk. `
+      + `Both academic trajectory (GRU: ${(s.academic_risk*100).toFixed(1)}%) `
+      + `and behavioural anomaly (VAE: ${(s.behavior_risk_mean*100).toFixed(1)}%) `
+      + `signals are elevated. Schedule an immediate welfare meeting.`;
+  if (s.final_alert === 'MEDIUM')
+    return `Integrated risk is ${pct}% — monitor closely. `
+      + `Academic risk (${(s.academic_risk*100).toFixed(1)}%) and `
+      + `behavioural signals suggest emerging difficulties. `
+      + `Consider a proactive check-in within 2 weeks.`;
+  return `Integrated risk is LOW (${pct}%). `
+    + `Both academic and behavioural signals are within `
+    + `expected range. Continue routine monitoring.`;
+}
+
+// ── Set API status ────────────────────────────────────────
+function setStatus(state) {
+  const el = document.getElementById('apiStatus');
+  if (state === 'live') {
+    el.textContent = '🟢 API Live';
+    el.style.color = '#6EE7B7';
+  } else {
+    el.textContent = '🔴 API Offline';
+    el.style.color = '#FCA5A5';
+  }
+}
+
+// ── Load students ─────────────────────────────────────────
+async function loadStudents() {
+  try {
+    const res  = await apiFetch(`${API}/students`);
+    const data = await res.json();
+    allStudents = data.students || [];
+    setStatus('live');
+    document.getElementById('loadingMsg')
+      .style.display = 'none';
+    buildList(allStudents);
+    loadSummary();
+    const first = allStudents.find(
+      s => s.final_alert === 'HIGH');
+    if (first) selectStudent(first);
+  } catch(e) {
+    setStatus('offline');
+    document.getElementById('loadingMsg')
+      .textContent = 'API offline. Run: python meta_api.py';
+  }
+}
+
+// ── Load summary ──────────────────────────────────────────
+async function loadSummary() {
+  try {
+    const res  = await apiFetch(`${API}/summary`);
+    const data = await res.json();
+    document.getElementById('fTotal').textContent =
+      data.total_students;
+    document.getElementById('fHigh').textContent =
+      data.high_risk;
+    document.getElementById('fMed').textContent =
+      data.medium_risk;
+    document.getElementById('fLow').textContent =
+      data.low_risk;
+    document.getElementById('fF1').textContent =
+      data.model_f1?.toFixed(4) || '—';
+    document.getElementById('fAuc').textContent =
+      data.model_auc?.toFixed(4) || '—';
+    document.getElementById('headerStats').textContent =
+      `Meta F1=${data.model_f1?.toFixed(4)} · AUC=${data.model_auc?.toFixed(4)}`;
+
+    const cc = data.component_contribution || {};
+    document.getElementById('fGRU').textContent =
+      (cc.GRU_IT22916426_pct || '—') + '%';
+    document.getElementById('fVAE').textContent =
+      (cc.VAE_IT22215710_pct || '—') + '%';
+  } catch(e) { /* keep defaults */ }
+}
+
+// ── Build sidebar ─────────────────────────────────────────
+function buildList(students) {
+  const list = document.getElementById('studentList');
+  list.innerHTML = '';
+  students.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'srow'
+      + (s.student_id == selectedId ? ' selected' : '');
+    row.dataset.id = s.student_id;
+    const risk = (s.final_burnout_risk * 100).toFixed(1);
+    row.innerHTML = `
+      <div class="srow-left">
+        <span class="srow-id">${s.student_id}</span>
+        <span class="srow-sub">
+          Final: ${risk}% |
+          GRU: ${(s.academic_risk*100).toFixed(1)}%
+        </span>
+      </div>
+      <span class="badge-pill ${s.final_alert}">
+        ${s.final_alert}
+      </span>`;
+    row.addEventListener('click', () => selectStudent(s));
+    list.appendChild(row);
+  });
+}
+
+// ── Filter ────────────────────────────────────────────────
+async function filterStudents() {
+  const level = document.getElementById('filterAlert').value;
+  try {
+    const url = level === 'ALL'
+      ? `${API}/students`
+      : `${API}/students?alert=${level}`;
+    const res  = await apiFetch(url);
+    const data = await res.json();
+    buildList(data.students || []);
+  } catch(e) {
+    const filtered = level === 'ALL'
+      ? allStudents
+      : allStudents.filter(s => s.final_alert === level);
+    buildList(filtered);
+  }
+}
+
+// ── Select student ────────────────────────────────────────
+function selectStudent(s) {
+  selectedId = s.student_id;
+  document.querySelectorAll('.srow').forEach(r => {
+    r.classList.toggle(
+      'selected', r.dataset.id == s.student_id);
+  });
+
+  document.getElementById('placeholder')
+    .classList.add('hidden');
+  document.getElementById('detailContent')
+    .classList.remove('hidden');
+
+  // Header
+  document.getElementById('dId').textContent =
+    'Student ID: ' + s.student_id;
+  document.getElementById('dHead').textContent =
+    `Integrated Burnout Risk: `
+    + `${(s.final_burnout_risk*100).toFixed(1)}%`;
+
+  // Alert badge
+  const badge = document.getElementById('dBadge');
+  badge.textContent = s.final_alert;
+  badge.className   = 'alert-big ' + s.final_alert;
+  const bc = {
+    HIGH:   {bg:'#FCEBEB',color:'#C00000',border:'#FECACA'},
+    MEDIUM: {bg:'#FFF3E0',color:'#B86B00',border:'#FDE68A'},
+    LOW:    {bg:'#E8F5E9',color:'#2E7D32',border:'#A7F3D0'},
+  }[s.final_alert] || {};
+  badge.style.background = bc.bg;
+  badge.style.color      = bc.color;
+  badge.style.border     = `1px solid ${bc.border}`;
+
+  // Score cards
+  const fr = s.final_burnout_risk;
+  document.getElementById('dFinal').textContent =
+    (fr * 100).toFixed(1) + '%';
+  document.getElementById('bFinal').style.width =
+    (fr * 100) + '%';
+
+  const ar = s.academic_risk;
+  document.getElementById('dAcad').textContent =
+    (ar * 100).toFixed(1) + '%';
+  document.getElementById('dAcad').style.color =
+    riskColor(ar);
+  document.getElementById('bAcad').style.width =
+    (ar * 100) + '%';
+
+  const br = s.behavior_risk_mean || 0;
+  document.getElementById('dBehav').textContent =
+    (br * 100).toFixed(1) + '%';
+  document.getElementById('bBehav').style.width =
+    (br * 100) + '%';
+
+  // Horizons
+  document.getElementById('hW4').textContent =
+    ((s.week4_risk || 0) * 100).toFixed(1) + '%';
+  document.getElementById('hW4').style.color =
+    riskColor(s.week4_risk || 0);
+  document.getElementById('hW8').textContent =
+    ((s.week8_risk || 0) * 100).toFixed(1) + '%';
+  document.getElementById('hW8').style.color =
+    riskColor(s.week8_risk || 0);
+  document.getElementById('hW12').textContent =
+    ((s.week12_risk || 0) * 100).toFixed(1) + '%';
+  document.getElementById('hW12').style.color =
+    riskColor(s.week12_risk || 0);
+  document.getElementById('hW17').textContent =
+    ((s.week17_risk || 0) * 100).toFixed(1) + '%';
+
+  // Component bars
+  const setBar = (fillId, pctId, val, max=1) => {
+    const w = Math.min((val / max) * 100, 100);
+    document.getElementById(fillId).style.width = w + '%';
+    document.getElementById(pctId).textContent =
+      (val * 100).toFixed(1) + '%';
+  };
+  setBar('cAcad',  'pAcad',  s.academic_risk || 0);
+  setBar('cW4',    'pW4',    s.week4_risk    || 0);
+  setBar('cBehav', 'pBehav', s.behavior_risk_mean || 0);
+  const comp = s.compliance_mean || 0;
+  setBar('cComp',  'pComp',  comp);
+
+  // Ground truth
+  const atEl = document.getElementById('dActual');
+  atEl.textContent = s.actual_label === 1
+    ? 'AT-RISK (1)' : 'SAFE (0)';
+  atEl.className = 'truth-val '
+    + (s.actual_label === 1 ? 'atrisk' : 'safe');
+
+  // Advisor
+  document.getElementById('advisorText').textContent =
+    advisorText(s);
+  const adv   = document.getElementById('advisorBox');
+  const title = adv.querySelector('.adv-title');
+  const text  = adv.querySelector('.adv-text');
+  const ac = {
+    HIGH:   {border:'#C00000',bg:'#FCEBEB',
+              title:'#C00000',text:'#7A0000'},
+    MEDIUM: {border:'#B86B00',bg:'#FFFBEB',
+              title:'#B86B00',text:'#5C3A00'},
+    LOW:    {border:'#1565C0',bg:'#E3F2FD',
+              title:'#1565C0',text:'#0D2F5C'},
+  }[s.final_alert] || {};
+  adv.style.borderLeftColor = ac.border;
+  adv.style.background      = ac.bg;
+  title.style.color         = ac.title;
+  text.style.color          = ac.text;
+}
+
+// ── Init ──────────────────────────────────────────────────
+loadStudents();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+    "model1_logistic_regression": {
+        "accuracy": 0.7669,
+        "f1_score": 0.7595
+    },
+    "model2_random_forest": {
+        "accuracy": 0.7187,
+        "f1_score": 0.6994
+    },
+    "model3_svm": {
+        "accuracy": 0.7549,
+        "f1_score": 0.7498
+    },
+    "model4_lstm": {
+        "accuracy": 0.7684,
+        "f1_score": 0.7662
+    }
+}

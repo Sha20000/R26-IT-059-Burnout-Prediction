@@ -1,0 +1,501 @@
+student_id,text_sample,predicted_label,confidence,emotional_stress_score,risk_level
+STU1000,horrible sore throat hurt,Normal,0.9965,0,Low
+STU1001,found myself literally reading how to cut my femoral and in a state that i am shaking and feeling ph,Depression,0.7787,3,High
+STU1002,stressed about careers starting to stress out cuz i cant decide what career is best for me i made an,Stress,0.967,1,Medium
+STU1003,nicotine relapse when hypomanic im not sure what ill gain from this but i just need to vent my frust,Bipolar,0.984,3,High
+STU1004,i vacuumed the entire house,Normal,0.9972,0,Low
+STU1005,jakarta aquarium yu,Normal,0.9966,0,Low
+STU1006,bleh i strongly dislike working at am everyday,Normal,0.9981,0,Low
+STU1007,i am promising this because i have experienced iton monday i attempted suicide and now i was being s,Suicidal,0.8232,4,High
+STU1008,i am not ok i am feeling anxious i am feeling useless i am feeling worthless my anxiety keeps me awa,Depression,0.6607,3,High
+STU1009,my parents just hit and smacked my bodymy body is completely redshould i call im so scaredim not a m,Suicidal,0.7983,4,High
+STU1010,what do u do when u find out that the person u supported and stood behind since day tell u that in t,Normal,0.9209,0,Low
+STU1011,bipolar and relationships has anyone elses bipolar wrecked their relationship i have bipolar with ps,Bipolar,0.9845,3,High
+STU1012,i am on anti depressants i make great money i am an attractive woman who has the luxury of traveling,Suicidal,0.7671,4,High
+STU1013,i was sick,Normal,0.9973,0,Low
+STU1014,she now want an mmmf except i have to only play a supporting role would mind but the other two guy h,Normal,0.9937,0,Low
+STU1015,years i have been unemployed its not close to the caliber of what i am used to or what i used to do ,Depression,0.45,3,High
+STU1016,trying to find the healthiest distractions when i am feeling low but all i can really do is sleep sl,Depression,0.848,3,High
+STU1017,you have to be twice as good as them to get half of what they have i sometimes wonder how different ,Depression,0.9265,3,High
+STU1018,if this is not a sign to give up idk what is nobody wants anything to do with me i have called the d,Suicidal,0.6297,4,High
+STU1019,i have a good life i was born rather smart and had a super easy time going through school others alw,Suicidal,0.8307,4,High
+STU1020,i thought it wa an interesting way to look at it and wanted to share with you all,Normal,0.973,0,Low
+STU1021,bismillah my mama,Normal,0.9979,0,Low
+STU1022,oh yes i took him there yesterday he showed me one that he really liked,Normal,0.9975,0,Low
+STU1023,my friends depression every time my friend got depressed he wouldnt talk to anyone i was able to hel,Depression,0.9085,3,High
+STU1024,important its been exactly two hours since i have had this suspicion and i am just having a breakdow,Suicidal,0.9351,4,High
+STU1025,i am going to kill myself right now i am sorry you are feeling so desperate,Suicidal,0.9291,4,High
+STU1026,i have no one all i do is burden everyone with my issues and just by existing i feel like i am a bur,Depression,0.6269,3,High
+STU1027,how to not play the role of a therapist in a friendship ive been thinking recently that most of my f,Personality disorder,0.9168,3,High
+STU1028,when should i go to the doctor hopefully this isnt against the rules i keep feeling pressure i guess,Anxiety,0.9901,2,Medium
+STU1029,decently functional im at work today,Normal,0.9937,0,Low
+STU1030,did you save any money on the sale,Normal,0.9977,0,Low
+STU1031,you ever get that feeling of either complete numbness to the pain you have gotten used to or totally,Depression,0.9395,3,High
+STU1032,especially when your sleeping all day it either goes so fast or so slow by the time you realise week,Depression,0.7,3,High
+STU1033,i think now she feels some of responsibility to help those in need and she gets a lot of gratificati,Normal,0.9094,0,Low
+STU1034,this has been a theme in my life since the end of school at big changes scare me but mostly make me ,Depression,0.9239,3,High
+STU1035,i live at my parents house i dont have to pay bills i dont have a job i dont study but i still feel ,Stress,0.9687,1,Medium
+STU1036,my mom doesnt believe anxiety is real i finally got the courage to talk to a professional today for ,Anxiety,0.9653,2,Medium
+STU1037,hi i was wondering what you guys to to prevent or atleast make your panic attacks a bit milder becau,Depression,0.6998,3,High
+STU1038,i want him,Normal,0.9967,0,Low
+STU1039,new bp i was recently admitted for a short involuntary stay at the county hospital psychiatric ward ,Bipolar,0.9144,3,High
+STU1040,i do not know if this is where i should post this but its going to be kind of a rant with a backstor,Suicidal,0.8039,4,High
+STU1041,what are you doing,Normal,0.9965,0,Low
+STU1042,stressing about studying i am in my mid s and have just been given the chance to do an extra year an,Stress,0.9753,1,Medium
+STU1043,victory saturday goal setting sunday and other topic threads hello everyone first off announcements ,Bipolar,0.7478,3,High
+STU1044,i hate being away from her i cant sleep alone anymore,Normal,0.9873,0,Low
+STU1045,i want to sing but i m afraid of everything my voice is shaking when i speak and it make me cry even,Depression,0.995,3,High
+STU1046,im the only one whos nervous,Anxiety,0.9837,2,Medium
+STU1047,want someone to come back,Normal,0.9959,0,Low
+STU1048,enjoying lunch at the lake of constance uh that would be cool but impossible,Normal,0.9977,0,Low
+STU1049,i need surgery or some operation i cant handle my anxiety anymore what should i do ive had anxiety f,Anxiety,0.9335,2,Medium
+STU1050,how are you doing today,Normal,0.9965,0,Low
+STU1051,has therapy ever worked for you ive tried counselling and schema therapy but it always ended the sam,Personality disorder,0.5961,3,High
+STU1052,i have been broken and honestly abused by people i loved and cared for i can never be the person i w,Suicidal,0.6187,4,High
+STU1053,ear size hurt watching chaos theory wonderful movie love it,Normal,0.9956,0,Low
+STU1054,dizzy spells i have randomly been getting dizzy spells while sitting down looking at a phone or comp,Anxiety,0.9794,2,Medium
+STU1055,i just feel like hanging myself some psychopath has my goddamn music my record labelmanager took adv,Suicidal,0.7878,4,High
+STU1056,i have been looking at the news and all i see is that our world is going to hell in a hand basket so,Suicidal,0.5577,4,High
+STU1057,i cannot say what i am feeling is a good feeling but its approaching and i am a little overwhelmed i,Depression,0.9515,3,High
+STU1058,about a year ago i made a halfassed attempt at an od and ended up in the hospital for the night when,Suicidal,0.822,4,High
+STU1059,so i have come to a realisation i have been trying to ignore for a while now no matter how long i go,Depression,0.5558,3,High
+STU1060,i do take a bath with febreze and alsobtake care of my teeth with toothbrush toothpaste floss and mo,Normal,0.883,0,Low
+STU1061,i am and male after highschool i lost everything my friends who i now know were not even that great ,Suicidal,0.7448,4,High
+STU1062,i m fucking done trying everything hurt i m tired of being a loser at life and being myself i m just,Depression,0.9795,3,High
+STU1063,new to the communitydiagnosis hey all i was just diagnosed with avpd yesterday along with some other,Personality disorder,0.9698,3,High
+STU1064,does anyone know the exact amount of advil that can kill you overdose,Suicidal,0.8799,4,High
+STU1065,quit from my full time shift job due to decreasing performancemoved out of my rented room to my pare,Depression,0.9068,3,High
+STU1066,time to get me as in gear and start the day,Normal,0.9964,0,Low
+STU1067,when i arrived at the office i saluted the employees wow im really diligent even though i didnt ente,Normal,0.9929,0,Low
+STU1068,laughing and smiling when less stressed all my life ive been stressed but today i was sitting in a q,Stress,0.9387,1,Medium
+STU1069,the album doesnt disappoint but dont forget to go digital too spirit for dreamis we love the best,Normal,0.9963,0,Low
+STU1070,last few hour in england,Normal,0.9975,0,Low
+STU1071,friends privy to the situation believe that she is just constantly keeping me on the back burner bec,Stress,0.907,1,Medium
+STU1072,i do not know if i ought to to be honest i determined to quit drinking nine months ago and have been,Stress,0.8368,1,Medium
+STU1073,i still have my job thank goodness,Normal,0.998,0,Low
+STU1074,curse this planet curse that most woman want an above average penis size curse most woman enjoy abov,Depression,0.9894,3,High
+STU1075,hi this is my first time posting on reddit or just any community my therapist told me i have depress,Depression,0.9248,3,High
+STU1076,anyone ever done a liver cleanse it honestly sounds like bullshit but ive hit a wall recently so im ,Bipolar,0.9826,3,High
+STU1077,dad needs help with sons bipolar my year old son was diagnosed a few weeks ago with bipolar with psy,Bipolar,0.9838,3,High
+STU1078,feel really lonely and isolated for some reason i have a few friends who i dont hang out with too mu,Depression,0.5817,3,High
+STU1079,i dated someone i thought was finally the one for months until he suddenly pulled away and ended thi,Depression,0.9496,3,High
+STU1080,why do i fantasize about ending it so much its a reoccurring thought and i have thought of over ways,Suicidal,0.8178,4,High
+STU1081,bill i believe this is killing me as the smile ran away from his face but i am sure that i could be ,Depression,0.8786,3,High
+STU1082,parenting with health anxiety i dont want my kids to be like me i want them to live carefree and hav,Anxiety,0.9864,2,Medium
+STU1083,heidimontag we don t get to see season of hill till may,Normal,0.9974,0,Low
+STU1084,why him in our own garage too why is it like this i thought everything was going smoothly but now it,Suicidal,0.5401,4,High
+STU1085,i know it hurts so why do i want to do it over and over again and more importantly how the fuck do i,Suicidal,0.7505,4,High
+STU1086,i do not know when or on what basis they will be let out five days in with no clear plan or contact ,Suicidal,0.8953,4,High
+STU1087,duncanmacrae hmmm well good luck with that,Normal,0.9979,0,Low
+STU1088,is this normal please readreply hi im years old i suffer from bad anxiety regarding eyes id love to ,Anxiety,0.9868,2,Medium
+STU1089,i feel like i deserve to suffer i fucking hate myself all i remember are my mistakes i do not seek o,Suicidal,0.7833,4,High
+STU1090,got broken up with four months ago and have been in the worst depressive episode since then my heart,Depression,0.9853,3,High
+STU1091,she said she didnt love me anymore,Normal,0.9973,0,Low
+STU1092,i am so scared i feel so anxious scared alone broken i feel gross and ugly and unwanted i feel like ,Anxiety,0.9437,2,Medium
+STU1093,people during eid eat rice cake ketupat well i have to have pempek which pempek should also come fro,Normal,0.9957,0,Low
+STU1094,i wasted so much time in useless stuff such as gaming porn and useless media that i have become a sh,Suicidal,0.7457,4,High
+STU1095,im falling apart bad i fell from grace and i don t know where i m going where do i begin i m so inse,Depression,0.9955,3,High
+STU1096,if i could id put security cameras all over his house so i can watch whatever he does and says i don,Stress,0.8843,1,Medium
+STU1097,can overdosing be painless i just want to go to sleep and never wake up overdosing,Suicidal,0.892,4,High
+STU1098,i got the best news of my life that i was actually pregnant today just to have a miscarriage hours l,Suicidal,0.9405,4,High
+STU1099,heart palpitations gone crazy i am freaking out right now im due to take a flight tomorrow and im so,Anxiety,0.978,2,Medium
+STU1100,wwwwooo guys i feel ssso great right now had a couple shots while the family is gone its great but s,Bipolar,0.964,3,High
+STU1101,i do not know if this is the right subreddit but i am just looking for adviceas i said in the title ,Suicidal,0.9178,4,High
+STU1102,life is constant heart break amp pain aas,Depression,0.9385,3,High
+STU1103,i feel like i am screaming inside at myself to just do the damn thing but my body will not move i kn,Suicidal,0.7753,4,High
+STU1104,i wan na go home,Normal,0.996,0,Low
+STU1105,tldr ghosted after over a month of talking to a guy met in hotel room made out but didnt have sex if,Normal,0.9782,0,Low
+STU1106,i want to do the job of trimming but im afraid of doing the wrong job again,Normal,0.992,0,Low
+STU1107,i really want to die kill me,Suicidal,0.9169,4,High
+STU1108,i have been depressed with suicidal ideation since i was i am currently at the worst i have ever bee,Suicidal,0.833,4,High
+STU1109,job im unemployed and dont know what to work in what do you guys do,Bipolar,0.434,3,High
+STU1110,idk if this is the right place to rant but i am in an situationi am very much depressed and my psych,Depression,0.7804,3,High
+STU1111,i have suffered from anhedonia for as long as i can remember and the trick i found most helpful to d,Depression,0.9319,3,High
+STU1112,this chick is so cute,Normal,0.9979,0,Low
+STU1113,and i still want to diedo not get me wrong life is great sometimes it has its moments but the past m,Suicidal,0.7395,4,High
+STU1114,i did not mean to ghost them but all i know now is that i can actually never kill myself because it ,Suicidal,0.8572,4,High
+STU1115,when you lose someone who is very important in this world rest assured that allah will replace his d,Normal,0.9949,0,Low
+STU1116,good day everyone i will be returning back to university soon after taking a year off but i do not f,Depression,0.9913,3,High
+STU1117,i dont know why the body is limp the brain is not clear and the self is restless,Anxiety,0.9922,2,Medium
+STU1118,medicated type hypomanic and scared help hey all diagnosed with type after mania and hospitalization,Bipolar,0.9869,3,High
+STU1119,for years i have been addicted to scrolling and posting on social media i want to take back control ,Depression,0.9711,3,High
+STU1120,helloi do not even know what i should writei have been depressed before but now it feels worsei know,Depression,0.973,3,High
+STU1121,i do not have anybody to talk to so i am talking into the void i have planned this for the past two ,Suicidal,0.9481,4,High
+STU1122,i also take a sleeping pill for my insomnia but do any of you guys get nightmares while on your anti,Depression,0.9777,3,High
+STU1123,im spiralling amp i can see it but i cant stop it so my partner recently got diagnosed with cancer h,Bipolar,0.4461,3,High
+STU1124,i am very stressed someone help so in november i was with one of my friends at the elementary school,Stress,0.9642,1,Medium
+STU1125,one of my worst experiences with psychosis one of my worst experiences with psychosis was when i wok,Bipolar,0.9591,3,High
+STU1126,are you expecting,Normal,0.997,0,Low
+STU1127,bipolar ii and ptsdno meds sometimes i feel im losing it yeah so i was diagnosed with ptsd bipolar i,Bipolar,0.9866,3,High
+STU1128,i have been feeling extremely frustrated and lost for some time now i used to feel like ending it al,Depression,0.5263,3,High
+STU1129,i do not want to be alive i should just do it i am just going to hang myself while listening to musi,Suicidal,0.9063,4,High
+STU1130,avpd and social anxiety on the rise it feels like avpd and social anxiety are becoming more prevalen,Personality disorder,0.9658,3,High
+STU1131,egg is good,Normal,0.9979,0,Low
+STU1132,literally i do not even know what to write anymore everything is way too much i want it to end i do ,Suicidal,0.9195,4,High
+STU1133,want to cry happy bangeeettt,Normal,0.9979,0,Low
+STU1134,disability with bipolar disorder i have a general question about being bipolar in the work place i w,Bipolar,0.9845,3,High
+STU1135,my family just begged me to go with them somewhere and spend some time together i wanted to go so ba,Depression,0.8553,3,High
+STU1136,how did you know it was time to seek inpatient care cw suicidal ideation im in the pits this has bee,Bipolar,0.8972,3,High
+STU1137,any strange things you do when feeling anxious started thinking about this today when out for a walk,Anxiety,0.9805,2,Medium
+STU1138,i know these question are probably annoying and kind of outdated now since most people i know are fu,Depression,0.9952,3,High
+STU1139,for everyone in here on the needs support side of the fence i highly recommend taking cold showers t,Depression,0.9872,3,High
+STU1140,am free to talk if you want to get something out or for any other reason if anyone needs to talk,Normal,0.5996,0,Low
+STU1141,yes i have to breathe through my mouth,Normal,0.9937,0,Low
+STU1142,i am a years oldm my father left me when i was very young my mom usually abused me because of her te,Suicidal,0.8292,4,High
+STU1143,i find it annoying at night time i spill out all that i keep during the day like a dam breakingi am ,Depression,0.8415,3,High
+STU1144,had enough cannot do this anymore had enough i am sick of being ill my life is ruined i have tried s,Suicidal,0.9264,4,High
+STU1145,well a d is better than an f,Normal,0.9978,0,Low
+STU1146,no need to show off about the existing reality later when the harsh reality hits you will know the f,Normal,0.9834,0,Low
+STU1147,i am sick of everything sick of high school sick of being abused at home sick of just living i am ti,Suicidal,0.9332,4,High
+STU1148,this world does not need me i want to end me pls someone kill me i want to fucking die,Suicidal,0.8921,4,High
+STU1149,me the triangle warning is gone jpj employee how can i not be me how would i know each one has a dif,Normal,0.9783,0,Low
+STU1150,every time i mention that i want to kill myself or that i want to die to people that are close to me,Suicidal,0.8959,4,High
+STU1151,i am tired i am ready for everything to be over now life is a pointless painful suffering and its ex,Suicidal,0.9525,4,High
+STU1152,its take me to the river from sydenee,Normal,0.9975,0,Low
+STU1153,i want to come off risperidone im on mg of risperidone a day my eye sight was fine and i didnt need ,Anxiety,0.8111,2,Medium
+STU1154,i think i m happy i ve just went through a couple of month of sad dark feeling and thought best way ,Depression,0.994,3,High
+STU1155,well it gives me money but its my own money,Normal,0.9968,0,Low
+STU1156,im really scared and proud ive been taking the same adhd pill since i was a very small child and i h,Anxiety,0.9204,2,Medium
+STU1157,i want to kill him,Normal,0.9909,0,Low
+STU1158,i got psychotic episodes really hard schizophrenia type shit anxiety and depressioni cannot sleep i ,Suicidal,0.7613,4,High
+STU1159,ill try to keep this short and succint so its easier to read i had a very brief relationship with th,Normal,0.9274,0,Low
+STU1160,twsuicideseeing a new therapist how much do i need to dance around my suicidal ideation ive been on ,Bipolar,0.8847,3,High
+STU1161,i cannot take being sober i need drugs so i do not kms what is something that is sustainable somethi,Suicidal,0.8042,4,High
+STU1162,i have a rabies fear can anyone help out this all started last june i was playing with my dog in my ,Anxiety,0.9769,2,Medium
+STU1163,why werent you at school yesterday,Normal,0.9981,0,Low
+STU1164,i am new i guess i am depressed but never had any real diagnosis i have been deluged with lots of is,Depression,0.959,3,High
+STU1165,eating beets red stool i had a fairly large amount of cut up beets for lunch today around noon along,Anxiety,0.9882,2,Medium
+STU1166,this year has been the worse in my fucking life a lot of bad things happened i do not have anyone to,Suicidal,0.8143,4,High
+STU1167,i am staying in my parents house for the summer since i have just graduated college i have an indust,Suicidal,0.8908,4,High
+STU1168,from the outside looking in i have lived a pretty good life i am at college grew up middle class in ,Suicidal,0.5394,4,High
+STU1169,i just need to vent a little i think it s upsetting to be a student who know the answer to your prof,Depression,0.9955,3,High
+STU1170,daniela hahaa i just realized quot impune quot definitely isnt the word i wanted dang i m so uncleve,Normal,0.9982,0,Low
+STU1171,things have already been pretty bad and somehow they took a turn for the worse i feel entirely isola,Depression,0.9571,3,High
+STU1172,does adulting mean having therapist as a friend i feel i have lost my friends i moved from a diff co,Depression,0.9812,3,High
+STU1173,being stable is so fucking boring after multiple years of suffering from different combinations of b,Bipolar,0.9864,3,High
+STU1174,then i have a job for you in my kitchen,Normal,0.9975,0,Low
+STU1175,i feel like recently i have been having suicidal thoughts rather frequently i feel like i do not wan,Suicidal,0.572,4,High
+STU1176,feeling down again hi everyone idk i think this is just ranty but need to move this energy into some,Bipolar,0.832,3,High
+STU1177,yes tomorrow theres a pink dresscode event but i did not have a pink cloth,Normal,0.9979,0,Low
+STU1178,quite busy today attended appointment well tomorrow going to be another busy day,Normal,0.9864,0,Low
+STU1179,its a flying zoo,Normal,0.9982,0,Low
+STU1180,my primary concern is to get her the surgery and treatment she needs to save her life to that end iv,Normal,0.96,0,Low
+STU1181,when your a mess but someone still loves you today i was texting my mom about my latest pains my bf ,Anxiety,0.9886,2,Medium
+STU1182,i thought i did well but i was severely depressed that weekend was my birthday weekend and he made i,Stress,0.9271,1,Medium
+STU1183,i cant cry anymore i have so many thoughts and emotions i want to get out somehow but i cant even cr,Depression,0.7925,3,High
+STU1184,i had ect and it changed my life i was hospitalized over a week ago for a suicide attempt since ive ,Bipolar,0.489,3,High
+STU1185,i m have been looking for a relationship for a long time but have had an awful bad luck so far tried,Depression,0.9596,3,High
+STU1186,i just feel lonely i cannot make friends i am just a loser i need love i want a girl to love and bei,Depression,0.5193,3,High
+STU1187,also is overdosing a good option or reliable how to overdose and on what,Suicidal,0.913,4,High
+STU1188,but i stopped,Normal,0.9949,0,Low
+STU1189,asking questions also depends i remember i made a mistake in the critical part even if you ask somet,Normal,0.7478,0,Low
+STU1190,i just tried taking a nap in my bed today ive been sleeping on the couch since march i had dreams of,Stress,0.8791,1,Medium
+STU1191,i know nothing its not a lie or a trick i simply do not know shit but you might be wondering how i c,Depression,0.6429,3,High
+STU1192,au i finished what are you reading,Normal,0.995,0,Low
+STU1193,not funny morning runny nose,Normal,0.998,0,Low
+STU1194,lrt look at the team how many pts can you get once you play,Normal,0.9929,0,Low
+STU1195,and i refuse any treatment other than pain meds i keep finding myself fantasizing that i got cancer ,Suicidal,0.5081,4,High
+STU1196,only monday is the most awaited,Normal,0.9976,0,Low
+STU1197,talking bout depression girl i just got off the pill,Depression,0.9821,3,High
+STU1198,i really want to go to the movies this weekend,Normal,0.9977,0,Low
+STU1199,so how do you plan to become rich,Normal,0.9971,0,Low
+STU1200,i couldnt find any stamps,Normal,0.9981,0,Low
+STU1201,there are more to the ups and downs that bipolar disorder brings there are emotions that come along ,Bipolar,0.9874,3,High
+STU1202,does lamictal rashes itch i have some faded redish rashes on my chest i dont know how long theyve be,Bipolar,0.9843,3,High
+STU1203,creativity is more fleeting than it used to be i amwas a very creative person i went to an arts high,Bipolar,0.9855,3,High
+STU1204,and fuc you benjichip you must feel happy getting a sick kick out of reading people posts about suic,Suicidal,0.9249,4,High
+STU1205,no one to talk to so im currently super stressed and i dont feel like i have anyone to talk to ive s,Stress,0.9641,1,Medium
+STU1206,balamurugan a longterm member of the team is leaving this month we ll miss working with him hope he ,Normal,0.998,0,Low
+STU1207,casual insults from normals she isnt even really a normie but shes close enough today after i shared,Stress,0.5544,1,Medium
+STU1208,ugh back to dollar fill ups at the pump,Normal,0.9978,0,Low
+STU1209,my cat just died she wasnt even a full year old yet around am tonight i realized i hadnt seen her si,Stress,0.6331,1,Medium
+STU1210,i miss sebby peek,Normal,0.998,0,Low
+STU1211,i don t understand why thing get taken away i didn t have enough time with him it unfair i want him ,Normal,0.945,0,Low
+STU1212,i never thought about that,Normal,0.9958,0,Low
+STU1213,been playing awpx legends for over a year now and it is started stressing me out to a great extent a,Suicidal,0.9282,4,High
+STU1214,volunteering heya first of all sorry for any ramblings or incorrect sentences my brain is all fuzzy ,Anxiety,0.4456,2,Medium
+STU1215,how and when did your health anxiety start what was your trigger,Anxiety,0.974,2,Medium
+STU1216,i havent had eid yet but the thr is over,Normal,0.9977,0,Low
+STU1217,i don t feel so hot,Normal,0.9954,0,Low
+STU1218,i had fun talking to you,Normal,0.998,0,Low
+STU1219,i have let my depression dig me into a deep financial hole i am trying to fix it but i keep having s,Depression,0.9522,3,High
+STU1220,nights im restless dumbfounded and then cry im mentally ill im so weak,Anxiety,0.991,2,Medium
+STU1221,rt cheers for more wonderful years with highlight happy th anniversary guys,Normal,0.9874,0,Low
+STU1222,i always been a loner it rarely bother mesince the last year i have been looking to start a romantic,Depression,0.9124,3,High
+STU1223,death scares tf out of me and i am not ready to die,Suicidal,0.8463,4,High
+STU1224,i desperately need a car and found a great opportunity but the previous owner died of a heart attack,Stress,0.8989,1,Medium
+STU1225,i want to die badly just someone talk to me someone just talk to me please,Suicidal,0.8721,4,High
+STU1226,are you on holiday,Normal,0.9978,0,Low
+STU1227,health anxiety im a type diabetic and in my teenage years it was a rough time where i fainted multip,Anxiety,0.9911,2,Medium
+STU1228,spent hour to reach to axis bank only to find out today is holiday for mahavir jayanti contd,Normal,0.9966,0,Low
+STU1229,there here is a world its failed me no med no people no life usa will have no problem being short on,Suicidal,0.7539,4,High
+STU1230,i cant believe this so my health anxiety was somewhat under control i went through a full course of ,Anxiety,0.9848,2,Medium
+STU1231,good morning everyone,Normal,0.9978,0,Low
+STU1232,i am not saying it would not suck but being able to toss all work related shit out the window not wo,Depression,0.8219,3,High
+STU1233,its getting later every minute,Normal,0.9977,0,Low
+STU1234,i am trying not to give up can anyone send blessings my way that would be nice thank you and have a ,Depression,0.9203,3,High
+STU1235,no i dont do you,Normal,0.9974,0,Low
+STU1236,ive stopped telling it and when someone at work says whats wrong i just look at them and say its bee,Depression,0.4368,3,High
+STU1237,i feel like people do not understand how hard it is to get better i can do everything right and stil,Depression,0.9936,3,High
+STU1238,ill just make this account a task jockey this time haha,Normal,0.9979,0,Low
+STU1239,i stopped doing the whole therapy thing deleted their numbers from my phone its been several months ,Depression,0.9781,3,High
+STU1240,i ve never hated anything this much in my entire life i m stressed out i m so stressed out i m const,Depression,0.9885,3,High
+STU1241,wow im sooo sad i had everything planned out on when i was going to leave home amp go to college in ,Suicidal,0.8499,4,High
+STU1242,do you believe everything you hear,Normal,0.9925,0,Low
+STU1243,i just dont want to do anything anymore i just feel no motivation to do anything anymore i dont want,Depression,0.7244,3,High
+STU1244,ie not having friends not going a lot of places not having many hobbiesseems like more of a concern ,Depression,0.9498,3,High
+STU1245,i have had depression for several years and within this year i have been involved with a woman that ,Depression,0.9863,3,High
+STU1246,do you actually have to go through with it and fail or does it count if you never actually got to go,Suicidal,0.9233,4,High
+STU1247,patchy darkened area on side of the foot getting paranoid about illnesses such as diabetes with this,Anxiety,0.9905,2,Medium
+STU1248,in the late evening when i am lonely and feeling like crap and drinking i need a metaphorical warm b,Depression,0.6939,3,High
+STU1249,hi i really feel lost and would like any input i am a year old married man and i work full time and ,Depression,0.9449,3,High
+STU1250,i would like to leave there but im terrified of a shelter im also a semi observant jewish woman most,Stress,0.8754,1,Medium
+STU1251,i feel nothing i like this numb,Depression,0.829,3,High
+STU1252,you dont play unless you know how to play nbsp weaponizing mental health and addictions appears to b,Normal,0.9533,0,Low
+STU1253,okay i think ill be awake by then,Normal,0.9972,0,Low
+STU1254,if i manage to achieve what i want now then i live where the life goes graduation and find a job wha,Suicidal,0.7924,4,High
+STU1255,my boyfriend is busy with a huge deadline coming up so i do not want to bother him since hes stresse,Suicidal,0.8808,4,High
+STU1256,i am just trying to vibe but i get random urges to cut myself what is that about what is makes me wa,Depression,0.8692,3,High
+STU1257,trigger warning im i have ms and im worried i also have colon cancer its been quite the rough year a,Anxiety,0.9907,2,Medium
+STU1258,i smoked for the first time in month and now i m freaking out and idk what to do edit i m all good n,Depression,0.9852,3,High
+STU1259,as the title says i do not know who i am what i believe in what i want to do what i stand fori spent,Depression,0.5427,3,High
+STU1260,life sucks i do not have a car a job i hate going to i have anxiety every time i have to get a lyft ,Depression,0.9267,3,High
+STU1261,looking for someone to discuss my experience hi all the past few months ive suspected more and more ,Bipolar,0.9829,3,High
+STU1262,lithium and muscle pain hi all i started lithium about ten days ago with mg at evening then as order,Bipolar,0.9818,3,High
+STU1263,anyone else fantasize about being a part of a community but ghost it when given the opportunity i ca,Personality disorder,0.8952,3,High
+STU1264,i m f been struggling with depression for almost yr i ve noticed that in recent year i ll have a or ,Depression,0.9958,3,High
+STU1265,now like this can gausa chat with me for month i dont need a chat buddy anymore what i need is you c,Normal,0.9934,0,Low
+STU1266,i do not really know what to say i have bipolar disorder and depression like a lot of other people i,Suicidal,0.9399,4,High
+STU1267,i want to just fall asleep and never wake up the whole world would just drift away and i would final,Depression,0.7167,3,High
+STU1268,now i wish i would tell somebody while i had the chance the moment i stopped caring the moment i rea,Suicidal,0.5503,4,High
+STU1269,you wont catch me because i love you im not a cheater,Normal,0.9932,0,Low
+STU1270,michigan who i don t know them sigh shameful,Normal,0.9944,0,Low
+STU1271,oh blimey its not you is it dont worry i wouldnt say anything here that i wouldnt say to them person,Normal,0.9882,0,Low
+STU1272,im really worried but i dont know why,Anxiety,0.9621,2,Medium
+STU1273,if this reaches million sales im not surprised,Normal,0.9978,0,Low
+STU1274,it was on sale,Normal,0.9976,0,Low
+STU1275,something is wrong with me trigger warning im becoming numb and i dont feel like talking to anyone i,Anxiety,0.9696,2,Medium
+STU1276,did not wake up at the time i wanted todaymaybe i should just kill myself did not feel productive en,Suicidal,0.8232,4,High
+STU1277,going to walk my dog and shower before bed sad the yankee lost the first game monday too boooo,Normal,0.997,0,Low
+STU1278,last school year i actually made quite alot of friends or friends though i do acknowledge that they ,Depression,0.9434,3,High
+STU1279,moving to central jakarta around menteng today anyone want to fill the slot,Normal,0.9894,0,Low
+STU1280,mornnnninggg ugh by cub ha gone to work without a phoneee got no one to textt,Normal,0.9981,0,Low
+STU1281,so i am f all my classmates who are about to graduate college with me are or under so i am years beh,Depression,0.5153,3,High
+STU1282,everythings so magical kind of sad to realise it this late got to enjoy every second now lt enjoying,Normal,0.6414,0,Low
+STU1283,scraped up the last euros i could find on my paypal to atleast get groceries for this week but i am ,Depression,0.5217,3,High
+STU1284,i just found this one amp i do not know how i did not find it before i am in tears goodbye i am sorr,Suicidal,0.9136,4,High
+STU1285,wegah muleh bengii me,Normal,0.9953,0,Low
+STU1286,m no underlying physical health issue known i started taking mg propranolol a few week ago missing s,Depression,0.9949,3,High
+STU1287,depression is not something i talk about much but i just wanted to say that men saying that females ,Depression,0.9945,3,High
+STU1288,how to manage bipolar fatigue the lack of motivation the sheer amount of willpower required to do th,Bipolar,0.9823,3,High
+STU1289,heart rate ever since i had chest pain i have had many panic attacks does anyone else have their hea,Anxiety,0.9881,2,Medium
+STU1290,lump on back of neck im a yr old female and earlier today when i was brushing my hair on the left si,Anxiety,0.9893,2,Medium
+STU1291,hello i am from indiai have issue with my family specially mothermy mother sometimes tortures my fat,Suicidal,0.5959,4,High
+STU1292,night sweats for years to keep it short i have ptsd agoraphobia depression and anxiety specially hea,Anxiety,0.9279,2,Medium
+STU1293,the father has one of the most notable family lawyers in illinois working his case justine cannot af,Normal,0.6651,0,Low
+STU1294,i like the ones i can sing along with,Normal,0.9973,0,Low
+STU1295,loss and depression go really well together i was doing well on new medication ping ponging a bit bu,Bipolar,0.9809,3,High
+STU1296,boy im glad that job is finished,Normal,0.9981,0,Low
+STU1297,had my dad drop me off at the mall today was feeling awful and impulsively walked up to the top of t,Suicidal,0.8602,4,High
+STU1298,sadly nothings improvingmy dui case has finally come up read my post history after a year i show up ,Suicidal,0.8487,4,High
+STU1299,what are you going to do with them,Normal,0.9965,0,Low
+STU1300,totally love this pic are you singing it in finnish,Normal,0.9971,0,Low
+STU1301,you can reply to this post with something similar if you like to for me depression makes it so that ,Depression,0.9953,3,High
+STU1302,tired of wasting my money and time i know nothing is wrong with me but im in so much pain all the ti,Anxiety,0.9832,2,Medium
+STU1303,is going to school to do dt,Normal,0.9981,0,Low
+STU1304,i do not do this kind of stuff feelings and all and i feel like my problems are so miniscule compare,Suicidal,0.8444,4,High
+STU1305,does anyone else just want to die casually no worrying about getting better not worrying about impro,Suicidal,0.6507,4,High
+STU1306,i am losing my friends everytime we meet up i always feel like an outsider a third wheel like they a,Depression,0.5608,3,High
+STU1307,i cant stop comparing myself to others i am a chess player when i lose to my friend in tournaments i,Stress,0.5998,1,Medium
+STU1308,suck when you know you haven t done anything wrong but it feel like you have,Normal,0.9661,0,Low
+STU1309,yes you really deserved this,Normal,0.9979,0,Low
+STU1310,tell me about it were going to try that puresleep mouth piece on tv will let you know ifhow it works,Normal,0.9852,0,Low
+STU1311,miserable after stopping zoloft cold turkey and switching to wellbutrin the zoloft appeared to stop ,Bipolar,0.5838,3,High
+STU1312,just realized im talking to no one,Normal,0.9972,0,Low
+STU1313,carli chick i can t get photo x,Normal,0.9981,0,Low
+STU1314,any advice for someone whos scared of taking an ultrasound and its test results hello this coming sa,Anxiety,0.9892,2,Medium
+STU1315,maybe knowing that i literally cannot afford to try is what will keep me here today i have insurance,Suicidal,0.9497,4,High
+STU1316,valdezign hmm this beta of nambu ha ping fm and friendfeed disabled boo,Normal,0.9976,0,Low
+STU1317,its my fault i was used its my fault i was not sexual enough my ocd is fake because i use it as an e,Suicidal,0.648,4,High
+STU1318,featherinair call me back,Normal,0.998,0,Low
+STU1319,im seriously so stuck i developed a horrible case of health anxiety and constantly think something i,Depression,0.9953,3,High
+STU1320,alright,Normal,0.9974,0,Low
+STU1321,its hard knowing i am the only one everybody i see everything i interact with is just so i am unsure,Suicidal,0.8142,4,High
+STU1322,i loved this person dearly with all my heart and it was an extremly tragic and sudden death i want t,Normal,0.9058,0,Low
+STU1323,hi everyone my life s pretty difficult now i hate it i feel like i can t do nothing about it i ve be,Depression,0.9951,3,High
+STU1324,any quick and painless ways to kill yourself any ways to kill myself,Suicidal,0.9257,4,High
+STU1325,i used to enjoy various things just a few years ago nowdays nothing makes me happy or gives me a sen,Suicidal,0.5061,4,High
+STU1326,i quit my job today after being told yesterday that i m bad at it and could be fired if i fuck up ag,Depression,0.9939,3,High
+STU1327,i am an atheist and i am terrified of death because of two reasons eternal life and ceasing to exist,Suicidal,0.736,4,High
+STU1328,hmm the work is not easy wasted two hour for a silly mistake now one system is too slow,Normal,0.9974,0,Low
+STU1329,i am over eating my sleep schedule is erratic my room is a mess i am binging i am moving slow i am h,Suicidal,0.8541,4,High
+STU1330,please someone chat with me i feel super hopeless i want to cry but i cannot i feel empty,Depression,0.6761,3,High
+STU1331,where s derrick http ff im xwxs,Normal,0.9981,0,Low
+STU1332,deepbluesealove im still here reading an article on a different site seems a little dull on twitter ,Normal,0.9671,0,Low
+STU1333,can you imagine being president,Normal,0.9954,0,Low
+STU1334,twista i still haven t read the th amp th princess diary saving francesca made me cry at the end hmm,Normal,0.9982,0,Low
+STU1335,i do not know what i am going to do with myself i get attached too easily that its impossible for me,Depression,0.9783,3,High
+STU1336,i have always gotten good grades because all the learning kind of came easy to me but also i believe,Depression,0.918,3,High
+STU1337,i feel like i m in a simulation game movie etc when i wa doin intake at helen ross mcnabb the lady t,Depression,0.9956,3,High
+STU1338,years ago when i was happened thats the day everything changed for me my mom was a first responder s,Normal,0.9749,0,Low
+STU1339,does more happypositive or upbeat music help or do you listen to somber depressive type of music to ,Depression,0.9898,3,High
+STU1340,my whole body is aching like i have the flu i dont know why all of a sudden after almost a week of n,Anxiety,0.9902,2,Medium
+STU1341,chen huh like what i didnt know,Normal,0.9979,0,Low
+STU1342,had a lovely day at the beach followed by dinner with a gorgeous lady roll on the work today booo,Normal,0.9959,0,Low
+STU1343,i am envious and resentful of my friend i am letting stay with me i am doing a huge thing for her an,Depression,0.9196,3,High
+STU1344,need ideas to travel too before i end iti might aswell use this maintenance loan on somthing good th,Suicidal,0.7573,4,High
+STU1345,numbness sensation on chest around heart after waking up once in a while please does anyone else exp,Anxiety,0.9859,2,Medium
+STU1346,i am done with trying to explain myself with hell of a long articles so just read the post below in ,Depression,0.9816,3,High
+STU1347,dating apps even harder with avpd disclaimer i dislike dating app culture in general theres a hell o,Personality disorder,0.9694,3,High
+STU1348,everyone keeps telling me i am a survivor to hang in there coz i have already been thru sooo much in,Suicidal,0.8674,4,High
+STU1349,so thank you my day got better i am on medicine so i took my alprazolam and went to a store to try a,Normal,0.9947,0,Low
+STU1350,but im literally afraid of him because i feel like every second hes gonna stand behind me again and ,Stress,0.9511,1,Medium
+STU1351,nikrosser i don t think there is any kind of good stroke i ll wait to hear from you i love that litt,Normal,0.9968,0,Low
+STU1352,not even intentionally just wanted to feel nice i curshed up some pills and did them thru my nose an,Suicidal,0.7499,4,High
+STU1353,please i just want to be able to accept the simple and good parts of my life as simple and good i wa,Depression,0.877,3,High
+STU1354,long time no hear the strokes,Normal,0.996,0,Low
+STU1355,i tried it a few times but it never worked except for the last time but i got scared and called the ,Suicidal,0.8028,4,High
+STU1356,i really really need help i am on the verge of committing suicide i do not know if ill make it to to,Suicidal,0.9095,4,High
+STU1357,worried about the flu hey guys ive always been extremely worried about my health and i always think ,Anxiety,0.9904,2,Medium
+STU1358,help please i feel so guilty ok,Suicidal,0.6224,4,High
+STU1359,i am not leaving anything behind but she will understand for the longest time she was enough reason ,Suicidal,0.794,4,High
+STU1360,well we unfortunately have mouse and been trapping a few but i dropped my phone where the mouse have,Depression,0.978,3,High
+STU1361,being treated like a drug addict i have been on antidepressants since the age i have severe anxiety ,Stress,0.7397,1,Medium
+STU1362,how do i accept the fact that my partner finds other women attractive i have been feeling super anxi,Anxiety,0.5833,2,Medium
+STU1363,feeling guilty i have fmla and i took a day today because it was impossible to get out of bed i felt,Bipolar,0.9725,3,High
+STU1364,how many people here actually own a gun i have recently bought a gun and i do not think that is the ,Suicidal,0.9317,4,High
+STU1365,i am a mom and wife to two beautiful boys and husband it all started with insomnia due to going back,Depression,0.9083,3,High
+STU1366,i have involuntarily started to feel lonely all the time in all contexts and chronically suicidal be,Suicidal,0.8978,4,High
+STU1367,people keep telling me to see a therapist that is such bs they just want money i therapist will not ,Suicidal,0.6715,4,High
+STU1368,whoever leaves the asr prayer his deeds have been erased narrated by bukhari ramadan increases piety,Normal,0.995,0,Low
+STU1369,i feel like i want to die i need my dad i do not understand how this happened this all feels like a ,Suicidal,0.5589,4,High
+STU1370,i am empty i ve been focusing on school and work but every day i feel worse and worse last night i g,Depression,0.869,3,High
+STU1371,i do not no what i am waiting for but for some reason my patience is running low i use to pray to th,Depression,0.5158,3,High
+STU1372,ill start dinner at,Normal,0.9979,0,Low
+STU1373,i am killing myself by the end of the month life is not worth never gets better,Suicidal,0.8138,4,High
+STU1374,guys i am fine physically embarrassing as it is i am still alive update,Suicidal,0.8766,4,High
+STU1375,yes it will only take about minutes,Normal,0.9971,0,Low
+STU1376,nobody takes me seriously ive m dealt with depressionanxiety for years now i used to be great with p,Depression,0.978,3,High
+STU1377,i am pretty sure i have a porn addiction in particular i find myself drawn to the casting type video,Depression,0.9853,3,High
+STU1378,i feel really petty and childish for having suicidal thoughts whenever i feel unwanted or forgotten ,Suicidal,0.9,4,High
+STU1379,people are really quick to make fanart,Normal,0.998,0,Low
+STU1380,thanks wani,Normal,0.9979,0,Low
+STU1381,ive been dating this guy for nearly three months we met at a bar and had a one night stand so my exp,Normal,0.9727,0,Low
+STU1382,missed brent at praise band no fun to not have your lead guitarist lt pout gt,Normal,0.9981,0,Low
+STU1383,why is that,Normal,0.9973,0,Low
+STU1384,before anything id like to apologies for the rambely way i writeso hey i am dan i am and recently i ,Depression,0.8558,3,High
+STU1385,just outside mules mules yes bujank its your turn in the bathroom to not show up basic ee,Normal,0.9979,0,Low
+STU1386,someone should set him on fire,Normal,0.9967,0,Low
+STU1387,i feel like it was wrong i was born i feel like i have been just a burden for being born i feel like,Suicidal,0.7776,4,High
+STU1388,for some reason i have a strong urge to draw illustration for novel cover,Normal,0.9909,0,Low
+STU1389,here i am again facing another crisis that is my fault i kept hoping i will receive some mercy but t,Suicidal,0.9052,4,High
+STU1390,i need adit not for stalking or for strange things because i myself have started to learn not to sta,Anxiety,0.4736,2,Medium
+STU1391,maybe hes just a liar,Normal,0.9975,0,Low
+STU1392,imagine you want to commit suicide but you dont want suicide,Suicidal,0.4335,4,High
+STU1393,i have wanted to be put on medication for months but the useless people in this shit town just tell ,Depression,0.8243,3,High
+STU1394,so i was minutes away from offing my self but freind called me and asked me if i was ok we talked fo,Depression,0.5227,3,High
+STU1395,i have dealt with depression for the majority of my life i had trouble with it as a teenager tried t,Depression,0.6955,3,High
+STU1396,anyone figured out stress yet im a mid s man with a somewhat stressful job and feels like i cant kee,Stress,0.9467,1,Medium
+STU1397,feeling in over my head and looking for help my situation is this i am coaching high school lacrosse,Stress,0.3593,1,Medium
+STU1398,i also posted this in the bipolar subreddit but i want to post it here too so i am on a mood stabili,Bipolar,0.7272,3,High
+STU1399,perhaps as a result i feel awful about wanting more from him i feel like its incredibly ungrateful o,Stress,0.8558,1,Medium
+STU1400,my life is going into shambles now i m was having a pretty good day but now i got a depressive episo,Depression,0.9736,3,High
+STU1401,i had already gone two months ago due to my first cavity being chipped for a long time and a newly f,Depression,0.9748,3,High
+STU1402,so it occurred to me today during my morning sob session that no matter what i do i will still becau,Suicidal,0.7575,4,High
+STU1403,voices so i was digonost with manic depression some years ago and i have been taking meds since i re,Depression,0.7117,3,High
+STU1404,head pulsing from medicine side effects my suffering started when doctor prescribed me clonazepam an,Anxiety,0.9797,2,Medium
+STU1405,i m leaving tonight i can t keep doing this i m sorry,Depression,0.9486,3,High
+STU1406,whoever is reading this i am sorry if i made this decision i just do not want to live anymore i do n,Suicidal,0.7521,4,High
+STU1407,its unfortunate we cant crosspost links from other subs like rpsychology to rptsd because sometimes ,Normal,0.9679,0,Low
+STU1408,i hate having bipolar i almost impulsively quit my job without anything lined up i was beyond stress,Bipolar,0.9867,3,High
+STU1409,how do i fix myselfits not school itself i love learning on my own terms atleast i am behind and i a,Depression,0.7777,3,High
+STU1410,i cant eat over calorie ori feel horrible and i lost kg in a few week but my parent didnt notice unt,Depression,0.8973,3,High
+STU1411,morning,Normal,0.9975,0,Low
+STU1412,doe anyone have any advice on what to do i m currently having a panic attack after accidentally popp,Depression,0.9898,3,High
+STU1413,my cullen family jewellery set arrived this morning so happy,Normal,0.9981,0,Low
+STU1414,soon it will be full of surprises,Normal,0.9973,0,Low
+STU1415,its a paper cut,Normal,0.9983,0,Low
+STU1416,i told this person i might end up killing myself at but he told me this i do not know it did not do ,Depression,0.5884,3,High
+STU1417,im just so dumb socially because ive been isolating for so long im and havent had a friend in years ,Personality disorder,0.9034,3,High
+STU1418,you had an art class,Normal,0.9977,0,Low
+STU1419,powerbank bb battre iphone samsung blackberry bmorireplica info dadf iklanpeople,Normal,0.9965,0,Low
+STU1420,the worst symptom of depression for me is low self esteem because its so obvious lets face it no one,Depression,0.9157,3,High
+STU1421,i have been diagnosed with adhd since early childhood and autism since ampnbspampnbspits nearly my t,Suicidal,0.6665,4,High
+STU1422,dont have a bus pass or anything unfortunately the question iswhere i havent seen any homeless shelt,Stress,0.9524,1,Medium
+STU1423,i got my period yesterday night and i have not had the strength to get up take a shower and change m,Depression,0.9329,3,High
+STU1424,about pemersatuperbedaan lets follow scoutmovementid humanitarian donation for bank dki accounts an ,Normal,0.9977,0,Low
+STU1425,she wa my only hope the only person i thought loved me she only love me a a brother her ex which i m,Depression,0.9887,3,High
+STU1426,life is bullshit i am done i have heard insulin can do it but i cannot find how much i would need fo,Suicidal,0.9227,4,High
+STU1427,it s raining outside look like snow but it s raining,Normal,0.9624,0,Low
+STU1428,i am tired so fcking tired you can swamp yourself with all the work you can distract yourself as muc,Suicidal,0.6658,4,High
+STU1429,olabini still here though the site is gone,Normal,0.9978,0,Low
+STU1430,is dreading tomorrow i hate hospital especially when it s your baby that is the patient,Normal,0.9878,0,Low
+STU1431,there are so many plaques that its not too bad if you want to scroollllllll laaaaa,Normal,0.9978,0,Low
+STU1432,i am in about years worth of average wage in debt and actively having suicidal thoughtsi have been a,Suicidal,0.8448,4,High
+STU1433,surprisingly its more because i am not good at anything and when i do try all i do is get smacked do,Depression,0.7163,3,High
+STU1434,i have an extraordinary sleepiness oh my god sitting under the aircond again,Normal,0.9932,0,Low
+STU1435,lol i love it,Normal,0.9981,0,Low
+STU1436,i wish i could date a therapist to receive free therapy this is obviously a joke why are therapies s,Stress,0.7513,1,Medium
+STU1437,i hate them and i do not want be like them i think there just disgusting but i do not want be like t,Depression,0.7556,3,High
+STU1438,i break everything i touch literally i have broken two laptops a brand new monitor and a brand new i,Suicidal,0.7671,4,High
+STU1439,i just got off the phone with my person well i thought she was she let me go knowing i was suicidal ,Suicidal,0.9283,4,High
+STU1440,i get very down when people dont include me socially but but i dont even wanna get to know them at a,Personality disorder,0.8874,3,High
+STU1441,its supposed to start at about eight,Normal,0.9978,0,Low
+STU1442,at am my stomach is rumbling is it because i ate indomie,Normal,0.9978,0,Low
+STU1443,im really tired so i literally just came back from the doctor because i was convinced something was ,Anxiety,0.9876,2,Medium
+STU1444,good day i am from the philippines and i was recently diagnosed with depression and anxiety almost a,Stress,0.7833,1,Medium
+STU1445,there is no chance i will find how to cut myself without killing myself on reddit i do not want to k,Suicidal,0.8238,4,High
+STU1446,this might be a silly question but does anyone elses depression feel absolutely unbearable at certai,Depression,0.9862,3,High
+STU1447,i dont know all this time ive been dressing up to get peoples approval validation,Normal,0.9922,0,Low
+STU1448,cie who doesnt use pp lets say hes beautifulhandsome,Normal,0.998,0,Low
+STU1449,i am diappointed i did not die in my sleep being alive is so exhausting and i could not care less ab,Suicidal,0.8772,4,High
+STU1450,i want to share something my therapist told me that really resonated and stuck with me she said anxi,Depression,0.9943,3,High
+STU1451,changing diagnosis no longer bipolar hi i was first diagnosed with bipolar type in i quickly got sta,Bipolar,0.9865,3,High
+STU1452,sometimes people answer my posts sometimes not there is nothing too special about me i just wish i w,Suicidal,0.6671,4,High
+STU1453,do you eat fruits and vegetables every day,Normal,0.9978,0,Low
+STU1454,msiogope enyi wanyama wa kondeni maana malisho ya jangwani yanatoa miche na huo mti unazaa matunda y,Normal,0.9449,0,Low
+STU1455,whenever i feel good something reminds me that life is shit everyone says that time heals the past b,Suicidal,0.774,4,High
+STU1456,belief is single handedly the most important thing you can have in this life do you remember how as ,Depression,0.6561,3,High
+STU1457,hey ho hello as the title says i am kind of struggling with my own thoughts there are times like rig,Suicidal,0.9253,4,High
+STU1458,i do not want to die but i do not want to exist there are people around me but i have never felt mor,Suicidal,0.5922,4,High
+STU1459,seroquel question i was just put on mg starting out and was told to take before bed i know everyone ,Bipolar,0.6844,3,High
+STU1460,hurt my back and titty in the process shouldve waited another week to avoid the titty pain but it do,Depression,0.9934,3,High
+STU1461,they both think i am pathetic they are not wrong but its be nice if they at least tried to hide it i,Depression,0.6725,3,High
+STU1462,long time no on erpe hm hm,Normal,0.9978,0,Low
+STU1463,united kingdom what hapens if i dont want to be here anymore,Suicidal,0.9282,4,High
+STU1464,please help for years i was in a severe depression and in the last few months i have been making a g,Depression,0.9855,3,High
+STU1465,como q jyp,Normal,0.9977,0,Low
+STU1466,my best friends plans for summer were to spend as much time with me as he could we got out on may he,Depression,0.9249,3,High
+STU1467,i have not had a real conversation in months every single person i cross paths with just talks at me,Depression,0.5782,3,High
+STU1468,cold water immersion for stress relief im currently on day of getting in ice water for minutesday an,Stress,0.9783,1,Medium
+STU1469,i havent even lost one pound of fat,Normal,0.9978,0,Low
+STU1470,i do not even know why i am posting here to be honest ill most likely post this on from this throwaw,Suicidal,0.8343,4,High
+STU1471,head injury worries i constantly worry about head injuries because i constantly worry if a hit to my,Anxiety,0.9761,2,Medium
+STU1472,unbearable mind boggling irritability i had my meds down to a science topamax seroquel buspar sertra,Bipolar,0.4681,3,High
+STU1473,its not too much only about,Normal,0.998,0,Low
+STU1474,this is just another message to the void please do not respond or care nobody has ever cared or been,Suicidal,0.827,4,High
+STU1475,imaginarypeach now your leaving me get sad,Normal,0.9971,0,Low
+STU1476,you ever just get out of a super anxiety inducing situation and just have a depressive episode and y,Depression,0.9732,3,High
+STU1477,it is emotionally and physically taxing for us all to deal with these i am worried that one day some,Stress,0.9573,1,Medium
+STU1478,bed is painfully tempting right now but if i take a nap i ll probably wake up at pm,Normal,0.997,0,Low
+STU1479,is this stress or mental health issues hi i am always nervous i dont know how to describe like havin,Stress,0.8479,1,Medium
+STU1480,going thru town and traffic on bypass is stink,Normal,0.9953,0,Low
+STU1481,hey everyone first off i will start by saying that this is my first post here so do please let me kn,Depression,0.964,3,High
+STU1482,so cold,Normal,0.9961,0,Low
+STU1483,good luck,Normal,0.9978,0,Low
+STU1484,casasteve vw forum are a nightmare for that enthusiast on forum always result in politics and bitchi,Normal,0.9961,0,Low
+STU1485,being restless since noon but being ignored,Anxiety,0.991,2,Medium
+STU1486,i feel like i will never trust my own judgement again i fucking hate being this person i hate being ,Stress,0.9558,1,Medium
+STU1487,and theyre clean,Normal,0.9981,0,Low
+STU1488,my heart races and palpitates ive gone on autopilot but ive never experienced anything like an out o,Stress,0.7673,1,Medium
+STU1489,i do not even know who myself is anymore as a kid i was able just to be and people who liked me like,Depression,0.9573,3,High
+STU1490,i am a living fuck up physically mentally socially academically etcif someone offered me the chance ,Suicidal,0.8502,4,High
+STU1491,the worst part of anxiety and panic attack for me is the sense of impending doom it s the worst feel,Depression,0.9942,3,High
+STU1492,hi everyone so i am in abusive relationship we live together he doesnt pay for anything but his alco,Normal,0.4981,0,Low
+STU1493,i do not know what to do i will not get better at the train station,Suicidal,0.522,4,High
+STU1494,lately i have had a hard time feeling things for myself and when i imagine things happening to me it,Depression,0.9784,3,High
+STU1495,i hate this world and all the systems devised by humans in power i am glad and fortunate for what i ,Suicidal,0.8522,4,High
+STU1496,dear twitter i have bug bite on my leg they r itchyyyy haha just got outta the shower uhh night,Normal,0.998,0,Low
+STU1497,i finally understood what i lack in life and what i tried to get for all my life sense of communtiy ,Suicidal,0.9345,4,High
+STU1498,marie be friends with me before hot sauce mv release help rt like moots thank you,Normal,0.9947,0,Low
+STU1499,schizoaffective vs bipolar i was diagnosed bipolar when i had my first psychotic break but how do i ,Bipolar,0.9867,3,High

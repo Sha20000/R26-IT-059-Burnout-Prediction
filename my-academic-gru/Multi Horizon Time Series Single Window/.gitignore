@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# ALL raw data files — too large for GitHub
+data/raw/
+
+# Processed numpy files — too large
+data/processed/*.npy
+
+# Model weights — too large
+models/saved/*.pt
+models/saved/*.pth
+models/saved/*.pkl
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+anaconda_projects/

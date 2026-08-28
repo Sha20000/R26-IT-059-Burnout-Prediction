@@ -1,0 +1,48 @@
+{
+  "weights": {
+    "academic_score": 0.3,
+    "emotion_score": 0.2,
+    "behavior_score": 0.2,
+    "engagement_score": 0.3
+  },
+  "thresholds": {
+    "low_max": 0.4,
+    "medium_max": 0.7
+  },
+  "override": {
+    "academic_min": 0.7,
+    "engagement_min": 0.8
+  },
+  "sources": [
+    {
+      "name": "academic",
+      "file": "academic_prediction.csv",
+      "id_col": "student_id",
+      "score_col": "academic_risk",
+      "score_key": "academic_score",
+      "reason_col": "main_reason"
+    },
+    {
+      "name": "emotion",
+      "file": "data/emotion_predictions.csv",
+      "id_col": "student_id",
+      "score_col": "emotion_score",
+      "score_key": "emotion_score"
+    },
+    {
+      "name": "behavior",
+      "file": "data/behavior_predictions.csv",
+      "id_col": "student_id",
+      "score_col": "behavior_score",
+      "score_key": "behavior_score"
+    },
+    {
+      "name": "engagement",
+      "file": "data/engagement_predictions.csv",
+      "id_col": "student_id",
+      "score_col": "engagement_score",
+      "score_key": "engagement_score"
+    }
+  ],
+  "refresh_seconds": 30
+}

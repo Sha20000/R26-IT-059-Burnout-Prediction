@@ -1,0 +1,63 @@
+{
+  "model": "Unified Multi-Horizon GRU",
+  "student": "IT22916426",
+  "project": "R26-IT-059",
+  "n_weeks": 17,
+  "n_features": 13,
+  "horizons": [
+    {
+      "horizon": "Week 4",
+      "week": 4,
+      "f1": 0.5178408051235133,
+      "auc": 0.6875638235991124,
+      "precision": 0.40778097982708933,
+      "recall": 0.7092731829573935,
+      "threshold": 0.44999999999999996
+    },
+    {
+      "horizon": "Week 8",
+      "week": 8,
+      "f1": 0.6081229418221734,
+      "auc": 0.7813286798658539,
+      "precision": 0.541015625,
+      "recall": 0.6942355889724311,
+      "threshold": 0.49999999999999994
+    },
+    {
+      "horizon": "Week 12",
+      "week": 12,
+      "f1": 0.6352026651860078,
+      "auc": 0.8109658099403235,
+      "precision": 0.5702891326021934,
+      "recall": 0.7167919799498746,
+      "threshold": 0.49999999999999994
+    },
+    {
+      "horizon": "Week 17",
+      "week": 17,
+      "f1": 0.7227101631116688,
+      "auc": 0.8831003008955052,
+      "precision": 0.7236180904522613,
+      "recall": 0.7218045112781954,
+      "threshold": 0.5499999999999999
+    }
+  ],
+  "optimal_horizon": {
+    "horizon": "Week 17",
+    "week": 17,
+    "f1": 0.7227101631116688,
+    "auc": 0.8831003008955052,
+    "precision": 0.7236180904522613,
+    "recall": 0.7218045112781954,
+    "threshold": 0.5499999999999999
+  },
+  "baselines": {
+    "Random Forest": 0.6647,
+    "Logistic Regression": 0.68,
+    "XGBoost": 0.689,
+    "Gradient Boosting": 0.6965,
+    "Simple LSTM": 0.7087,
+    "GRU": 0.7185,
+    "BiLSTM": 0.7107
+  }
+}

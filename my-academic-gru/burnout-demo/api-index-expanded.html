@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Burnout & Dropout Risk Detection — R26-IT-059 | API-Enabled</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-inner {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-brand {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .brand-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .header-brand h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .header-brand p {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .model-pill {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .api-status {
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .api-status.online {
+      background: rgba(67, 233, 123, 0.2);
+      color: #43e97b;
+    }
+
+    .api-status.offline {
+      background: rgba(245, 87, 108, 0.2);
+      color: #f5576c;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .tab-btn {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #999;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .control-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Table View */
+    .table-wrapper {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead {
+      background: #f9f9f9;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #666;
+      white-space: nowrap;
+      background: #f9f9f9;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #f9f9f9;
+    }
+
+    td {
+      padding: 12px;
+      white-space: nowrap;
+    }
+
+    /* Student ID */
+    .student-id {
+      font-weight: 600;
+      color: #667eea;
+      cursor: pointer;
+    }
+
+    /* Risk Score Cells */
+    .risk-score {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .risk-score.high {
+      color: #f5576c;
+    }
+
+    .risk-score.medium {
+      color: #ffa502;
+    }
+
+    .risk-score.low {
+      color: #43e97b;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .badge-high {
+      background: #f5576c;
+      color: white;
+    }
+
+    .badge-medium {
+      background: #ffa502;
+      color: white;
+    }
+
+    .badge-low {
+      background: #43e97b;
+      color: white;
+    }
+
+    .badge-dropout {
+      background: #f5576c;
+      color: white;
+    }
+
+    .badge-passed {
+      background: #43e97b;
+      color: white;
+    }
+
+    /* Feature */
+    .feature {
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Stats Footer */
+    .stats-footer {
+      background: #f9f9f9;
+      padding: 16px;
+      border-top: 1px solid #e0e0e0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      font-size: 12px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .stat-label {
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .error {
+      background: #fff5f5;
+      border: 1px solid #f5576c;
+      color: #c41e3a;
+      padding: 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      table {
+        font-size: 11px;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-badge">R26-IT-059</div>
+        <div>
+          <h1>Academic Burnout & Dropout Risk Detection</h1>
+          <p>Test Students (2543) + PP2 Concurrent (839) · API-Enabled Backend</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="model-pill">Live API</div>
+        <div class="api-status online" id="apiStatus">
+          <span class="status-dot"></span> API Live
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('test', this)">
+        📊 Test Students
+      </button>
+      <button class="tab-btn" onclick="switchTab('pp2', this)">
+        🎯 PP2 Concurrent
+      </button>
+      <button class="tab-btn" onclick="switchTab('metrics', this)">
+        📈 Model Metrics
+      </button>
+      <button class="tab-btn" onclick="switchTab('metafnn', this)">
+        🔗 Meta-FNN Risk
+      </button>
+      <button class="tab-btn" onclick="switchTab('emotion', this)">
+        💬 Emotional Analysis
+      </button>
+      <button class="tab-btn" onclick="switchTab('academic', this)">
+        📚 Academic Risk
+      </button>
+      <button class="tab-btn" onclick="switchTab('behavioral', this)">
+        🧠 Behavioral Anomaly
+      </button>
+      <button class="tab-btn" onclick="switchTab('sliit', this)">
+        🎓 SLIIT Synthetic
+      </button>
+    </div>
+
+    <!-- Test Students Tab -->
+    <div id="test" class="tab-content active">
+      <div class="controls">
+        <div class="control-group">
+          <label>Filter by Alert Level</label>
+          <select id="filterAlert" onchange="loadTestStudents()">
+            <option value="">All Students</option>
+            <option value="HIGH">HIGH Risk</option>
+            <option value="MEDIUM">MEDIUM Risk</option>
+            <option value="LOW">LOW Risk</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Search Student ID</label>
+          <input type="text" id="searchStudent" placeholder="e.g., OULAD_TEST_0007" onkeyup="searchStudents()" />
+        </div>
+        <div class="control-group">
+          <label>Limit Results</label>
+          <select id="limitResults" onchange="loadTestStudents()">
+            <option value="">All</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="testError"></div>
+
+      <div class="table-wrapper">
+        <table id="testTable">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Overall Risk Score</th>
+              <th>Week 4 Risk</th>
+              <th>Week 8 Risk</th>
+              <th>Week 12 Risk</th>
+              <th>Week 17 Risk</th>
+              <th>Alert Level</th>
+              <th>Top Feature</th>
+              <th>Importance %</th>
+              <th>Critical Week</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody id="testBody">
+            <tr>
+              <td colspan="11" class="loading">Loading students...</td>
+            </tr>
+          </tbody>
+          <tfoot id="testFooter"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- PP2 Concurrent Tab -->
+    <div id="pp2" class="tab-content">
+      <div class="controls">
+        <div class="control-group">
+          <label>Filter by Alert Level</label>
+          <select id="filterAlertPP2" onchange="loadPP2Students()">
+            <option value="">All Students</option>
+            <option value="HIGH">HIGH Risk</option>
+            <option value="LOW">LOW Risk</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Prediction Agreement</label>
+          <select id="filterAgreement" onchange="loadPP2Students()">
+            <option value="">All</option>
+            <option value="true">Methods Agree</option>
+            <option value="false">Methods Disagree</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Search Student ID</label>
+          <input type="text" id="searchStudentPP2" placeholder="e.g., PP2_29820" onkeyup="searchStudentsPP2()" />
+        </div>
+      </div>
+
+      <div id="pp2Error"></div>
+
+      <div class="table-wrapper">
+        <table id="pp2Table">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Modules</th>
+              <th>Count-Based Pred</th>
+              <th>Max Pool Pred</th>
+              <th>Methods Agree?</th>
+              <th>Alert Level</th>
+              <th>Actual Outcome</th>
+            </tr>
+          </thead>
+          <tbody id="pp2Body">
+            <tr>
+              <td colspan="7" class="loading">Loading PP2 students...</td>
+            </tr>
+          </tbody>
+          <tfoot id="pp2Footer"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Metrics Tab -->
+    <div id="metrics" class="tab-content">
+      <h2 style="margin-bottom: 16px;">Cross-Year Validation Results (2013 → 2014)</h2>
+
+      <div class="table-wrapper" style="margin-bottom: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Score</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody id="validationBody">
+            <tr><td colspan="3" class="loading">Loading validation metrics...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 style="margin-bottom: 16px;">Model Performance Metrics</h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Score</th>
+              <th>Classification</th>
+            </tr>
+          </thead>
+          <tbody id="performanceBody">
+            <tr><td colspan="3" class="loading">Loading performance metrics...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Meta-FNN Risk Tab -->
+    <div id="metafnn" class="tab-content">
+      <div class="controls">
+        <div class="control-group">
+          <label>Filter by Alert Level</label>
+          <select id="filterMetaFNN" onchange="loadMetaFNNStudents()">
+            <option value="ALL">All Students</option>
+            <option value="HIGH">HIGH Risk</option>
+            <option value="MEDIUM">MEDIUM Risk</option>
+            <option value="LOW">LOW Risk</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="metafnnError"></div>
+
+      <div class="table-wrapper">
+        <table id="metafnnTable">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Academic Risk (GRU)</th>
+              <th>Week 4</th>
+              <th>Week 8</th>
+              <th>Week 12</th>
+              <th>Week 17</th>
+              <th>Behavioral Risk (VAE)</th>
+              <th>Emotional Risk (NLP)</th>
+              <th>Final Burnout Risk</th>
+              <th>Weighted Score</th>
+              <th>Alert Level</th>
+            </tr>
+          </thead>
+          <tbody id="metafnnBody">
+            <tr>
+              <td colspan="11" class="loading">Loading Meta-FNN data...</td>
+            </tr>
+          </tbody>
+          <tfoot id="metafnnFooter"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Emotional Analysis Tab -->
+    <div id="emotion" class="tab-content">
+      <div class="controls">
+        <div class="control-group">
+          <label>Analyze Student Text</label>
+          <input type="text" id="emotionText" placeholder="Enter student feedback or text..." style="width: 300px;" />
+          <button onclick="analyzeEmotion()" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 6px;">Analyze</button>
+        </div>
+      </div>
+
+      <div id="emotionError"></div>
+      <div id="emotionResult"></div>
+
+      <div class="table-wrapper">
+        <table id="emotionTable">
+          <thead>
+            <tr>
+              <th>Emotion Class</th>
+              <th>Stress Score</th>
+              <th>Confidence</th>
+              <th>Risk Level</th>
+              <th>Top Words</th>
+            </tr>
+          </thead>
+          <tbody id="emotionBody">
+            <tr>
+              <td colspan="5" class="loading">Enter text above to analyze emotional state...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Academic Risk Tab -->
+    <div id="academic" class="tab-content">
+      <h2 style="margin-bottom: 16px;">Academic Risk Progression (Week-by-Week)</h2>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Sort by Risk Level</label>
+          <select id="sortAcademic" onchange="loadAcademicRisk()">
+            <option value="desc">Highest Risk First</option>
+            <option value="asc">Lowest Risk First</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="academicError"></div>
+
+      <div class="table-wrapper">
+        <table id="academicTable">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Week 4 Risk</th>
+              <th>Week 8 Risk</th>
+              <th>Week 12 Risk</th>
+              <th>Week 17 Risk</th>
+              <th>Trend</th>
+              <th>Current Alert</th>
+            </tr>
+          </thead>
+          <tbody id="academicBody">
+            <tr>
+              <td colspan="7" class="loading">Loading academic risk data...</td>
+            </tr>
+          </tbody>
+          <tfoot id="academicFooter"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Behavioral Anomaly Tab -->
+    <div id="behavioral" class="tab-content">
+      <h2 style="margin-bottom: 16px;">Behavioral Anomaly & Compliance Detection</h2>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Filter by Anomaly Level</label>
+          <select id="filterBehavioral" onchange="loadBehavioralRisk()">
+            <option value="ALL">All Students</option>
+            <option value="HIGH">High Anomalies</option>
+            <option value="MEDIUM">Medium Anomalies</option>
+            <option value="LOW">Low Anomalies</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="behavioralError"></div>
+
+      <div class="table-wrapper">
+        <table id="behavioralTable">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Behavior Risk (Mean)</th>
+              <th>Behavior Risk (Peak)</th>
+              <th>Compliance Score</th>
+              <th>Anomaly Mean</th>
+              <th>High Anomaly Weeks</th>
+              <th>Risk Level</th>
+            </tr>
+          </thead>
+          <tbody id="behavioralBody">
+            <tr>
+              <td colspan="7" class="loading">Loading behavioral data...</td>
+            </tr>
+          </tbody>
+          <tfoot id="behavioralFooter"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIIT Synthetic Data Tab -->
+    <div id="sliit" class="tab-content">
+      <h2 style="margin-bottom: 16px;">SLIIT Synthetic Cohort — Behavioral Anomaly Results</h2>
+      <p style="margin-bottom: 16px; color: var(--muted, #666);">500 synthetic students · 5 concurrent modules · weeks 4-15 · IT22215710 Karunarathne D C</p>
+
+      <div id="sliitStats" class="controls" style="display:flex; gap:16px; flex-wrap:wrap;"></div>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Filter by Student Type</label>
+          <select id="filterSliitType" onchange="loadSliitStudents()">
+            <option value="ALL">All Types</option>
+            <option value="NORMAL">Normal</option>
+            <option value="BURNOUT">Burnout</option>
+            <option value="STRUGGLING">Struggling</option>
+            <option value="LATE_BURNOUT">Late Burnout</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Filter by Module</label>
+          <select id="filterSliitModule" onchange="loadSliitStudents()">
+            <option value="ALL">All Modules</option>
+            <option value="IT3040">IT3040</option>
+            <option value="IT3050">IT3050</option>
+            <option value="IT3060">IT3060</option>
+            <option value="IT3070">IT3070</option>
+            <option value="IT3080">IT3080</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="sliitError"></div>
+
+      <div class="table-wrapper">
+        <table id="sliitTable">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Module</th>
+              <th>Week</th>
+              <th>Anomaly Score</th>
+              <th>Combined Score</th>
+              <th>Compliance</th>
+              <th>Type</th>
+              <th>At Risk</th>
+            </tr>
+          </thead>
+          <tbody id="sliitBody">
+            <tr>
+              <td colspan="9" class="loading">Loading SLIIT synthetic data...</td>
+            </tr>
+          </tbody>
+          <tfoot id="sliitFooter"></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5001';
+    const VAE_API_BASE = 'http://localhost:5003';
+
+    // Pagination state
+    let currentPage = 1;
+    const pageSize = 25;
+    let allTestStudents = [];
+    let allPP2Students = [];
+
+    // Tab switching
+    function switchTab(tabName, btnEl) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      document.getElementById(tabName).classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+
+      if (tabName === 'pp2') {
+        currentPage = 1;
+        loadPP2Students();
+      } else if (tabName === 'metrics') {
+        loadMetrics();
+      } else if (tabName === 'metafnn') {
+        loadMetaFNNStudents();
+      } else if (tabName === 'academic') {
+        loadAcademicRisk();
+      } else if (tabName === 'behavioral') {
+        loadBehavioralRisk();
+      } else if (tabName === 'sliit') {
+        loadSliitStudents();
+      }
+    }
+
+    // Check API status
+    async function checkAPIStatus() {
+      try {
+        const res = await fetch(`${API_BASE}/api/health`);
+        if (res.ok) {
+          document.getElementById('apiStatus').classList.add('online');
+          document.getElementById('apiStatus').classList.remove('offline');
+        }
+      } catch (e) {
+        document.getElementById('apiStatus').classList.add('offline');
+        document.getElementById('apiStatus').classList.remove('online');
+      }
+    }
+
+    // Load Test Students (with server-side pagination)
+    async function loadTestStudents() {
+      const alertLevel = document.getElementById('filterAlert').value;
+
+      let url = `${API_BASE}/api/test-students?page=${currentPage}&limit=25`;
+      if (alertLevel) url += `&alert_level=${alertLevel}`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+        const data = await res.json();
+        displayTestStudents(data);
+        displayTestStats(data);
+      } catch (e) {
+        document.getElementById('testError').innerHTML = `<div class="error">⚠️ ${e.message}</div>`;
+      }
+    }
+
+    // Display Test Students Table (server-side pagination)
+    function displayTestStudents(apiResponse) {
+      const tbody = document.getElementById('testBody');
+      tbody.innerHTML = '';
+
+      const students = apiResponse.data || [];
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="loading">No students found</td></tr>';
+        return;
+      }
+
+      students.forEach(student => {
+        const risk = parseFloat(student.academic_risk || 0);
+        const riskClass = risk > 0.6 ? 'high' : risk > 0.3 ? 'medium' : 'low';
+        const alertBadgeClass = `badge-${student.alert_level?.toLowerCase() || 'low'}`;
+        const outcomeBadgeClass = student.actual_label === 1 ? 'badge-dropout' : 'badge-passed';
+        const outcomeText = student.actual_label === 1 ? '⚠️ DROPOUT' : '✅ PASSED';
+
+        const row = `
+          <tr>
+            <td class="student-id">${student.student_id || '—'}</td>
+            <td class="risk-score ${riskClass}">${(risk * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(student.week4_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(student.week8_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(student.week12_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(student.week17_risk || 0) * 100).toFixed(1)}%</td>
+            <td><span class="badge ${alertBadgeClass}">${student.alert_level || 'LOW'}</span></td>
+            <td class="feature">${student.top_feature_1 || '—'}</td>
+            <td class="feature">${parseFloat(student.top_feature_1_pct || 0).toFixed(1)}%</td>
+            <td class="feature">Week ${student.most_important_week || '—'}</td>
+            <td><span class="badge ${outcomeBadgeClass}">${outcomeText}</span></td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+
+      // Add pagination controls
+      displayPaginationControls('testPagination', apiResponse.page, apiResponse.total_pages);
+    }
+
+    // Pagination controls
+    function displayPaginationControls(containerId, currentPage, totalPages) {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        // Create pagination container if it doesn't exist
+        const testFooter = document.getElementById('testFooter');
+        const paginationDiv = document.createElement('div');
+        paginationDiv.id = containerId;
+        paginationDiv.style.cssText = 'text-align: center; padding: 16px; background: #f9f9f9; border-top: 1px solid #e0e0e0;';
+        testFooter.parentNode.insertBefore(paginationDiv, testFooter);
+      }
+
+      let html = `<div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">`;
+
+      if (currentPage > 1) {
+        html += `<button onclick="goToPage(1)" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">« First</button>`;
+        html += `<button onclick="goToPage(${currentPage - 1})" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">‹ Prev</button>`;
+      }
+
+      html += `<span style="padding: 6px 12px; font-weight: 600;">Page ${currentPage} of ${totalPages}</span>`;
+
+      if (currentPage < totalPages) {
+        html += `<button onclick="goToPage(${currentPage + 1})" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">Next ›</button>`;
+        html += `<button onclick="goToPage(${totalPages})" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">Last »</button>`;
+      }
+
+      html += `</div>`;
+      document.getElementById(containerId).innerHTML = html;
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      loadTestStudents();
+      // Scroll to table
+      document.getElementById('testTable').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Display Test Stats
+    function displayTestStats(apiResponse) {
+      // Note: Stats show aggregate from filtered results (total), not just current page
+      const total = apiResponse.total;
+      // We can estimate based on current page, or display total count
+      const students = apiResponse.data || [];
+      const high = students.filter(s => s.alert_level === 'HIGH').length;
+      const medium = students.filter(s => s.alert_level === 'MEDIUM').length;
+      const low = students.filter(s => s.alert_level === 'LOW').length;
+      const dropouts = students.filter(s => s.actual_label === 1).length;
+
+      const footer = document.getElementById('testFooter');
+      footer.innerHTML = `
+        <tr style="background: #f9f9f9; border-top: 2px solid #e0e0e0;">
+          <td colspan="11">
+            <div class="stats-footer">
+              <div class="stat">
+                <div class="stat-value">${total}</div>
+                <div class="stat-label">Total Students</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #f5576c;">${high}</div>
+                <div class="stat-label">HIGH Risk</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #ffa502;">${medium}</div>
+                <div class="stat-label">MEDIUM Risk</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #43e97b;">${low}</div>
+                <div class="stat-label">LOW Risk</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #f5576c;">${dropouts}</div>
+                <div class="stat-label">Actual Dropouts</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #667eea; font-size: 14px;">Showing 25/page</div>
+                <div class="stat-label">Pagination</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Search Test Students (reload with filter)
+    function searchStudents() {
+      // Search is handled by loadTestStudents() with filter
+      // For now, just reload the current view
+      loadTestStudents();
+    }
+
+    // Load PP2 Students (with server-side pagination)
+    async function loadPP2Students() {
+      const alertLevel = document.getElementById('filterAlertPP2').value;
+      const agreement = document.getElementById('filterAgreement').value;
+
+      let url = `${API_BASE}/api/pp2-students?page=${currentPage}&limit=25`;
+      if (alertLevel) url += `&alert_level=${alertLevel}`;
+      if (agreement) url += `&agreement=${agreement}`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+        const data = await res.json();
+        displayPP2Students(data);
+        displayPP2Stats(data);
+      } catch (e) {
+        document.getElementById('pp2Error').innerHTML = `<div class="error">⚠️ ${e.message}</div>`;
+      }
+    }
+
+    // Display PP2 Students Table (server-side pagination)
+    function displayPP2Students(apiResponse) {
+      const tbody = document.getElementById('pp2Body');
+      tbody.innerHTML = '';
+
+      const students = apiResponse.data || [];
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No students found</td></tr>';
+        return;
+      }
+
+      students.forEach(student => {
+        const alertBadgeClass = `badge-${student.alert_level?.toLowerCase() || 'low'}`;
+        const agreeBadge = student.predictions_agree ? '<span class="badge" style="background: #43e97b; color: white;">✅ Agree</span>' : '<span class="badge" style="background: #ffa502; color: white;">⚠️ Disagree</span>';
+        const outcomeBadge = student.actual_label === 1 ? '<span class="badge badge-dropout">⚠️ DROPOUT</span>' : '<span class="badge badge-passed">✅ PASSED</span>';
+
+        const row = `
+          <tr>
+            <td class="student-id">${student.student_id || '—'}</td>
+            <td>${student.n_modules || '—'}</td>
+            <td>${student.count_based_pred === 1 ? '⚠️ Dropout' : '✅ Pass'}</td>
+            <td>${student.max_pool_pred === 1 ? '⚠️ Dropout' : '✅ Pass'}</td>
+            <td>${agreeBadge}</td>
+            <td><span class="badge ${alertBadgeClass}">${student.alert_level || 'LOW'}</span></td>
+            <td>${outcomeBadge}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+
+      // Add pagination controls
+      displayPP2PaginationControls('pp2Pagination', apiResponse.page, apiResponse.total_pages);
+    }
+
+    // PP2 Pagination controls
+    function displayPP2PaginationControls(containerId, currentPage, totalPages) {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        const pp2Footer = document.getElementById('pp2Footer');
+        const paginationDiv = document.createElement('div');
+        paginationDiv.id = containerId;
+        paginationDiv.style.cssText = 'text-align: center; padding: 16px; background: #f9f9f9; border-top: 1px solid #e0e0e0;';
+        pp2Footer.parentNode.insertBefore(paginationDiv, pp2Footer);
+      }
+
+      let html = `<div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">`;
+
+      if (currentPage > 1) {
+        html += `<button onclick="goToPP2Page(1)" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">« First</button>`;
+        html += `<button onclick="goToPP2Page(${currentPage - 1})" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">‹ Prev</button>`;
+      }
+
+      html += `<span style="padding: 6px 12px; font-weight: 600;">Page ${currentPage} of ${totalPages}</span>`;
+
+      if (currentPage < totalPages) {
+        html += `<button onclick="goToPP2Page(${currentPage + 1})" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">Next ›</button>`;
+        html += `<button onclick="goToPP2Page(${totalPages})" style="padding: 6px 12px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">Last »</button>`;
+      }
+
+      html += `</div>`;
+      document.getElementById(containerId).innerHTML = html;
+    }
+
+    function goToPP2Page(page) {
+      currentPage = page;
+      loadPP2Students();
+      document.getElementById('pp2Table').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Display PP2 Stats
+    function displayPP2Stats(apiResponse) {
+      const total = apiResponse.total;
+      const students = apiResponse.data || [];
+      const agree = students.filter(s => s.predictions_agree).length;
+      const high = students.filter(s => s.alert_level === 'HIGH').length;
+
+      const footer = document.getElementById('pp2Footer');
+      footer.innerHTML = `
+        <tr style="background: #f9f9f9; border-top: 2px solid #e0e0e0;">
+          <td colspan="7">
+            <div class="stats-footer">
+              <div class="stat">
+                <div class="stat-value">${total}</div>
+                <div class="stat-label">Total Students</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #43e97b;">${agree}</div>
+                <div class="stat-label">Methods Agree</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #ffa502;">${students.length - agree}</div>
+                <div class="stat-label">Methods Disagree</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #f5576c;">${high}</div>
+                <div class="stat-label">HIGH Risk</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #667eea;">${(100 * agree / students.length).toFixed(1)}%</div>
+                <div class="stat-label">Agreement %</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" style="color: #667eea; font-size: 14px;">Showing 25/page</div>
+                <div class="stat-label">Pagination</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Search PP2 Students
+    function searchStudentsPP2() {
+      loadPP2Students();
+    }
+
+    // Load Metrics
+    async function loadMetrics() {
+      try {
+        const [validation, performance] = await Promise.all([
+          fetch(`${API_BASE}/api/cross-year-validation`).then(r => r.json()),
+          fetch(`${API_BASE}/api/model-performance`).then(r => r.json())
+        ]);
+
+        displayValidationMetrics(validation);
+        displayPerformanceMetrics(performance);
+      } catch (e) {
+        console.error('Error loading metrics:', e);
+      }
+    }
+
+    // ========== NEW: Meta-FNN Tab ==========
+    async function loadMetaFNNStudents() {
+      const alertLevel = document.getElementById('filterMetaFNN').value;
+      const url = alertLevel === 'ALL'
+        ? 'http://localhost:5002/students'
+        : `http://localhost:5002/students?alert=${alertLevel}`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        displayMetaFNNStudents(data.students || []);
+      } catch (e) {
+        document.getElementById('metafnnError').innerHTML =
+          `<div class="error">⚠️ Meta-FNN API not available (http://localhost:5002)<br/>${e.message}</div>`;
+      }
+    }
+
+    function displayMetaFNNStudents(students) {
+      const tbody = document.getElementById('metafnnBody');
+      tbody.innerHTML = '';
+
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="loading">No students found</td></tr>';
+        return;
+      }
+
+      const rows = students.map(s => {
+        const burnoutRisk = parseFloat(s.final_burnout_risk || 0);
+        const riskClass = burnoutRisk > 0.7 ? 'high' : burnoutRisk > 0.4 ? 'medium' : 'low';
+        const alertBadgeClass = `badge-${s.final_alert?.toLowerCase() || 'low'}`;
+
+        const weightedRisk = parseFloat(s.weighted_burnout_risk || 0);
+        const weightedClass = weightedRisk > 0.7 ? 'high' : weightedRisk > 0.4 ? 'medium' : 'low';
+        const weightedBadgeClass = `badge-${s.weighted_alert?.toLowerCase() || 'low'}`;
+        const emoScore = parseFloat(s.emotional_stress_score || 0);
+
+        return `
+          <tr>
+            <td class="student-id">${s.student_id || '—'}</td>
+            <td class="risk-score">${(parseFloat(s.academic_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(s.week4_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(s.week8_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(s.week12_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(s.week17_risk || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(s.behavior_risk_mean || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${emoScore.toFixed(1)} / 4</td>
+            <td class="risk-score ${riskClass}">${(burnoutRisk * 100).toFixed(1)}%</td>
+            <td class="risk-score ${weightedClass}">${(weightedRisk * 100).toFixed(1)}%</td>
+            <td>
+              <span class="badge ${alertBadgeClass}" title="FNN-learned">${s.final_alert || 'LOW'}</span>
+              <span class="badge ${weightedBadgeClass}" title="0.4 GRU + 0.3 VAE + 0.3 NLP" style="margin-left:4px;">${s.weighted_alert || 'LOW'}</span>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = rows.join('');
+    }
+
+    // ========== NEW: Emotional Analysis Tab ==========
+    async function analyzeEmotion() {
+      const text = document.getElementById('emotionText').value.trim();
+      if (!text) {
+        alert('Please enter some text to analyze');
+        return;
+      }
+
+      try {
+        // Try calling emotional-nlp predict endpoint (if it exists)
+        const res = await fetch('http://localhost:3000/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: text })
+        });
+
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        displayEmotionResult(data);
+      } catch (e) {
+        document.getElementById('emotionError').innerHTML =
+          `<div class="error">⚠️ Emotional-NLP API not available (localhost:3000)<br/>${e.message}</div>`;
+      }
+    }
+
+    function displayEmotionResult(data) {
+      const tbody = document.getElementById('emotionBody');
+      tbody.innerHTML = '';
+
+      const stressScore = parseFloat(data.stress_score || 0);
+      const confidence = parseFloat(data.confidence || 0);
+      const riskMap = {
+        'Normal': 'Low', 'Stress': 'Medium', 'Anxiety': 'Medium',
+        'Depression': 'High', 'Bipolar': 'High', 'Personality disorder': 'High', 'Suicidal': 'Critical'
+      };
+      const riskLevel = riskMap[data.prediction] || 'Unknown';
+      const topWords = data.attention ? data.attention.slice(0, 3).map(a => a.token).join(', ') : '—';
+
+      const row = `
+        <tr>
+          <td><strong>${data.prediction || '—'}</strong></td>
+          <td class="risk-score">${stressScore.toFixed(1)}</td>
+          <td>${(confidence * 100).toFixed(1)}%</td>
+          <td><span class="badge badge-${riskLevel.toLowerCase()}">${riskLevel}</span></td>
+          <td class="feature">${topWords}</td>
+        </tr>
+      `;
+      tbody.innerHTML = row;
+
+      document.getElementById('emotionResult').innerHTML = `
+        <div style="background: #f9f9f9; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+          <p><strong>Prediction:</strong> ${data.prediction}</p>
+          <p><strong>Stress Score:</strong> ${stressScore.toFixed(1)} / 100</p>
+          <p><strong>Risk Level:</strong> ${riskLevel}</p>
+        </div>
+      `;
+    }
+
+    // ========== NEW: Academic Risk Tab ==========
+    async function loadAcademicRisk() {
+      try {
+        const res = await fetch('http://localhost:5002/students');
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        displayAcademicRisk(data.students || []);
+      } catch (e) {
+        document.getElementById('academicError').innerHTML =
+          `<div class="error">⚠️ Meta-FNN API not available<br/>${e.message}</div>`;
+      }
+    }
+
+    function displayAcademicRisk(students) {
+      const tbody = document.getElementById('academicBody');
+      tbody.innerHTML = '';
+
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No data available</td></tr>';
+        return;
+      }
+
+      const rows = students.map(s => {
+        const w4 = parseFloat(s.week4_risk || 0);
+        const w8 = parseFloat(s.week8_risk || 0);
+        const w12 = parseFloat(s.week12_risk || 0);
+        const w17 = parseFloat(s.week17_risk || 0);
+
+        let trend = '→';
+        if (w17 > w4) trend = '📈 Rising';
+        else if (w17 < w4) trend = '📉 Declining';
+        else trend = '→ Stable';
+
+        const alertBadgeClass = `badge-${s.final_alert?.toLowerCase() || 'low'}`;
+
+        return `
+          <tr>
+            <td class="student-id">${s.student_id || '—'}</td>
+            <td class="risk-score">${(w4 * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(w8 * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(w12 * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(w17 * 100).toFixed(1)}%</td>
+            <td>${trend}</td>
+            <td><span class="badge ${alertBadgeClass}">${s.final_alert || 'LOW'}</span></td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = rows.join('');
+    }
+
+    // ========== NEW: Behavioral Risk Tab ==========
+    async function loadBehavioralRisk() {
+      try {
+        const level = document.getElementById('filterBehavioral').value;
+        let url = `${VAE_API_BASE}/api/behavioral-risk`;
+        if (level && level !== 'ALL') url += `?risk_level=${level}`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        document.getElementById('behavioralError').innerHTML = '';
+        displayBehavioralRisk(data.students || []);
+      } catch (e) {
+        document.getElementById('behavioralError').innerHTML =
+          `<div class="error">⚠️ VAE API not available — is vae_api.py running on port 5003?<br/>${e.message}</div>`;
+      }
+    }
+
+
+    // ========== NEW: SLIIT Synthetic Data Tab ==========
+    async function loadSliitStudents() {
+      try {
+        const type = document.getElementById('filterSliitType').value;
+        const module = document.getElementById('filterSliitModule').value;
+        let url = `${API_BASE}/api/sliit-students?limit=200`;
+        if (type && type !== 'ALL') url += `&student_type=${type}`;
+        if (module && module !== 'ALL') url += `&module_code=${module}`;
+
+        const [res, statsRes] = await Promise.all([
+          fetch(url),
+          fetch(`${API_BASE}/api/sliit-students/stats`)
+        ]);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        const stats = statsRes.ok ? await statsRes.json() : null;
+
+        document.getElementById('sliitError').innerHTML = '';
+        displaySliitStudents(data.data || []);
+        if (stats) displaySliitStats(stats);
+      } catch (e) {
+        document.getElementById('sliitError').innerHTML =
+          `<div class="error">⚠️ SLIIT API not available — is app_api.py running?<br/>${e.message}</div>`;
+        document.getElementById('sliitBody').innerHTML =
+          '<tr><td colspan="9" class="loading">No data available</td></tr>';
+      }
+    }
+
+    function displaySliitStats(stats) {
+      const el = document.getElementById('sliitStats');
+      const atRiskPct = ((stats.at_risk_students / stats.total_students) * 100).toFixed(1);
+      el.innerHTML = `
+        <div class="control-group"><label>Total Students</label><div>${stats.total_students}</div></div>
+        <div class="control-group"><label>At-Risk</label><div>${stats.at_risk_students} (${atRiskPct}%)</div></div>
+        <div class="control-group"><label>Avg Anomaly Score</label><div>${stats.avg_anomaly_score.toFixed(4)}</div></div>
+        <div class="control-group"><label>Avg Compliance</label><div>${stats.avg_curriculum_compliance.toFixed(3)}</div></div>
+      `;
+    }
+
+    function displaySliitStudents(rows) {
+      const tbody = document.getElementById('sliitBody');
+      tbody.innerHTML = '';
+
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="loading">No data available</td></tr>';
+        return;
+      }
+
+      const html = rows.map(r => {
+        const riskBadge = r.at_risk === 1
+          ? '<span class="badge badge-high">AT RISK</span>'
+          : '<span class="badge badge-low">NORMAL</span>';
+        return `
+          <tr>
+            <td class="student-id">${r.student_id}</td>
+            <td>${r.student_name}</td>
+            <td>${r.module_code}</td>
+            <td>${r.week}</td>
+            <td class="risk-score">${parseFloat(r.anomaly_score).toFixed(4)}</td>
+            <td class="risk-score">${parseFloat(r.combined_score).toFixed(4)}</td>
+            <td>${(parseFloat(r.curriculum_compliance) * 100).toFixed(1)}%</td>
+            <td>${r.student_type}</td>
+            <td>${riskBadge}</td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.innerHTML = html;
+      document.getElementById('sliitFooter').innerHTML =
+        `<tr><td colspan="9">Showing ${rows.length} rows</td></tr>`;
+    }
+
+    function displayBehavioralRisk(students) {
+      const tbody = document.getElementById('behavioralBody');
+      tbody.innerHTML = '';
+
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No data available</td></tr>';
+        return;
+      }
+
+      const rows = students.map(s => {
+        const behaviorMean = parseFloat(s.behavior_risk_mean || 0);
+        const complianceMean = parseFloat(s.compliance_mean || 0);
+        const anomalyMean = parseFloat(s.anomaly_mean || 0);
+
+        let riskLevel = 'Low';
+        if (behaviorMean > 0.7) riskLevel = 'High';
+        else if (behaviorMean > 0.4) riskLevel = 'Medium';
+
+        return `
+          <tr>
+            <td class="student-id">${s.student_id || '—'}</td>
+            <td class="risk-score">${(behaviorMean * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(parseFloat(s.behavior_risk_max || 0) * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(complianceMean * 100).toFixed(1)}%</td>
+            <td class="risk-score">${(anomalyMean * 100).toFixed(1)}%</td>
+            <td>${parseInt(s.high_anomaly_weeks || 0)} weeks</td>
+            <td><span class="badge badge-${riskLevel.toLowerCase()}">${riskLevel}</span></td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = rows.join('');
+    }
+
+    // Display Validation Metrics
+    function displayValidationMetrics(data) {
+      const tbody = document.getElementById('validationBody');
+      tbody.innerHTML = '';
+
+      const metrics = data.metrics || {};
+      const metricsArray = [
+        { name: 'F1 Score', value: metrics.f1_score, benchmark: 0.72 },
+        { name: 'AUC-ROC', value: metrics.auc_score, benchmark: 0.88 },
+        { name: 'Accuracy', value: metrics.accuracy, benchmark: 0.82 },
+        { name: 'Precision', value: metrics.precision, benchmark: 0.78 },
+        { name: 'Recall', value: metrics.recall, benchmark: 0.75 },
+        { name: 'Balanced Accuracy', value: metrics.balanced_accuracy, benchmark: 0.81 }
+      ];
+
+      metricsArray.forEach(m => {
+        const val = parseFloat(m.value || 0);
+        const pct = (val * 100).toFixed(2);
+        const status = val >= m.benchmark ? '✅ Excellent' : val >= m.benchmark * 0.9 ? '⚠️ Good' : '❌ Fair';
+
+        const row = `
+          <tr>
+            <td><strong>${m.name}</strong></td>
+            <td class="risk-score" style="color: #667eea;">${pct}%</td>
+            <td>${status}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+
+      tbody.innerHTML += `
+        <tr style="background: #f9f9f9; border-top: 2px solid #e0e0e0; font-weight: 600;">
+          <td>📊 ${data.description || 'Cross-Year Validation'}</td>
+          <td></td>
+          <td>🎯 Outperformed ${data.baseline_models_beaten || 7}/${data.total_baselines || 7} baselines</td>
+        </tr>
+      `;
+    }
+
+    // Display Performance Metrics
+    function displayPerformanceMetrics(data) {
+      const tbody = document.getElementById('performanceBody');
+      tbody.innerHTML = '';
+
+      const metricsArray = [
+        { name: 'Accuracy', value: data.accuracy },
+        { name: 'F1 Score', value: data.f1_score },
+        { name: 'AUC-ROC', value: data.auc_roc },
+        { name: 'Precision', value: data.precision },
+        { name: 'Recall', value: data.recall },
+        { name: 'Specificity', value: data.specificity }
+      ];
+
+      metricsArray.forEach(m => {
+        const val = parseFloat(m.value || 0);
+        const pct = (val * 100).toFixed(2);
+        const status = val >= 0.80 ? '✅ Excellent' : val >= 0.70 ? '⚠️ Good' : '❌ Fair';
+
+        const row = `
+          <tr>
+            <td><strong>${m.name}</strong></td>
+            <td class="risk-score" style="color: #667eea;">${pct}%</td>
+            <td>${status}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+
+      tbody.innerHTML += `
+        <tr style="background: #f9f9f9; border-top: 2px solid #e0e0e0;">
+          <td><strong>${data.dataset_info || 'Model Performance'}</strong></td>
+          <td><strong>${data.total_students || 2543}</strong> students</td>
+          <td>📈 Model 8</td>
+        </tr>
+      `;
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', () => {
+      checkAPIStatus();
+      currentPage = 1;
+      loadTestStudents();
+      // Preload PP2 data so it's ready when user clicks tab
+      loadPP2Students();
+    });
+
+    // Refresh API status every 5 seconds
+    setInterval(checkAPIStatus, 5000);
+  </script>
+</body>
+</html>

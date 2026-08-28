@@ -1,0 +1,15 @@
+ehavioral anomaly detection 
+
+Records: 214,534
+Students: 24,005
+
+student_id            → join key
+code_module           → module identifier  
+week                  → week number (3-16)
+behavioral_risk_score → main FNN input (0.0 to 1.0)
+confidence_score      → model confidence (0.0 to 1.0)
+high_anomaly_flag     → binary flag (0 or 1)
+behavioral_prediction → LOW/MEDIUM/HIGH_RISK
+curriculum_compliance → compliance rate (0.0 to 1.0)
+anomaly_score         → raw VAE score
+at_risk               → ground truth label (0 or 1)
