@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+models/*.joblib
+models/*.pkl
+models/*.json
+README.md
+META_XAI_BUILD_PLAN.md
+META_XAI_PRODUCTION_TODOS.md
+META_XAI_PROGRESS_PRESENTATION.md
+META_XAI_TRAINING_TODOS.md

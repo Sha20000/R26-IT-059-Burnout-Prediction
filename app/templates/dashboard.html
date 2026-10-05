@@ -3,168 +3,112 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Burnout Risk Command Center</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
+    <title>Meta-XAI | Student Success Workspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   </head>
   <body>
-    <div class="page-shell">
-      <header class="hero">
-        <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-lg-7">
-              <p class="eyebrow">Explainable Multi-Modal AI</p>
-              <h1>Burnout Risk Command Center</h1>
-              <p class="lead">
-                Centralized dashboard for early academic burnout detection with
-                weighted meta-integration and explainable insights.
-              </p>
-              <div class="d-flex gap-3 flex-wrap">
-                <a class="btn btn-dark" href="/api/export/csv">Export CSV</a>
-                <button class="btn btn-outline-dark" onclick="window.print()">Print / Save PDF</button>
-              </div>
-            </div>
-            <div class="col-lg-5">
-              <div class="hero-card">
-                <h6>System Snapshot</h6>
-                <div class="stat-grid">
-                  <div>
-                    <span class="stat-label">Students tracked</span>
-                    <span class="stat-value">{{ total }}</span>
-                  </div>
-                  <div>
-                    <span class="stat-label">Average score</span>
-                    <span class="stat-value">{{ avg_score if avg_score is not none else 'N/A' }}</span>
-                  </div>
-                  <div>
-                    <span class="stat-label">High risk</span>
-                    <span class="stat-value">{{ counts['High'] }}</span>
-                  </div>
-                  <div>
-                    <span class="stat-label">Medium risk</span>
-                    <span class="stat-value">{{ counts['Medium'] }}</span>
-                  </div>
-                  <div>
-                    <span class="stat-label">Low risk</span>
-                    <span class="stat-value">{{ counts['Low'] }}</span>
-                  </div>
-                  <div>
-                    <span class="stat-label">Override rule</span>
-                    <span class="stat-value">Active</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="/">
+          <span class="brand-mark">MX</span>
+          <span><strong>Meta-XAI</strong><small>student success</small></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a class="nav-item active" href="#queue"><span class="nav-dot"></span>Intervention queue</a>
+          <a class="nav-item" href="#insights"><span class="nav-dot"></span>Cohort insights</a>
+          <a class="nav-item" href="#method"><span class="nav-dot"></span>Evidence health</a>
+        </nav>
+        <div class="sidebar-footer">
+          <span class="mode-dot"></span>
+          <div><strong>Demo workspace</strong><small>OULAD fixture / 2026-S1</small></div>
         </div>
-      </header>
+      </aside>
 
-      <main class="container-fluid">
-        <div class="row g-4">
-          <div class="col-xl-7">
-            <section class="panel">
-              <div class="panel-header">
-                <h3>Student Risk List</h3>
-                <p>Click a student to view explainability and recommendations.</p>
-              </div>
-              <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                  <thead>
-                    <tr>
-                      <th>Student ID</th>
-                      <th>Final score</th>
-                      <th>Risk level</th>
-                      <th>Override</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for row in records %}
-                    <tr
-                      class="student-row"
-                      data-student="{{ row.student_id }}"
-                      data-final-score="{{ row.final_score }}"
-                      data-final-risk="{{ row.final_risk }}"
-                      data-academic="{{ row.academic_score }}"
-                      data-emotion="{{ row.emotion_score }}"
-                      data-behavior="{{ row.behavior_score }}"
-                      data-engagement="{{ row.engagement_score }}"
-                      data-explanation="{{ row.summary | e }}"
-                      data-override="{{ row.override_applied }}"
-                      data-recommendation="{{ row.advisor_recommendation | e }}"
-                    >
-                      <td>{{ row.student_id }}</td>
-                      <td>{{ '%.2f' | format(row.final_score) if row.final_score is not none else 'N/A' }}</td>
-                      <td>
-                        <span class="badge risk-{{ row.final_risk | lower }}">
-                          {{ row.final_risk }}
-                        </span>
-                      </td>
-                      <td>{{ 'Yes' if row.override_applied else 'No' }}</td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="kicker">Student success operations</p>
+            <h1>Intervention queue</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="data-badge"><span class="status-dot"></span>DEMO DATA</span>
+            <a class="outline-button" href="/api/export/csv">Export queue</a>
+          </div>
+        </header>
+
+        <section class="intro-row">
+          <div>
+            <p class="intro-title">Make the next conversation count.</p>
+            <p class="intro-copy">Meta-XAI translates specialist model evidence into a ranked, explainable support queue for advisors.</p>
+          </div>
+          <div class="capacity-card">
+            <div class="capacity-label"><span>Weekly capacity</span><strong>{{ summary.capacity.available_slots }} slots open</strong></div>
+            <div class="capacity-track"><span style="width: 42%"></span></div>
+            <small>{{ summary.assigned_cases }} active cases of {{ summary.capacity.weekly_case_limit }} weekly places</small>
+          </div>
+        </section>
+
+        <section class="metrics-grid" aria-label="Queue summary">
+          <article class="metric-card metric-primary"><span class="metric-label">Students monitored</span><strong>{{ summary.total_students }}</strong><small>Across the current cohort</small></article>
+          <article class="metric-card"><span class="metric-label">Priority 1</span><strong>{{ summary.p1_cases }}</strong><small>Needs action this week</small></article>
+          <article class="metric-card"><span class="metric-label">Priority 2</span><strong>{{ summary.p2_cases }}</strong><small>Review and schedule</small></article>
+          <article class="metric-card"><span class="metric-label">Evidence coverage</span><strong>{{ (summary.evidence_coverage * 100)|round|int }}%</strong><small>Source completeness</small></article>
+        </section>
+
+        <section class="workspace-grid" id="queue">
+          <div class="queue-panel panel">
+            <div class="panel-heading">
+              <div><p class="section-label">Advisor workload</p><h2>Who needs attention first?</h2></div>
+              <span class="result-count" id="result-count">{{ records|length }} cases</span>
+            </div>
+            <div class="filters" role="group" aria-label="Queue filters">
+              <label class="search-field"><span class="search-icon">/</span><input id="search" type="search" placeholder="Search student or ID" /></label>
+              <select id="priority-filter" aria-label="Filter by priority"><option value="">All priorities</option><option value="P1">P1 first</option><option value="P2">P2 review</option><option value="P3">P3 monitor</option></select>
+              <select id="status-filter" aria-label="Filter by case status"><option value="">All statuses</option><option value="New">New</option><option value="Assigned">Assigned</option><option value="Monitoring">Monitoring</option><option value="Resolved">Resolved</option></select>
+            </div>
+            <div class="queue-table-wrap">
+              <table class="queue-table">
+                <thead><tr><th>Student</th><th>Priority</th><th>Pattern</th><th>Evidence</th><th>Action</th><th>Status</th></tr></thead>
+                <tbody id="queue-body">
+                  {% for row in records %}
+                  <tr class="queue-row {% if loop.first %}selected{% endif %}" data-id="{{ row.student_id }}">
+                    <td><strong>{{ row.student_name }}</strong><small>{{ row.student_id }} · {{ row.programme }}</small></td>
+                    <td><span class="priority-pill {{ row.priority_level|lower }}">{{ row.priority_level }}</span><small>{{ '%.0f'|format(row.priority_score * 100) }} priority</small></td>
+                    <td><span class="pattern-label">{{ row.trajectory|replace('_', ' ') }}</span><small>{{ row.trajectory_explanation }}</small></td>
+                    <td><span class="coverage-value">{{ (row.evidence_coverage * 100)|round|int }}%</span><small>{{ row.available_sources }}/{{ row.expected_sources }} sources</small></td>
+                    <td><span class="action-label">{{ row.recommended_action }}</span><small>Due {{ row.due_date }}</small></td>
+                    <td><span class="status-pill {{ row.status|lower|replace(' ', '-') }}">{{ row.status }}</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="empty-state" id="empty-state" hidden>No students match the current filters.</div>
+            </div>
           </div>
 
-          <div class="col-xl-5">
-            <section class="panel">
-              <div class="panel-header">
-                <h3>Student Insight Panel</h3>
-                <p>Model-level contributions and explainability summary.</p>
-              </div>
-              <div class="insight-card">
-                <div class="insight-header">
-                  <div>
-                    <h4 id="selected-student">Select a student</h4>
-                    <p id="selected-risk">Risk level: --</p>
-                  </div>
-                  <div class="badge risk-high" id="selected-override">Override: --</div>
-                </div>
-                <div class="chart-shell">
-                  <canvas id="modelChart" height="220"></canvas>
-                </div>
-                <div class="explain-block">
-                  <h6>Explainability</h6>
-                  <p id="selected-explanation">No student selected.</p>
-                </div>
-                <div class="explain-block">
-                  <h6>Advisor Recommendation</h6>
-                  <p id="selected-recommendation">Select a student to view guidance.</p>
-                </div>
-              </div>
-            </section>
+          <aside class="detail-panel panel" id="detail-panel">
+            <div class="detail-topline"><span class="section-label">Explainable case brief</span><span class="confidence-tag" id="detail-confidence">Medium confidence</span></div>
+            <div class="detail-identity"><div class="avatar" id="detail-avatar">AR</div><div><h2 id="detail-name">{{ records[0].student_name }}</h2><p id="detail-meta">{{ records[0].student_id }} · {{ records[0].programme }}</p></div></div>
+            <div class="detail-priority"><div><span class="metric-label">Intervention priority</span><strong id="detail-priority">{{ records[0].priority_level }}</strong></div><span class="priority-pill {{ records[0].priority_level|lower }}" id="detail-priority-pill">{{ records[0].priority_level }}</span></div>
+            <div class="trajectory-block"><div class="block-heading"><span>Academic trajectory</span><strong id="detail-trajectory">{{ records[0].trajectory|replace('_', ' ') }}</strong></div><div class="sparkline" id="sparkline"></div><div class="week-labels"><span>W4</span><span>W8</span><span>W12</span><span>W17</span></div></div>
+            <div class="explanation-block"><span class="block-heading">Why this case surfaced</span><p id="detail-explanation">{{ records[0].trajectory_explanation }}</p><div class="reason-list" id="reason-list"></div></div>
+            <div class="evidence-list"><div class="block-heading">Evidence layers</div><div id="evidence-items"></div></div>
+            <div class="recommendation"><span class="block-heading">Recommended next step</span><strong id="detail-action">{{ records[0].recommended_action }}</strong><p id="detail-owner">Owner: {{ records[0].owner_role }} · Due {{ records[0].due_date }}</p></div>
+            <div class="case-actions"><select id="case-status" aria-label="Update case status"><option>New</option><option>Assigned</option><option>Contacted</option><option>Monitoring</option><option>Resolved</option></select><button class="primary-button" id="save-case">Save case update</button></div>
+            <p class="save-message" id="save-message" role="status"></p>
+          </aside>
+        </section>
 
-            <section class="panel mt-4">
-              <div class="panel-header">
-                <h3>Risk Distribution</h3>
-                <p>Overview of students by final risk level.</p>
-              </div>
-              <div class="chart-shell">
-                <canvas id="distributionChart" height="200"></canvas>
-              </div>
-            </section>
-          </div>
-        </div>
+        <section class="bottom-grid" id="insights">
+          <article class="panel insight-panel"><div class="panel-heading"><div><p class="section-label">Decision quality</p><h2>Confidence is part of the answer</h2></div><span class="mini-tag">META-XAI</span></div><p>Every recommendation shows which evidence was available and where human review is needed. Missing signals reduce confidence instead of silently becoming low risk.</p><div class="confidence-bars"><div><span><b>High confidence</b><em>14 cases</em></span><i><u style="width: 55%"></u></i></div><div><span><b>Medium confidence</b><em>3 cases</em></span><i><u style="width: 24%"></u></i></div><div><span><b>Limited evidence</b><em>1 case</em></span><i><u style="width: 9%"></u></i></div></div></article>
+          <article class="panel method-panel" id="method"><p class="section-label">System posture</p><h2>Prediction is upstream. Action is here.</h2><p>Academic, behavioural, and emotional models remain independently owned. This layer validates their evidence, interprets trajectories, prioritises limited support capacity, and records what happens next.</p><div class="method-flow"><span>Signals</span><b>→</b><span>Evidence</span><b>→</b><span>Action</span><b>→</b><span>Outcome</span></div></article>
+        </section>
       </main>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      const distributionData = {
-        low: {{ counts['Low'] }},
-        medium: {{ counts['Medium'] }},
-        high: {{ counts['High'] }}
-      };
-    </script>
+    <script>window.initialRecords = {{ records|tojson }};</script>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
   </body>
 </html>
