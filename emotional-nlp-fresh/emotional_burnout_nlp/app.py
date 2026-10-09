@@ -98,3 +98,4 @@ if st.button("Analyze", type="primary"):
 
             except Exception as e:
                 st.error(f"Analysis failed: {e}. Please try again with different text.")
+ 

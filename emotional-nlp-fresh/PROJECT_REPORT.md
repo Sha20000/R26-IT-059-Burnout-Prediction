@@ -14,6 +14,8 @@ This project builds an AI system that reads student-written text and classifies 
 
 I built and compared **9 models** spanning classical machine learning, deep learning, and transformers. The best model — a **BERT + RoBERTa ensemble** — reached **82.32% accuracy**. A separate lead-time study showed the system can flag burnout as early as **Week 2 of a semester with 91% accuracy**. The trained model is deployed in a full-stack web dashboard.
 
+**Update — weekly dataset v2 (current deployed model).** The component was later retrained on a weekly version of the dataset (13,171 simulated students × weeks 2, 4, 8 and 12), split by student so that no student appears in both training and test data. On unseen students the deployed ensemble reaches **85.25% accuracy and 0.843 macro-F1** (see *Weekly Dataset v2 — Retrain*). Its known weaknesses, most importantly a bias towards labelling short texts as *Normal*, are measured in *Limitations & Future Work*.
+
 ---
 
 ## 2. Problem Statement & Motivation
@@ -245,26 +247,81 @@ emotional_burnout_nlp/
 
 ---
 
-## 15. Key Findings
+## 15. Weekly Dataset v2 — Retrain (current deployed model)
 
-1. **Fine-tuning is essential** — zero-shot/rule-based baselines scored 25–33%; fine-tuned transformers scored 80–84%.
-2. **Ensembling helps** — combining BERT + RoBERTa beat either model alone (82.32%).
-3. **Class imbalance is the core difficulty** — the rarest class (Personality disorder) remained hardest even after weighted loss.
-4. **Early detection works** — 91% accuracy at Week 2, a 14-week lead time.
+**Dataset.** `Combined_Data_all_weeks_v2.csv` arranges the same corpus as 13,171 students, each with one text at weeks 2, 4, 8 and 12 (52,681 texts). After cleaning, 52,582 texts remain. The 99 removed rows are 17 Excel error values (`#NAME?`), 11 texts with no readable words, and 71 identical texts that carried conflicting labels.
+
+**Preprocessing** (`preprocess_weekly.py`):
+- Light cleaning that keeps case and punctuation, which transformers use. It repairs broken characters, HTML codes, links and markdown.
+- Fixed label IDs, the same as the deployed models.
+- A **70/15/15 split by student**, stratified by label. Students who share an identical text are kept in the same split, and a check confirms zero student or text overlap between splits.
+- **Maximum length 256 tokens** with head+tail truncation (first 128 and last 126 tokens). With 128 tokens only 66–67% of texts fit; with 256, 85–86% fit.
+- Square-root class weights in the loss to handle class imbalance.
+
+**Results** on the test split (7,887 texts from 1,974 students not seen in training; 95% confidence intervals from a student-level bootstrap):
+
+| Model | Accuracy | Macro-F1 (95% CI) | Weighted F1 |
+|-------|----------|-------------------|-------------|
+| Logistic Regression (TF-IDF word + character n-grams) | 79.85% | 0.774 (0.759–0.786) | 0.798 |
+| BERT fine-tuned | 84.16% | 0.830 (0.818–0.840) | 0.843 |
+| RoBERTa fine-tuned | 85.15% | 0.840 (0.827–0.852) | 0.852 |
+| **BERT + RoBERTa ensemble (0.45 / 0.55)** | **85.25%** | **0.843 (0.831–0.854)** | **0.853** |
+
+- **Per-class F1 (ensemble):** Normal 0.96 · Anxiety 0.89 · Bipolar 0.88 · Personality disorder 0.81 · Depression 0.80 · Stress 0.79 · Suicidal 0.77.
+- **Main error:** Depression and Suicidal are confused with each other. 21% of Depression texts are predicted Suicidal, and 16% of Suicidal texts are predicted Depression.
+- **Early-warning view:** 98.6% of non-Normal texts are flagged as at risk (precision 98.1%).
+- **Per week:** macro-F1 is 0.83–0.86 at every week.
+- **Significance** (paired student-level bootstrap): RoBERTa beats Logistic Regression by +0.066 macro-F1 (p < 0.001) and beats BERT by +0.010 (p = 0.02). The ensemble's +0.003 over RoBERTa alone is **not** significant (p = 0.11).
+
+**Deployment and integration.** `serve_model.py` (port 5004) serves this ensemble with the same cleaning and truncation used in training. `export_weekly_stress_scores.py` writes a weekly 0–4 emotional stress score for every student for the Meta-FNN layer.
+
+**Scripts:** `preprocess_weekly.py`, `train_baseline_weekly.py`, `train_transformer_weekly.py`, `ensemble_weekly.py`, `export_weekly_stress_scores.py`. Results are saved in `results/metrics/weekly_v2_*.json`.
+
+---
+
+## 16. Key Findings
+
+1. **Fine-tuning is essential** — zero-shot/rule-based baselines scored 25–33%; fine-tuned transformers scored 80–85%.
+2. **Ensembling helps only slightly** — in the first version the ensemble beat either model alone (82.32%). In v2 its gain over RoBERTa alone is not statistically significant.
+3. **Class imbalance is a core difficulty** — rare classes stayed hardest after weighted loss. In v2 the largest remaining error is Depression vs Suicidal.
+4. **Early detection (simulated)** — 91% accuracy at Week 2 in the lead-time study. The week labels are simulated, so see Limitations before reading this as real early detection.
 5. **Explainability is achievable** — attention heatmaps make every prediction transparent.
 
 ---
 
-## 16. Limitations & Future Work
+## 17. Limitations & Future Work
 
-- **Imbalance remains** for rare classes → could add data augmentation or focal loss.
-- **Dataset is Reddit-based**, not real student data → future work: validate on actual (consented) student writing.
-- **Attention ≠ full explanation** → could add SHAP/LIME for comparison.
-- **Single language (English)** → extend to multilingual student populations.
+**1. Short texts are biased towards *Normal* (most important).**
+- In the training data, 82% of *Normal* texts have 20 words or fewer, compared with 8% of texts in the other six classes. The model therefore partly learned that a short text is a *Normal* text.
+- On the v2 test set, non-Normal texts of 10 words or fewer are predicted *Normal* 13.4% of the time, compared with 0.5% for texts longer than 50 words.
+- On a check with 12 short student-style sentences (for example *"I cry every night before going to class"* and *"I want to drop out, I can't take it"*), the deployed model predicted *Normal* for 10.
+- **Consequence:** short student messages are under-flagged, and the 85% test accuracy overstates performance on them, because the test set contains few short distressed texts.
+- *Future work:* add labelled short student-style texts, or train with length-balanced sampling, and evaluate on a separate short-text test set.
+
+**2. The text is not student language.** The corpus is Reddit and Twitter posts, so the reported scores measure performance on that kind of text. *Future work:* validate on real, consented student writing.
+
+**3. The weekly structure is simulated.**
+- Texts were assigned to students and weeks without a real timeline; for example, 1,036 students jump directly between *Suicidal* and *Normal* from one week to the next.
+- The per-week results therefore show that the model is equally accurate at every week. They do not show that it detects burnout earlier in the semester.
+- For the same reason, the lead-time study (Section 9) and the weekly progression (Section 10) are demonstrations, not evidence of real early detection.
+
+**4. Meta-layer scores are partly in-sample.** In the exported stress-score file, the 70% of students in the NLP training split are scored on texts the model was trained on: accuracy 93%, against 85% for test-split students. Only test-split students (`nlp_split = test`) are out-of-sample.
+
+**5. The NLP students are not the academic students.** In the Meta-FNN layer, emotional scores are joined to academic students by ID number only; they are different simulated people.
+- The new file gives 2,542 of the 2,543 academic students a real NLP score, up from 500.
+- That score's correlation with the dropout label is about 0 (−0.004). Before, it was 0.46, but only because the 2,043 unmatched students received a score generated from their academic risk.
+- After the swap the Meta-FNN changed little: test F1 0.681 → 0.696, AUC 0.855 → 0.856.
+- The NLP contribution to the meta prediction can only be measured properly on students who have both text and academic records.
+
+**6. The first version and v2 are not directly comparable.** Both use the same corpus, and the first version split by row rather than by student. The v2 numbers are the reliable ones.
+
+**7. Attention is not a full explanation.** *Future work:* compare with SHAP or LIME.
+
+**8. English only.** *Future work:* extend to multilingual student populations.
 
 ---
 
-## 17. AI/ML Concepts Demonstrated
+## 18. AI/ML Concepts Demonstrated
 
 **Foundations:** train/test split, stratification, overfitting, precision/recall, F1 (macro vs weighted), confusion matrices, k-fold cross-validation.
 **Classical ML:** Logistic Regression, SVM, Random Forest, decision trees, TF-IDF.

@@ -1,45 +1,53 @@
 {
-    "model": "BERT + RoBERTa Ensemble (Soft Voting)",
-    "accuracy": 0.8232,
-    "f1_score": 0.8232,
-    "bert_weight": 0.5,
-    "roberta_weight": 0.5,
-    "test_samples": 7659,
-    "per_class": {
-        "Normal": {
-            "precision": 0.95,
-            "recall": 0.96,
-            "f1": 0.96
-        },
-        "Depression": {
-            "precision": 0.79,
-            "recall": 0.74,
-            "f1": 0.76
-        },
-        "Suicidal": {
-            "precision": 0.7,
-            "recall": 0.75,
-            "f1": 0.73
-        },
-        "Anxiety": {
-            "precision": 0.85,
-            "recall": 0.89,
-            "f1": 0.87
-        },
-        "Bipolar": {
-            "precision": 0.86,
-            "recall": 0.82,
-            "f1": 0.84
-        },
-        "Stress": {
-            "precision": 0.7,
-            "recall": 0.74,
-            "f1": 0.72
-        },
-        "Personality disorder": {
-            "precision": 0.69,
-            "recall": 0.61,
-            "f1": 0.65
-        }
+  "model": "BERT + RoBERTa Ensemble (Soft Voting)",
+  "accuracy": 0.8232,
+  "f1_score": 0.8232,
+  "f1_macro": 0.7893,
+  "bert_weight": 0.5,
+  "roberta_weight": 0.5,
+  "test_samples": 7659,
+  "per_class": {
+    "Anxiety": {
+      "precision": 0.8501,
+      "recall": 0.8877,
+      "f1": 0.8685,
+      "support": 543
+    },
+    "Normal": {
+      "precision": 0.9524,
+      "recall": 0.9576,
+      "f1": 0.955,
+      "support": 2405
+    },
+    "Depression": {
+      "precision": 0.788,
+      "recall": 0.7406,
+      "f1": 0.7636,
+      "support": 2263
+    },
+    "Suicidal": {
+      "precision": 0.7022,
+      "recall": 0.7524,
+      "f1": 0.7264,
+      "support": 1595
+    },
+    "Stress": {
+      "precision": 0.6995,
+      "recall": 0.7442,
+      "f1": 0.7211,
+      "support": 344
+    },
+    "Bipolar": {
+      "precision": 0.8644,
+      "recall": 0.816,
+      "f1": 0.8395,
+      "support": 375
+    },
+    "Personality disorder": {
+      "precision": 0.6949,
+      "recall": 0.6119,
+      "f1": 0.6508,
+      "support": 134
     }
+  }
 }

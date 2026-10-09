@@ -1,0 +1,39 @@
+{
+  "student_weeks": 52582,
+  "students": 13171,
+  "ensemble_weights": {
+    "bert": 0.45,
+    "roberta": 0.55
+  },
+  "agreement_with_ensemble_test_predictions": 0.9995,
+  "accuracy_by_nlp_split": {
+    "test": 0.8528,
+    "train": 0.9309,
+    "val": 0.8487
+  },
+  "note": "train-split students were seen in fine-tuning; only test-split scores are out-of-sample",
+  "stress_score_by_week": {
+    "2": {
+      "mean": 2.008,
+      "std": 1.648
+    },
+    "4": {
+      "mean": 2.057,
+      "std": 1.606
+    },
+    "8": {
+      "mean": 2.21,
+      "std": 1.524
+    },
+    "12": {
+      "mean": 2.219,
+      "std": 1.555
+    }
+  },
+  "per_student_score": {
+    "definition": "mean of weekly 0-4 scores",
+    "mean": 2.124,
+    "students_with_peak_4": 6541
+  },
+  "meta_layer_id_match": "student_id is unpadded (STU12) so meta_intregation.py's numeric-suffix merge works"
+}

@@ -1,0 +1,20 @@
+# Python / notebooks
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# Editor / OS files
+.vscode/
+.DS_Store
+
+# Emotional NLP: too large or regenerable (share trained models via Drive)
+emotional-nlp-fresh/emotional_burnout_nlp/models/
+emotional-nlp-fresh/emotional_burnout_nlp/data/processed/
+emotional-nlp-fresh/emotional_burnout_nlp/data/cleaned_data.csv
+emotional-nlp-fresh/emotional_burnout_nlp/data/Combined Data.csv
+emotional-nlp-fresh/emotional_burnout_nlp/results/logs/
+emotional-nlp-fresh/package-lock.json
+
+# Local backup only
+meta-integration/meta_results/backup_before_nlp_weekly_v2/

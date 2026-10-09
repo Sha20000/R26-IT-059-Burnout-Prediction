@@ -12,16 +12,16 @@
     "high_anomaly_weeks",
     "emotional_stress_score"
   ],
-  "threshold": 0.44999999999999996,
+  "threshold": 0.49999999999999994,
   "n_features": 11,
   "hidden_size": 32,
   "vae_real_data": false,
   "emotional_real_data": true,
   "results": {
-    "f1": 0.6836,
-    "auc": 0.8576,
-    "accuracy": 0.7723,
-    "precision": 0.6065,
+    "f1": 0.6963,
+    "auc": 0.8556,
+    "accuracy": 0.7853,
+    "precision": 0.6267,
     "recall": 0.7833
   },
   "component_contribution": {

@@ -38,10 +38,15 @@
     'Personality disorder': '#ec4899', Suicidal: '#ff2020',
   };
 
+  // Ensemble per-class F1 on the weekly_v2 test set (results/metrics/weekly_v2_ensemble_results.json)
   const PER_CLASS_F1 = {
-    Normal: '92%', Stress: '75%', Anxiety: '82%', Depression: '85%',
-    Bipolar: '82%', 'Personality disorder': '77%', Suicidal: '86%',
+    Normal: '96%', Stress: '79%', Anxiety: '89%', Depression: '80%',
+    Bipolar: '88%', 'Personality disorder': '81%', Suicidal: '77%',
   };
+
+  // Weeks to show for a student. Test-set students carry the dataset's checkpoints
+  // (2, 4, 8, 12); demo and advisor-added students use the form's WEEK_NUMS.
+  const weeksOf = (student) => (student && student.weekNums) || WEEK_NUMS;
 
   const ADVISOR_MAP = {
     Normal: {
@@ -230,9 +235,10 @@
 
   function renderModelPerformance() {
     const stats = [
-      ['ACCURACY', '82.32%', 'Test set'],
-      ['F1 SCORE', '82.32%', 'Weighted avg'],
-      ['DATASET', '51,055', 'Training samples'],
+      // weekly_v2 ensemble, unseen test students (results/metrics/weekly_v2_ensemble_results.json)
+      ['ACCURACY', '85.25%', 'Test set'],
+      ['F1 SCORE', '84.29%', 'Macro avg'],
+      ['DATASET', '52,582', 'Texts · 13,171 students'],
       ['CLASSES', '7', 'Mental health categories'],
     ];
     return card(null, `
@@ -259,8 +265,9 @@
     const padL = 44, padR = 24, padT = 36, padB = 36;
     const chartW = W - padL - padR;
     const chartH = H - padT - padB;
-    const minWeek = WEEK_NUMS[0];
-    const maxWeek = WEEK_NUMS[WEEK_NUMS.length - 1];
+    const weeks = data.map((d) => d.week);
+    const minWeek = weeks[0];
+    const maxWeek = weeks[weeks.length - 1];
     const xOf = (w) => padL + ((w - minWeek) / (maxWeek - minWeek)) * chartW;
     const yOf = (s) => padT + (1 - s / 10) * chartH;
     const yTicks = [0, 2, 4, 6, 8, 10];
@@ -281,7 +288,7 @@
       <text x="${padL - 6}" y="${yOf(v) + 4}" text-anchor="end" font-size="9" fill="#64748b">${v}</text>
     `).join('');
 
-    const weekLabels = WEEK_NUMS.map((w) =>
+    const weekLabels = weeks.map((w) =>
       `<text x="${xOf(w)}" y="${padT + chartH + 16}" text-anchor="middle" font-size="9" fill="#64748b">Wk ${w}</text>`
     ).join('');
 
@@ -297,7 +304,7 @@
 
     return card('EMOTIONAL BURNOUT RISK PROGRESSION', `
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block" role="img"
-           aria-label="Risk score across weeks 2, 4, 8 and 18">
+           aria-label="Risk score across weeks ${weeks.join(', ')}">
         <defs>
           <linearGradient id="emoLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient>
           <linearGradient id="emoAreaGrad" x1="0" y1="0" x2="0" y2="1">
@@ -321,7 +328,7 @@
   // ─── Weekly timeline + lead-time table ─────────────────────────────────────
 
   function weekChartData(student) {
-    return WEEK_NUMS.map((w) => {
+    return weeksOf(student).map((w) => {
       const r = student.weeks && student.weeks[w] ? student.weeks[w].result : null;
       const rl = (r && r.risk_level) || 'Unknown';
       return {
@@ -402,7 +409,7 @@
 
   window.EmotionTab = {
     EMO_API, WEEK_NUMS, RISK_COLOR, RISK_SCORE, RISK_LEFT, PER_CLASS_F1,
-    esc, el, riskOf, topWords, card,
+    esc, el, riskOf, topWords, card, weeksOf,
     renderMetricCards, renderAttentionHeatmap, renderProbabilityBars,
     renderAdvisor, renderModelPerformance, renderRiskChart,
     weekChartData, renderTimeline, renderResultsTable,
