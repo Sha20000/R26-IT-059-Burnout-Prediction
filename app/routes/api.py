@@ -1,8 +1,11 @@
 import csv
 import io
+from pathlib import Path
 
 from flask import Blueprint, current_app, jsonify, request, send_file
 
+from meta_xai.fusion import build_evidence_profiles, write_profiles_csv
+from app.services.analytics import build_analytics
 from app.services.workspace import analyze_record, overview, update_case
 
 api_bp = Blueprint("api", __name__)
@@ -37,7 +40,17 @@ def get_student(student_id: str):
 
 @api_bp.get("/overview")
 def get_overview():
-    return jsonify(overview(_get_records()))
+    return jsonify(overview(_get_records(), current_app.config["DATA_MODE"]))
+
+
+@api_bp.get("/analytics")
+def get_analytics():
+    root = current_app.config["V1_INPUT_DIR"].parents[2]
+    return jsonify(build_analytics(
+        _get_records(),
+        current_app.config["V1_INPUT_DIR"] / "manifest.json",
+        root / "models" / "intervention_opportunity_metrics.json",
+    ))
 
 
 @api_bp.post("/analyze")
@@ -45,6 +58,30 @@ def analyze_student():
     try:
         return jsonify(analyze_record(request.get_json(silent=True) or {}))
     except (TypeError, ValueError) as exc:
+        return jsonify({"error": str(exc)}), 400
+
+
+@api_bp.post("/analyze/batch")
+def analyze_batch():
+    payload = request.get_json(silent=True) or {}
+    input_dir = Path(payload.get("input_dir", current_app.config["V1_INPUT_DIR"]))
+    mapping_path = Path(payload.get("mapping_path", input_dir / "student_mapping.csv"))
+    output_path = Path(payload.get("output_path", current_app.config["V1_OUTPUT_PATH"]))
+    try:
+        profiles, alignment = build_evidence_profiles(
+            input_dir,
+            mapping_path,
+            input_dir / "manifest.json",
+            current_app.config.get("OPPORTUNITY_MODEL_PATH"),
+        )
+        write_profiles_csv(profiles, output_path)
+        return jsonify({
+            "profiles": profiles,
+            "profile_count": len(profiles),
+            "output_path": str(output_path),
+            "alignment": alignment,
+        })
+    except (OSError, TypeError, ValueError) as exc:
         return jsonify({"error": str(exc)}), 400
 
 

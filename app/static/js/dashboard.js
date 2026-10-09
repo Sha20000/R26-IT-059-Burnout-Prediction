@@ -15,6 +15,7 @@ const elements = {
   avatar: document.getElementById("detail-avatar"),
   confidence: document.getElementById("detail-confidence"),
   priority: document.getElementById("detail-priority"),
+  priorityMeaning: document.getElementById("detail-priority-meaning"),
   priorityPill: document.getElementById("detail-priority-pill"),
   trajectory: document.getElementById("detail-trajectory"),
   sparkline: document.getElementById("sparkline"),
@@ -26,6 +27,12 @@ const elements = {
   caseStatus: document.getElementById("case-status"),
   saveCase: document.getElementById("save-case"),
   saveMessage: document.getElementById("save-message"),
+};
+
+const priorityMeanings = {
+  P1: "Review within the next few days",
+  P2: "Review and schedule a check-in",
+  P3: "Continue routine monitoring",
 };
 
 function initials(name) {
@@ -49,7 +56,7 @@ function renderRows() {
   elements.rows.innerHTML = records.map((record) => `
     <tr class="queue-row ${state.selected && state.selected.student_id === record.student_id ? "selected" : ""}" data-id="${record.student_id}">
       <td><strong>${record.student_name}</strong><small>${record.student_id} · ${record.programme}</small></td>
-      <td><span class="priority-pill ${record.priority_level.toLowerCase()}">${record.priority_level}</span><small>${Math.round(record.priority_score * 100)} priority</small></td>
+      <td><span class="priority-pill ${record.priority_level.toLowerCase()}">${record.priority_level}</span><small>${priorityMeanings[record.priority_level]}</small></td>
       <td><span class="pattern-label">${record.trajectory.replaceAll("_", " ")}</span><small>${record.trajectory_explanation}</small></td>
       <td><span class="coverage-value">${Math.round(record.evidence_coverage * 100)}%</span><small>${record.available_sources}/${record.expected_sources} sources</small></td>
       <td><span class="action-label">${record.recommended_action}</span><small>Due ${record.due_date}</small></td>
@@ -67,6 +74,7 @@ function selectRecord(studentId) {
   elements.avatar.textContent = initials(record.student_name);
   elements.confidence.textContent = `${record.confidence} confidence`;
   elements.priority.textContent = record.priority_level;
+  elements.priorityMeaning.textContent = priorityMeanings[record.priority_level];
   elements.priorityPill.textContent = record.priority_level;
   elements.priorityPill.className = `priority-pill ${record.priority_level.toLowerCase()}`;
   elements.trajectory.textContent = record.trajectory.replaceAll("_", " ");

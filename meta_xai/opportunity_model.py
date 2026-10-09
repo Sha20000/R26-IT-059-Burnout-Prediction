@@ -59,6 +59,10 @@ def train(input_path: str | Path, output_dir: str | Path) -> TrainingResult:
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     frame = pd.read_csv(input_path)
+    if "risk_change" not in frame.columns:
+        frame["risk_change"] = frame["week17_risk"] - frame["week4_risk"]
+    if "recent_risk_change" not in frame.columns:
+        frame["recent_risk_change"] = frame["week17_risk"] - frame["week12_risk"]
     required = set(FEATURE_COLUMNS + [TARGET_COLUMN])
     missing = sorted(required - set(frame.columns))
     if missing:

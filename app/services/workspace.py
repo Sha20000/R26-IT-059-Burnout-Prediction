@@ -77,7 +77,7 @@ def build_demo_records() -> list[dict]:
     return [_record(index) for index in range(len(NAMES))]
 
 
-def overview(records: list[dict]) -> dict:
+def overview(records: list[dict], data_mode: str = "DEMO") -> dict:
     counts = {level: sum(row["priority_level"] == level for row in records) for level in ("P1", "P2", "P3")}
     return {
         "total_students": len(records),
@@ -87,7 +87,7 @@ def overview(records: list[dict]) -> dict:
         "assigned_cases": sum(row["status"] != "New" for row in records),
         "evidence_coverage": round(sum(row["evidence_coverage"] for row in records) / len(records), 2),
         "capacity": {"available_slots": 8, "weekly_case_limit": 12},
-        "data_mode": "DEMO",
+        "data_mode": data_mode,
     }
 
 

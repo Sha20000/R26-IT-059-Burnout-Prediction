@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Meta-XAI | Student Success Workspace</title>
+    <title>Burnout Guard | Meta-XAI Student Success</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet" />
@@ -14,35 +14,36 @@
       <aside class="sidebar">
         <a class="brand" href="/">
           <span class="brand-mark">MX</span>
-          <span><strong>Meta-XAI</strong><small>student success</small></span>
+          <span><strong>Burnout Guard</strong><small>Meta-XAI Student Success</small></span>
         </a>
         <nav class="primary-nav" aria-label="Primary navigation">
           <a class="nav-item active" href="#queue"><span class="nav-dot"></span>Intervention queue</a>
-          <a class="nav-item" href="#insights"><span class="nav-dot"></span>Cohort insights</a>
-          <a class="nav-item" href="#method"><span class="nav-dot"></span>Evidence health</a>
+          <a class="nav-item" href="#insights"><span class="nav-dot"></span>How to read the queue</a>
+          <a class="nav-item" href="#method"><span class="nav-dot"></span>How the system works</a>
+          <a class="nav-item" href="/analytics"><span class="nav-dot"></span>Model evidence</a>
         </nav>
         <div class="sidebar-footer">
           <span class="mode-dot"></span>
-          <div><strong>Demo workspace</strong><small>OULAD fixture / 2026-S1</small></div>
+          <div><strong>{{ data_mode }} workspace</strong><small>OULAD Cohort 2026 / Weeks 4-17</small></div>
         </div>
       </aside>
 
       <main class="main-content">
         <header class="topbar">
           <div>
-            <p class="kicker">Student success operations</p>
+            <p class="kicker">Burnout Guard · Student success operations</p>
             <h1>Intervention queue</h1>
           </div>
           <div class="topbar-actions">
-            <span class="data-badge"><span class="status-dot"></span>DEMO DATA</span>
+            <span class="data-badge"><span class="status-dot"></span>{{ data_mode }} DATA</span>
             <a class="outline-button" href="/api/export/csv">Export queue</a>
           </div>
         </header>
 
         <section class="intro-row">
           <div>
-            <p class="intro-title">Make the next conversation count.</p>
-            <p class="intro-copy">Meta-XAI translates specialist model evidence into a ranked, explainable support queue for advisors.</p>
+            <p class="intro-title">A clearer view of who may need support.</p>
+            <p class="intro-copy">This page combines academic, behavioural, and emotional signals into a review queue. It supports advisor judgement; it is not a diagnosis.</p>
           </div>
           <div class="capacity-card">
             <div class="capacity-label"><span>Weekly capacity</span><strong>{{ summary.capacity.available_slots }} slots open</strong></div>
@@ -52,16 +53,16 @@
         </section>
 
         <section class="metrics-grid" aria-label="Queue summary">
-          <article class="metric-card metric-primary"><span class="metric-label">Students monitored</span><strong>{{ summary.total_students }}</strong><small>Across the current cohort</small></article>
-          <article class="metric-card"><span class="metric-label">Priority 1</span><strong>{{ summary.p1_cases }}</strong><small>Needs action this week</small></article>
-          <article class="metric-card"><span class="metric-label">Priority 2</span><strong>{{ summary.p2_cases }}</strong><small>Review and schedule</small></article>
-          <article class="metric-card"><span class="metric-label">Evidence coverage</span><strong>{{ (summary.evidence_coverage * 100)|round|int }}%</strong><small>Source completeness</small></article>
+          <article class="metric-card metric-primary"><span class="metric-label">Students in review</span><strong>{{ summary.total_students }}</strong><small>Across the current cohort</small></article>
+          <article class="metric-card"><span class="metric-label">Act this week</span><strong>{{ summary.p1_cases }}</strong><small>Highest-priority conversations</small></article>
+          <article class="metric-card"><span class="metric-label">Review and plan</span><strong>{{ summary.p2_cases }}</strong><small>Needs advisor review</small></article>
+          <article class="metric-card"><span class="metric-label">Evidence available</span><strong>{{ (summary.evidence_coverage * 100)|round|int }}%</strong><small>Across three signal sources</small></article>
         </section>
 
         <section class="workspace-grid" id="queue">
           <div class="queue-panel panel">
             <div class="panel-heading">
-              <div><p class="section-label">Advisor workload</p><h2>Who needs attention first?</h2></div>
+              <div><p class="section-label">Advisor workload</p><h2>Who needs attention first?</h2><p class="panel-helper">Select a student to see what changed and the suggested next step.</p></div>
               <span class="result-count" id="result-count">{{ records|length }} cases</span>
             </div>
             <div class="filters" role="group" aria-label="Queue filters">
@@ -71,7 +72,7 @@
             </div>
             <div class="queue-table-wrap">
               <table class="queue-table">
-                <thead><tr><th>Student</th><th>Priority</th><th>Pattern</th><th>Evidence</th><th>Action</th><th>Status</th></tr></thead>
+                <thead><tr><th>Student</th><th>Support priority</th><th>What changed</th><th>Evidence available</th><th>Suggested next step</th><th>Case status</th></tr></thead>
                 <tbody id="queue-body">
                   {% for row in records %}
                   <tr class="queue-row {% if loop.first %}selected{% endif %}" data-id="{{ row.student_id }}">
@@ -92,7 +93,7 @@
           <aside class="detail-panel panel" id="detail-panel">
             <div class="detail-topline"><span class="section-label">Explainable case brief</span><span class="confidence-tag" id="detail-confidence">Medium confidence</span></div>
             <div class="detail-identity"><div class="avatar" id="detail-avatar">AR</div><div><h2 id="detail-name">{{ records[0].student_name }}</h2><p id="detail-meta">{{ records[0].student_id }} · {{ records[0].programme }}</p></div></div>
-            <div class="detail-priority"><div><span class="metric-label">Intervention priority</span><strong id="detail-priority">{{ records[0].priority_level }}</strong></div><span class="priority-pill {{ records[0].priority_level|lower }}" id="detail-priority-pill">{{ records[0].priority_level }}</span></div>
+            <div class="detail-priority"><div><span class="metric-label">Support priority</span><strong id="detail-priority">{{ records[0].priority_level }}</strong><small class="priority-meaning" id="detail-priority-meaning">Review this case first</small></div><span class="priority-pill {{ records[0].priority_level|lower }}" id="detail-priority-pill">{{ records[0].priority_level }}</span></div>
             <div class="trajectory-block"><div class="block-heading"><span>Academic trajectory</span><strong id="detail-trajectory">{{ records[0].trajectory|replace('_', ' ') }}</strong></div><div class="sparkline" id="sparkline"></div><div class="week-labels"><span>W4</span><span>W8</span><span>W12</span><span>W17</span></div></div>
             <div class="explanation-block"><span class="block-heading">Why this case surfaced</span><p id="detail-explanation">{{ records[0].trajectory_explanation }}</p><div class="reason-list" id="reason-list"></div></div>
             <div class="evidence-list"><div class="block-heading">Evidence layers</div><div id="evidence-items"></div></div>
@@ -103,7 +104,7 @@
         </section>
 
         <section class="bottom-grid" id="insights">
-          <article class="panel insight-panel"><div class="panel-heading"><div><p class="section-label">Decision quality</p><h2>Confidence is part of the answer</h2></div><span class="mini-tag">META-XAI</span></div><p>Every recommendation shows which evidence was available and where human review is needed. Missing signals reduce confidence instead of silently becoming low risk.</p><div class="confidence-bars"><div><span><b>High confidence</b><em>14 cases</em></span><i><u style="width: 55%"></u></i></div><div><span><b>Medium confidence</b><em>3 cases</em></span><i><u style="width: 24%"></u></i></div><div><span><b>Limited evidence</b><em>1 case</em></span><i><u style="width: 9%"></u></i></div></div></article>
+          <article class="panel insight-panel"><div class="panel-heading"><div><p class="section-label">How to read the queue</p><h2>Priority is a review order, not a diagnosis</h2></div><span class="mini-tag">META-XAI</span></div><p>Higher priority means the evidence suggests an earlier human review may be useful. It does not mean a student has burnout. Missing signals lower confidence instead of being treated as low risk.</p><div class="priority-guide"><div><span class="priority-pill p1">P1</span><p><strong>Act soon</strong><small>Review within the next few days.</small></p></div><div><span class="priority-pill p2">P2</span><p><strong>Review and plan</strong><small>Schedule an appropriate check-in.</small></p></div><div><span class="priority-pill p3">P3</span><p><strong>Monitor</strong><small>Keep the student under routine review.</small></p></div></div></article>
           <article class="panel method-panel" id="method"><p class="section-label">System posture</p><h2>Prediction is upstream. Action is here.</h2><p>Academic, behavioural, and emotional models remain independently owned. This layer validates their evidence, interprets trajectories, prioritises limited support capacity, and records what happens next.</p><div class="method-flow"><span>Signals</span><b>→</b><span>Evidence</span><b>→</b><span>Action</span><b>→</b><span>Outcome</span></div></article>
         </section>
       </main>

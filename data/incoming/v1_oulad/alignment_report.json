@@ -1,0 +1,21 @@
+{
+  "source_counts": {
+    "academic": 1000,
+    "behaviour": 1000,
+    "emotional": 1000
+  },
+  "source_unique_ids": {
+    "academic": 1000,
+    "behaviour": 1000,
+    "emotional": 1000
+  },
+  "canonical_ids": 1000,
+  "fully_matched_ids": 1000,
+  "coverage": {
+    "academic": 1.0,
+    "behaviour": 1.0,
+    "emotional": 1.0
+  },
+  "ready_for_fusion": true,
+  "issues": []
+}
