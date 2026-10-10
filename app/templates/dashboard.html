@@ -11,121 +11,215 @@
   </head>
   <body class="dark-theme">
     <div class="app-shell">
-      <!-- Main Triage Workspace -->
-      <main class="main-content">
-        <!-- Topbar -->
-        <header class="topbar">
-          <div class="brand-group">
-            <div class="brand-badge">
-              <span class="brand-glyph">✦</span>
-              <span class="brand-title">BURNOUT GUARD</span>
+      <!-- Enterprise Sidebar Navigation -->
+      <aside class="app-sidebar" aria-label="Application Sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon-box">
+            <span class="brand-icon">✦</span>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">Burnout Guard</span>
+            <span class="brand-subtitle">Clinical Triage AI · v2.0</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">WORKSPACE</div>
+          <a class="nav-link active" href="/dashboard" id="nav-queue">
+            <span class="nav-icon">📋</span>
+            <span class="nav-text">Triage Kanban</span>
+            <span class="nav-badge" id="nav-p1-badge">{{ summary.p1_cases }} P1</span>
+          </a>
+          <a class="nav-link" href="/analytics" id="nav-analytics">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Model Evidence</span>
+            <span class="nav-badge-sub">AUC .996</span>
+          </a>
+          <a class="nav-link" href="/api/export/csv" download id="nav-export">
+            <span class="nav-icon">⤓</span>
+            <span class="nav-text">Export CSV Queue</span>
+          </a>
+
+          <div class="nav-section-label">VIVA DEMO PRESETS</div>
+          <button class="nav-preset-btn" id="preset-discordant" type="button" title="Highlight a student with passing grades but critical emotional stress">
+            <span class="preset-icon">⚡</span>
+            <div class="preset-desc">
+              <strong>Masked Burnout Catch</strong>
+              <small>Discordant Multi-Modal</small>
             </div>
-            <div class="brand-sub">Meta-XAI Clinical Triage Platform · Multi-Modal Institutional Decision Support</div>
+          </button>
+          <button class="nav-preset-btn" id="preset-capacity" type="button" title="Simulate advisor constraint: squeeze capacity to 3 slots">
+            <span class="preset-icon">⚖</span>
+            <div class="preset-desc">
+              <strong>Capacity Squeeze (3)</strong>
+              <small>Trigger Knapsack Deferral</small>
+            </div>
+          </button>
+          <button class="nav-preset-btn" id="preset-reset" type="button" title="Wipe queue clean to showcase empty-state cold start during viva">
+            <span class="preset-icon">↺</span>
+            <div class="preset-desc">
+              <strong>Cold Start Reset</strong>
+              <small>Wipe Queue for Live Stream</small>
+            </div>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="system-status-indicator">
+            <span class="pulse-indicator"></span>
+            <div class="status-meta">
+              <strong>XGBoost + TreeSHAP</strong>
+              <small>Multi-Modal Engine Online</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Clinical Workspace -->
+      <main class="main-content">
+        <!-- Topbar & Workstation Header -->
+        <header class="topbar">
+          <div class="topbar-heading">
+            <div class="kicker-row">
+              <span class="status-pill status-pill-active">INSTITUTIONAL TRIAL ACTIVE</span>
+              <span class="data-mode-badge" id="data-mode-badge">{{ data_mode }}</span>
+            </div>
+            <h1 class="page-title">Clinical Intervention & Triage Queue</h1>
+            <p class="page-subtitle">Real-time multi-modal risk synthesis across Academic GRU, Behavioral VAE, and Emotional RoBERTa specialists.</p>
           </div>
 
-          <div class="topbar-controls">
-            <!-- Capacity Slider -->
-            <div class="control-box capacity-box">
-              <div class="control-label-row">
-                <span class="control-label">ADVISOR CAPACITY</span>
-                <strong class="capacity-value" id="capacity-display">5 Slots</strong>
+          <!-- Advisor Capacity Control Station -->
+          <div class="capacity-control-card">
+            <div class="capacity-header-row">
+              <div class="capacity-title-wrap">
+                <span class="capacity-kicker">ADVISOR CASE CAPACITY</span>
+                <strong class="capacity-display-num" id="capacity-display">5 Slots Allocated</strong>
               </div>
-              <div class="slider-wrapper">
-                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" />
-                <div class="capacity-ticks">
-                  <span>1</span>
-                  <span>5</span>
-                  <span>10</span>
-                  <span>15</span>
-                  <span>20</span>
-                  <span>25</span>
-                </div>
+              <div class="capacity-status-chip" id="knapsack-status-chip">
+                <span>Knapsack:</span> <strong id="knapsack-overflow-count">0 Overflow Deferred</strong>
               </div>
             </div>
 
-            <!-- Demo Live Actions -->
-            <div class="action-buttons">
-              <button class="btn btn-outline" id="btn-reset" title="Wipe queue clean to showcase empty-state cold start during viva">
-                <span class="btn-icon">↺</span> Reset (Cold Start)
-              </button>
-              <button class="btn btn-primary" id="btn-stream-toggle">
-                <span class="live-dot pulse"></span>
-                <span id="stream-btn-text">Live Ingestion: Active</span>
-              </button>
-              <a class="btn btn-ghost" href="/api/export/csv" download title="Export active triage queue">
-                <span>⤓ Export CSV</span>
-              </a>
-              <a class="btn btn-ghost" href="/analytics" title="Inspect Component Performance">
-                <span>Model Analytics →</span>
-              </a>
+            <div class="capacity-slider-row">
+              <button class="btn-step" id="btn-cap-decrement" type="button" title="Decrease capacity by 1">−</button>
+              <div class="slider-track-wrap">
+                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" aria-label="Advisor weekly capacity" />
+                <div class="slider-glow-bar" id="slider-glow-bar" style="width: 20%;"></div>
+              </div>
+              <button class="btn-step" id="btn-cap-increment" type="button" title="Increase capacity by 1">+</button>
             </div>
+
+            <div class="capacity-quick-pills">
+              <button type="button" class="pill-btn" data-cap="3">3 (Urgent)</button>
+              <button type="button" class="pill-btn active" data-cap="5">5 (Standard)</button>
+              <button type="button" class="pill-btn" data-cap="10">10 (Expanded)</button>
+              <button type="button" class="pill-btn" data-cap="20">20 (Maximum)</button>
+            </div>
+          </div>
+
+          <!-- Live Stream Toggle -->
+          <div class="stream-action-wrap">
+            <button class="btn-live-stream" id="btn-stream-toggle" type="button">
+              <span class="live-dot pulse"></span>
+              <span id="stream-btn-text">Live Ingestion: Active</span>
+            </button>
           </div>
         </header>
 
-        <!-- Clinical Telemetry Row -->
+        <!-- Clinical Telemetry Metric Cards -->
         <section class="telemetry-bar" aria-label="Triage Telemetry">
           <div class="telemetry-card">
-            <span class="telemetry-label">STUDENTS IN REVIEW</span>
-            <div class="telemetry-value-row">
-              <strong id="stat-total">{{ summary.total_students }}</strong>
-              <span class="telemetry-sub">Cohort 2026-S1</span>
+            <div class="telemetry-icon-box icon-students">👥</div>
+            <div class="telemetry-body">
+              <span class="telemetry-label">COHORT MONITORED</span>
+              <div class="telemetry-value-row">
+                <strong id="stat-total">{{ summary.total_students }}</strong>
+                <span class="telemetry-sub">Students Fused</span>
+              </div>
             </div>
           </div>
+
           <div class="telemetry-card card-p1">
-            <span class="telemetry-label">P1 QUEUE (ACTION REQUIRED)</span>
-            <div class="telemetry-value-row">
-              <strong id="stat-p1">{{ summary.p1_cases }}</strong>
-              <span class="telemetry-tag" id="stat-p1-tag">Capacity Capped</span>
+            <div class="telemetry-icon-box icon-p1">🚨</div>
+            <div class="telemetry-body">
+              <span class="telemetry-label">P1 IMMEDIATE ACTION</span>
+              <div class="telemetry-value-row">
+                <strong id="stat-p1">{{ summary.p1_cases }}</strong>
+                <span class="telemetry-tag" id="stat-p1-tag">Capacity Capped</span>
+              </div>
             </div>
           </div>
+
           <div class="telemetry-card card-p2">
-            <span class="telemetry-label">MONITORING (IN PROGRESS)</span>
-            <div class="telemetry-value-row">
-              <strong id="stat-p2">{{ summary.p2_cases }}</strong>
-              <span class="telemetry-sub" id="stat-p2-sub">Active Review</span>
+            <div class="telemetry-icon-box icon-p2">⏱</div>
+            <div class="telemetry-body">
+              <span class="telemetry-label">MONITORING QUEUE</span>
+              <div class="telemetry-value-row">
+                <strong id="stat-p2">{{ summary.p2_cases }}</strong>
+                <span class="telemetry-sub" id="stat-p2-sub">Active Review</span>
+              </div>
             </div>
           </div>
+
           <div class="telemetry-card card-resolved">
-            <span class="telemetry-label">RESOLVED & RETRAINED</span>
-            <div class="telemetry-value-row">
-              <strong id="stat-resolved">{{ summary.assigned_cases }}</strong>
-              <span class="telemetry-tag tag-green">Loop Closed</span>
+            <div class="telemetry-icon-box icon-resolved">✔</div>
+            <div class="telemetry-body">
+              <span class="telemetry-label">RESOLVED & RETRAINED</span>
+              <div class="telemetry-value-row">
+                <strong id="stat-resolved">{{ summary.assigned_cases }}</strong>
+                <span class="telemetry-tag tag-green">Feedback Closed</span>
+              </div>
             </div>
           </div>
-          <div class="telemetry-card">
-            <span class="telemetry-label">EVIDENCE FUSION</span>
-            <div class="telemetry-value-row">
-              <strong>{{ (summary.evidence_coverage * 100)|round|int }}%</strong>
-              <span class="telemetry-sub">3/3 Modalities</span>
+
+          <div class="telemetry-card card-fusion">
+            <div class="telemetry-icon-box icon-fusion">⚡</div>
+            <div class="telemetry-body">
+              <span class="telemetry-label">DISCORDANT CATCHES</span>
+              <div class="telemetry-value-row">
+                <strong id="stat-discordant">343</strong>
+                <span class="telemetry-sub">Hidden Stress</span>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Filter & Search Toolbar -->
-        <div class="toolbar">
-          <div class="search-input-wrap">
-            <span class="search-icon">🔍</span>
+        <!-- Filter & Search Workstation Toolbar -->
+        <section class="toolbar-section">
+          <div class="search-wrap">
+            <span class="search-glyph">🔍</span>
             <input type="search" id="search-input" placeholder="Search student by name, canonical ID, or programme..." />
+            <button class="clear-search-btn" id="btn-clear-search" type="button" hidden>✕</button>
           </div>
-          <div class="toolbar-filters">
-            <select id="filter-programme">
+
+          <!-- Filter Pills -->
+          <div class="filter-pills-bar">
+            <button type="button" class="filter-pill active" data-filter="all">All Cases</button>
+            <button type="button" class="filter-pill pill-p1" data-filter="p1">🚨 P1 Action Only</button>
+            <button type="button" class="filter-pill pill-discordant" data-filter="discordant">⚡ Multi-Modal Catches</button>
+            <button type="button" class="filter-pill pill-stress" data-filter="high_stress">🔥 Severe Stress (≥3.0)</button>
+            <button type="button" class="filter-pill pill-opp" data-filter="high_opp">🎯 High Opp (≥70%)</button>
+            <button type="button" class="filter-pill pill-resolved" data-filter="resolved">✔ Resolved</button>
+          </div>
+
+          <!-- Secondary Dropdowns -->
+          <div class="toolbar-selects">
+            <select id="filter-programme" aria-label="Filter by academic programme">
               <option value="">All Programmes</option>
               <option value="Computing">Computing</option>
               <option value="Business">Business</option>
               <option value="STEM">STEM</option>
               <option value="Social Sciences">Social Sciences</option>
             </select>
-            <select id="filter-catch">
-              <option value="">All Signals</option>
-              <option value="discordant">⚡ Multi-Modal Catch Only</option>
-              <option value="high_stress">Severe Stress (≥ 3.0)</option>
-              <option value="anomaly">Behavioral Anomaly</option>
+
+            <select id="sort-selector" aria-label="Sort queue">
+              <option value="opportunity_desc">Sort: Success Opp ↓</option>
+              <option value="priority_desc">Sort: Urgency Score ↓</option>
+              <option value="academic_risk_desc">Sort: Academic Risk ↓</option>
+              <option value="name_asc">Sort: Name (A-Z)</option>
             </select>
           </div>
-          <div class="toolbar-info">
-            <span class="data-mode-badge" id="data-mode-badge">{{ data_mode }}</span>
-          </div>
-        </div>
+        </section>
 
         <!-- Clinical Kanban Triage Board -->
         <section class="kanban-board" id="kanban-board">
@@ -134,11 +228,11 @@
             <div class="column-header">
               <div class="col-title-group">
                 <span class="status-indicator ind-p1"></span>
-                <h2>P1 Queue (Action Required)</h2>
+                <h2>P1 Queue · Action Required</h2>
               </div>
               <span class="col-count count-p1" id="count-p1">0</span>
             </div>
-            <div class="col-kicker">High triage urgency · Ranked by XGBoost opportunity probability</div>
+            <div class="col-kicker">High triage urgency · Allocated by XGBoost opportunity probability</div>
             <div class="cards-container" id="cards-p1"></div>
           </div>
 
@@ -147,11 +241,11 @@
             <div class="column-header">
               <div class="col-title-group">
                 <span class="status-indicator ind-p2"></span>
-                <h2>Monitoring (In Progress)</h2>
+                <h2>Monitoring Queue</h2>
               </div>
               <span class="col-count count-p2" id="count-p2">0</span>
             </div>
-            <div class="col-kicker">Scheduled review · Includes overflow deferred by advisor capacity limits</div>
+            <div class="col-kicker">Scheduled review · Includes cases deferred by advisor capacity limit</div>
             <div class="cards-container" id="cards-p2"></div>
           </div>
 
@@ -160,7 +254,7 @@
             <div class="column-header">
               <div class="col-title-group">
                 <span class="status-indicator ind-resolved"></span>
-                <h2>Resolved</h2>
+                <h2>Resolved Cases</h2>
               </div>
               <span class="col-count count-resolved" id="count-resolved">0</span>
             </div>
@@ -174,11 +268,24 @@
       <aside class="detail-drawer" id="detail-drawer" aria-hidden="true">
         <div class="drawer-header">
           <div class="drawer-title-group">
-            <span class="section-kicker">META-XAI CLINICAL BREAKDOWN</span>
+            <span class="section-kicker">CLINICAL TRIAGE INSPECTOR</span>
             <h2 id="drawer-student-name">Select a Student</h2>
             <div class="drawer-meta" id="drawer-student-meta">ID: — · Programme: —</div>
           </div>
-          <button class="drawer-close-btn" id="drawer-close" aria-label="Close drawer">✕</button>
+          <button class="drawer-close-btn" id="drawer-close" aria-label="Close drawer" type="button">✕</button>
+        </div>
+
+        <!-- Drawer Navigation Tabs -->
+        <div class="drawer-tabs">
+          <button class="drawer-tab active" data-tab="tab-trajectories" type="button">
+            <span>📈 Multi-Modal Signals</span>
+          </button>
+          <button class="drawer-tab" data-tab="tab-shap" type="button">
+            <span>🧠 TreeSHAP "Why"</span>
+          </button>
+          <button class="drawer-tab" data-tab="tab-resolve" type="button">
+            <span>✍ Resolve & Retrain</span>
+          </button>
         </div>
 
         <div class="drawer-content">
@@ -187,7 +294,7 @@
             <div class="discordant-icon">⚡</div>
             <div>
               <strong>MULTI-MODAL DISCORDANT CATCH</strong>
-              <p>Academic performance is stable/passing, but severe emotional stress or behavioral anomalies were detected. A standard LMS would miss this student completely.</p>
+              <p>Academic performance is passing/stable, but severe emotional stress or behavioral anomalies were detected. Traditional single-source LMS dashboards miss this student entirely.</p>
             </div>
           </div>
 
@@ -204,8 +311,8 @@
             </div>
           </div>
 
-          <!-- Section 1: 3 Synchronized Sparklines -->
-          <div class="drawer-section">
+          <!-- TAB 1: Multi-Modal Trajectories -->
+          <div class="drawer-tab-pane active" id="tab-trajectories">
             <div class="section-header">
               <h3>Multi-Modal Specialist Trajectories</h3>
               <small>Synchronized Observation Window (Weeks 4 – 17)</small>
@@ -238,7 +345,7 @@
                 <svg id="svg-behavior-sparkline" viewBox="0 0 280 40" preserveAspectRatio="none"></svg>
               </div>
               <div class="sparkline-labels">
-                <span>Anomaly Risk: Low</span>
+                <span>Anomaly: Low</span>
                 <span id="drawer-compliance-trend">Trend: Positive (+0.18)</span>
               </div>
             </div>
@@ -263,82 +370,93 @@
             </div>
           </div>
 
-          <!-- Section 2: TreeSHAP "Why" Panel -->
-          <div class="drawer-section shap-section">
-            <div class="section-header">
-              <h3>The "Why" Panel (TreeSHAP Attribution)</h3>
-              <small>Mathematical feature impact on intervention urgency</small>
+          <!-- TAB 2: TreeSHAP Explainability -->
+          <div class="drawer-tab-pane" id="tab-shap">
+            <div class="drawer-section shap-section">
+              <div class="section-header">
+                <h3>TreeSHAP Feature Attribution ("The Why")</h3>
+                <small>Signed mathematical impact on predicted intervention urgency</small>
+              </div>
+
+              <div class="shap-summary-box" id="drawer-shap-summary">
+                <!-- Clinical text summary -->
+              </div>
+
+              <div class="shap-bars-container" id="drawer-shap-bars">
+                <!-- Feature impact bars injected dynamically -->
+              </div>
             </div>
 
-            <div class="shap-summary-box" id="drawer-shap-summary">
-              <!-- Clinical text summary -->
-            </div>
-
-            <div class="shap-bars-container" id="drawer-shap-bars">
-              <!-- Feature impact bars injected dynamically -->
+            <!-- XGBoost Intervention Opportunity Gauge -->
+            <div class="drawer-section opp-section">
+              <div class="section-header">
+                <h3>Intervention Opportunity Model</h3>
+                <small>XGBoost estimate of intervention responsiveness</small>
+              </div>
+              <div class="opp-metric-row">
+                <div class="opp-gauge">
+                  <span class="opp-number" id="drawer-opp-prob">84.2%</span>
+                  <span class="opp-label">Success Likelihood</span>
+                </div>
+                <div class="opp-details">
+                  <span class="opp-band-pill" id="drawer-opp-band">High Opportunity Band</span>
+                  <p id="drawer-opp-expl">Timely academic & wellbeing intervention has high historical efficacy for students exhibiting this risk profile.</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Section 3: XGBoost Intervention Opportunity -->
-          <div class="drawer-section opp-section">
-            <div class="section-header">
-              <h3>Intervention Opportunity Model</h3>
-              <small>XGBoost estimate of intervention responsiveness</small>
+          <!-- TAB 3: Closed-Loop Case Resolution Form -->
+          <div class="drawer-tab-pane" id="tab-resolve">
+            <div class="drawer-section resolve-section">
+              <div class="section-header">
+                <h3>Closed-Loop Case Resolution</h3>
+                <small>Action routes ground-truth data back to retrain the XGBoost model</small>
+              </div>
+
+              <form id="resolve-form" class="resolve-form">
+                <div class="outcome-selector-group">
+                  <label class="outcome-radio-label">
+                    <input type="radio" name="intervention-outcome" value="Intervention Successful" checked />
+                    <span class="outcome-button btn-success">
+                      <span class="outcome-icon">✔</span>
+                      <div>
+                        <strong>Intervention Successful</strong>
+                        <small>Student re-engaged / risk reduced</small>
+                      </div>
+                    </span>
+                  </label>
+                  <label class="outcome-radio-label">
+                    <input type="radio" name="intervention-outcome" value="Student Withdrawn" />
+                    <span class="outcome-button btn-danger">
+                      <span class="outcome-icon">✖</span>
+                      <div>
+                        <strong>Student Withdrawn</strong>
+                        <small>Non-responsive / module drop</small>
+                      </div>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="form-group">
+                  <label for="advisor-notes">Clinical Advisor Notes</label>
+                  <textarea id="advisor-notes" rows="4" placeholder="Document check-in outcome, specific adjustments agreed, or module referral notes..."></textarea>
+                </div>
+
+                <div class="quick-notes-presets">
+                  <span class="preset-label">Quick Snippets:</span>
+                  <button type="button" class="btn-snippet" data-text="Scheduled 1-on-1 pastoral check-in. Student agreed to weekly touchpoints.">Pastoral Check-In</button>
+                  <button type="button" class="btn-snippet" data-text="Referred to Wellbeing and Counselling team due to severe stress signals.">Wellbeing Referral</button>
+                  <button type="button" class="btn-snippet" data-text="Arranged module deadline extension and tutoring support.">Academic Extension</button>
+                </div>
+
+                <button type="submit" class="btn btn-save" id="btn-save-case">
+                  <span>Save Outcome & Trigger Retraining Loop</span>
+                </button>
+              </form>
+
+              <div class="toast-message" id="toast-message" role="status" hidden></div>
             </div>
-            <div class="opp-metric-row">
-              <div class="opp-gauge">
-                <span class="opp-number" id="drawer-opp-prob">84.2%</span>
-                <span class="opp-label">Success Likelihood</span>
-              </div>
-              <div class="opp-details">
-                <span class="opp-band-pill" id="drawer-opp-band">High Opportunity Band</span>
-                <p id="drawer-opp-expl">Timely academic & wellbeing intervention has high historical efficacy for students exhibiting this risk profile.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 4: Closed-Loop Case Resolution Form -->
-          <div class="drawer-section resolve-section">
-            <div class="section-header">
-              <h3>Closed-Loop Case Resolution</h3>
-              <small>Action routes ground-truth data back to retrain the XGBoost model</small>
-            </div>
-
-            <form id="resolve-form" class="resolve-form">
-              <div class="outcome-selector-group">
-                <label class="outcome-radio-label">
-                  <input type="radio" name="intervention-outcome" value="Intervention Successful" checked />
-                  <span class="outcome-button btn-success">
-                    <span class="outcome-icon">✔</span>
-                    <div>
-                      <strong>Intervention Successful</strong>
-                      <small>Student re-engaged / risk reduced</small>
-                    </div>
-                  </span>
-                </label>
-                <label class="outcome-radio-label">
-                  <input type="radio" name="intervention-outcome" value="Student Withdrawn" />
-                  <span class="outcome-button btn-danger">
-                    <span class="outcome-icon">✖</span>
-                    <div>
-                      <strong>Student Withdrawn</strong>
-                      <small>Non-responsive / module drop</small>
-                    </div>
-                  </span>
-                </label>
-              </div>
-
-              <div class="form-group">
-                <label for="advisor-notes">Clinical Advisor Notes</label>
-                <textarea id="advisor-notes" rows="3" placeholder="Document check-in outcome, specific adjustments agreed, or module referral notes..."></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-save" id="btn-save-case">
-                <span>Save Outcome & Trigger Retraining Loop</span>
-              </button>
-            </form>
-
-            <div class="toast-message" id="toast-message" role="status" hidden></div>
           </div>
         </div>
       </aside>
