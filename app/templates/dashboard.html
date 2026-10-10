@@ -3,113 +3,352 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Burnout Guard | Meta-XAI Student Success</title>
+    <title>Burnout Guard | Clinical Student Triage Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   </head>
-  <body>
+  <body class="dark-theme">
     <div class="app-shell">
-      <aside class="sidebar">
-        <a class="brand" href="/">
-          <span class="brand-mark">MX</span>
-          <span><strong>Burnout Guard</strong><small>Meta-XAI Student Success</small></span>
-        </a>
-        <nav class="primary-nav" aria-label="Primary navigation">
-          <a class="nav-item active" href="#queue"><span class="nav-dot"></span>Intervention queue</a>
-          <a class="nav-item" href="#insights"><span class="nav-dot"></span>How to read the queue</a>
-          <a class="nav-item" href="#method"><span class="nav-dot"></span>How the system works</a>
-          <a class="nav-item" href="/analytics"><span class="nav-dot"></span>Model evidence</a>
-        </nav>
-        <div class="sidebar-footer">
-          <span class="mode-dot"></span>
-          <div><strong>{{ data_mode }} workspace</strong><small>OULAD Cohort 2026 / Weeks 4-17</small></div>
-        </div>
-      </aside>
-
+      <!-- Main Triage Workspace -->
       <main class="main-content">
+        <!-- Topbar -->
         <header class="topbar">
-          <div>
-            <p class="kicker">Burnout Guard · Student success operations</p>
-            <h1>Intervention queue</h1>
+          <div class="brand-group">
+            <div class="brand-badge">
+              <span class="brand-glyph">✦</span>
+              <span class="brand-title">BURNOUT GUARD</span>
+            </div>
+            <div class="brand-sub">Meta-XAI Clinical Triage Platform · Multi-Modal Institutional Decision Support</div>
           </div>
-          <div class="topbar-actions">
-            <span class="data-badge"><span class="status-dot"></span>{{ data_mode }} DATA</span>
-            <a class="outline-button" href="/api/export/csv">Export queue</a>
+
+          <div class="topbar-controls">
+            <!-- Capacity Slider -->
+            <div class="control-box capacity-box">
+              <div class="control-label-row">
+                <span class="control-label">ADVISOR CAPACITY</span>
+                <strong class="capacity-value" id="capacity-display">5 Slots</strong>
+              </div>
+              <div class="slider-wrapper">
+                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" />
+                <div class="capacity-ticks">
+                  <span>1</span>
+                  <span>5</span>
+                  <span>10</span>
+                  <span>15</span>
+                  <span>20</span>
+                  <span>25</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Demo Live Actions -->
+            <div class="action-buttons">
+              <button class="btn btn-outline" id="btn-reset" title="Wipe queue clean to showcase empty-state cold start during viva">
+                <span class="btn-icon">↺</span> Reset (Cold Start)
+              </button>
+              <button class="btn btn-primary" id="btn-stream-toggle">
+                <span class="live-dot pulse"></span>
+                <span id="stream-btn-text">Live Ingestion: Active</span>
+              </button>
+              <a class="btn btn-ghost" href="/api/export/csv" download title="Export active triage queue">
+                <span>⤓ Export CSV</span>
+              </a>
+              <a class="btn btn-ghost" href="/analytics" title="Inspect Component Performance">
+                <span>Model Analytics →</span>
+              </a>
+            </div>
           </div>
         </header>
 
-        <section class="intro-row">
-          <div>
-            <p class="intro-title">A clearer view of who may need support.</p>
-            <p class="intro-copy">This page combines academic, behavioural, and emotional signals into a review queue. It supports advisor judgement; it is not a diagnosis.</p>
+        <!-- Clinical Telemetry Row -->
+        <section class="telemetry-bar" aria-label="Triage Telemetry">
+          <div class="telemetry-card">
+            <span class="telemetry-label">STUDENTS IN REVIEW</span>
+            <div class="telemetry-value-row">
+              <strong id="stat-total">{{ summary.total_students }}</strong>
+              <span class="telemetry-sub">Cohort 2026-S1</span>
+            </div>
           </div>
-          <div class="capacity-card">
-            <div class="capacity-label"><span>Weekly capacity</span><strong>{{ summary.capacity.available_slots }} slots open</strong></div>
-            <div class="capacity-track"><span style="width: 42%"></span></div>
-            <small>{{ summary.assigned_cases }} active cases of {{ summary.capacity.weekly_case_limit }} weekly places</small>
+          <div class="telemetry-card card-p1">
+            <span class="telemetry-label">P1 QUEUE (ACTION REQUIRED)</span>
+            <div class="telemetry-value-row">
+              <strong id="stat-p1">{{ summary.p1_cases }}</strong>
+              <span class="telemetry-tag" id="stat-p1-tag">Capacity Capped</span>
+            </div>
+          </div>
+          <div class="telemetry-card card-p2">
+            <span class="telemetry-label">MONITORING (IN PROGRESS)</span>
+            <div class="telemetry-value-row">
+              <strong id="stat-p2">{{ summary.p2_cases }}</strong>
+              <span class="telemetry-sub" id="stat-p2-sub">Active Review</span>
+            </div>
+          </div>
+          <div class="telemetry-card card-resolved">
+            <span class="telemetry-label">RESOLVED & RETRAINED</span>
+            <div class="telemetry-value-row">
+              <strong id="stat-resolved">{{ summary.assigned_cases }}</strong>
+              <span class="telemetry-tag tag-green">Loop Closed</span>
+            </div>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-label">EVIDENCE FUSION</span>
+            <div class="telemetry-value-row">
+              <strong>{{ (summary.evidence_coverage * 100)|round|int }}%</strong>
+              <span class="telemetry-sub">3/3 Modalities</span>
+            </div>
           </div>
         </section>
 
-        <section class="metrics-grid" aria-label="Queue summary">
-          <article class="metric-card metric-primary"><span class="metric-label">Students in review</span><strong>{{ summary.total_students }}</strong><small>Across the current cohort</small></article>
-          <article class="metric-card"><span class="metric-label">Act this week</span><strong>{{ summary.p1_cases }}</strong><small>Highest-priority conversations</small></article>
-          <article class="metric-card"><span class="metric-label">Review and plan</span><strong>{{ summary.p2_cases }}</strong><small>Needs advisor review</small></article>
-          <article class="metric-card"><span class="metric-label">Evidence available</span><strong>{{ (summary.evidence_coverage * 100)|round|int }}%</strong><small>Across three signal sources</small></article>
-        </section>
+        <!-- Filter & Search Toolbar -->
+        <div class="toolbar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="search-input" placeholder="Search student by name, canonical ID, or programme..." />
+          </div>
+          <div class="toolbar-filters">
+            <select id="filter-programme">
+              <option value="">All Programmes</option>
+              <option value="Computing">Computing</option>
+              <option value="Business">Business</option>
+              <option value="STEM">STEM</option>
+              <option value="Social Sciences">Social Sciences</option>
+            </select>
+            <select id="filter-catch">
+              <option value="">All Signals</option>
+              <option value="discordant">⚡ Multi-Modal Catch Only</option>
+              <option value="high_stress">Severe Stress (≥ 3.0)</option>
+              <option value="anomaly">Behavioral Anomaly</option>
+            </select>
+          </div>
+          <div class="toolbar-info">
+            <span class="data-mode-badge" id="data-mode-badge">{{ data_mode }}</span>
+          </div>
+        </div>
 
-        <section class="workspace-grid" id="queue">
-          <div class="queue-panel panel">
-            <div class="panel-heading">
-              <div><p class="section-label">Advisor workload</p><h2>Who needs attention first?</h2><p class="panel-helper">Select a student to see what changed and the suggested next step.</p></div>
-              <span class="result-count" id="result-count">{{ records|length }} cases</span>
+        <!-- Clinical Kanban Triage Board -->
+        <section class="kanban-board" id="kanban-board">
+          <!-- Column 1: P1 Action Required -->
+          <div class="kanban-column col-p1" id="col-p1">
+            <div class="column-header">
+              <div class="col-title-group">
+                <span class="status-indicator ind-p1"></span>
+                <h2>P1 Queue (Action Required)</h2>
+              </div>
+              <span class="col-count count-p1" id="count-p1">0</span>
             </div>
-            <div class="filters" role="group" aria-label="Queue filters">
-              <label class="search-field"><span class="search-icon">/</span><input id="search" type="search" placeholder="Search student or ID" /></label>
-              <select id="priority-filter" aria-label="Filter by priority"><option value="">All priorities</option><option value="P1">P1 first</option><option value="P2">P2 review</option><option value="P3">P3 monitor</option></select>
-              <select id="status-filter" aria-label="Filter by case status"><option value="">All statuses</option><option value="New">New</option><option value="Assigned">Assigned</option><option value="Monitoring">Monitoring</option><option value="Resolved">Resolved</option></select>
-            </div>
-            <div class="queue-table-wrap">
-              <table class="queue-table">
-                <thead><tr><th>Student</th><th>Support priority</th><th>What changed</th><th>Evidence available</th><th>Suggested next step</th><th>Case status</th></tr></thead>
-                <tbody id="queue-body">
-                  {% for row in records %}
-                  <tr class="queue-row {% if loop.first %}selected{% endif %}" data-id="{{ row.student_id }}">
-                    <td><strong>{{ row.student_name }}</strong><small>{{ row.student_id }} · {{ row.programme }}</small></td>
-                    <td><span class="priority-pill {{ row.priority_level|lower }}">{{ row.priority_level }}</span><small>{{ '%.0f'|format(row.priority_score * 100) }} priority</small></td>
-                    <td><span class="pattern-label">{{ row.trajectory|replace('_', ' ') }}</span><small>{{ row.trajectory_explanation }}</small></td>
-                    <td><span class="coverage-value">{{ (row.evidence_coverage * 100)|round|int }}%</span><small>{{ row.available_sources }}/{{ row.expected_sources }} sources</small></td>
-                    <td><span class="action-label">{{ row.recommended_action }}</span><small>Due {{ row.due_date }}</small></td>
-                    <td><span class="status-pill {{ row.status|lower|replace(' ', '-') }}">{{ row.status }}</span></td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              <div class="empty-state" id="empty-state" hidden>No students match the current filters.</div>
-            </div>
+            <div class="col-kicker">High triage urgency · Ranked by XGBoost opportunity probability</div>
+            <div class="cards-container" id="cards-p1"></div>
           </div>
 
-          <aside class="detail-panel panel" id="detail-panel">
-            <div class="detail-topline"><span class="section-label">Explainable case brief</span><span class="confidence-tag" id="detail-confidence">Medium confidence</span></div>
-            <div class="detail-identity"><div class="avatar" id="detail-avatar">AR</div><div><h2 id="detail-name">{{ records[0].student_name }}</h2><p id="detail-meta">{{ records[0].student_id }} · {{ records[0].programme }}</p></div></div>
-            <div class="detail-priority"><div><span class="metric-label">Support priority</span><strong id="detail-priority">{{ records[0].priority_level }}</strong><small class="priority-meaning" id="detail-priority-meaning">Review this case first</small></div><span class="priority-pill {{ records[0].priority_level|lower }}" id="detail-priority-pill">{{ records[0].priority_level }}</span></div>
-            <div class="trajectory-block"><div class="block-heading"><span>Academic trajectory</span><strong id="detail-trajectory">{{ records[0].trajectory|replace('_', ' ') }}</strong></div><div class="sparkline" id="sparkline"></div><div class="week-labels"><span>W4</span><span>W8</span><span>W12</span><span>W17</span></div></div>
-            <div class="explanation-block"><span class="block-heading">Why this case surfaced</span><p id="detail-explanation">{{ records[0].trajectory_explanation }}</p><div class="reason-list" id="reason-list"></div></div>
-            <div class="evidence-list"><div class="block-heading">Evidence layers</div><div id="evidence-items"></div></div>
-            <div class="recommendation"><span class="block-heading">Recommended next step</span><strong id="detail-action">{{ records[0].recommended_action }}</strong><p id="detail-owner">Owner: {{ records[0].owner_role }} · Due {{ records[0].due_date }}</p></div>
-            <div class="case-actions"><select id="case-status" aria-label="Update case status"><option>New</option><option>Assigned</option><option>Contacted</option><option>Monitoring</option><option>Resolved</option></select><button class="primary-button" id="save-case">Save case update</button></div>
-            <p class="save-message" id="save-message" role="status"></p>
-          </aside>
-        </section>
+          <!-- Column 2: Monitoring (In Progress) -->
+          <div class="kanban-column col-p2" id="col-p2">
+            <div class="column-header">
+              <div class="col-title-group">
+                <span class="status-indicator ind-p2"></span>
+                <h2>Monitoring (In Progress)</h2>
+              </div>
+              <span class="col-count count-p2" id="count-p2">0</span>
+            </div>
+            <div class="col-kicker">Scheduled review · Includes overflow deferred by advisor capacity limits</div>
+            <div class="cards-container" id="cards-p2"></div>
+          </div>
 
-        <section class="bottom-grid" id="insights">
-          <article class="panel insight-panel"><div class="panel-heading"><div><p class="section-label">How to read the queue</p><h2>Priority is a review order, not a diagnosis</h2></div><span class="mini-tag">META-XAI</span></div><p>Higher priority means the evidence suggests an earlier human review may be useful. It does not mean a student has burnout. Missing signals lower confidence instead of being treated as low risk.</p><div class="priority-guide"><div><span class="priority-pill p1">P1</span><p><strong>Act soon</strong><small>Review within the next few days.</small></p></div><div><span class="priority-pill p2">P2</span><p><strong>Review and plan</strong><small>Schedule an appropriate check-in.</small></p></div><div><span class="priority-pill p3">P3</span><p><strong>Monitor</strong><small>Keep the student under routine review.</small></p></div></div></article>
-          <article class="panel method-panel" id="method"><p class="section-label">System posture</p><h2>Prediction is upstream. Action is here.</h2><p>Academic, behavioural, and emotional models remain independently owned. This layer validates their evidence, interprets trajectories, prioritises limited support capacity, and records what happens next.</p><div class="method-flow"><span>Signals</span><b>→</b><span>Evidence</span><b>→</b><span>Action</span><b>→</b><span>Outcome</span></div></article>
+          <!-- Column 3: Resolved -->
+          <div class="kanban-column col-resolved" id="col-resolved">
+            <div class="column-header">
+              <div class="col-title-group">
+                <span class="status-indicator ind-resolved"></span>
+                <h2>Resolved</h2>
+              </div>
+              <span class="col-count count-resolved" id="count-resolved">0</span>
+            </div>
+            <div class="col-kicker">Intervention outcomes logged to retrain the heavy meta-model</div>
+            <div class="cards-container" id="cards-resolved"></div>
+          </div>
         </section>
       </main>
+
+      <!-- Slide-over Clinical Detail & Meta-XAI Breakdown Drawer -->
+      <aside class="detail-drawer" id="detail-drawer" aria-hidden="true">
+        <div class="drawer-header">
+          <div class="drawer-title-group">
+            <span class="section-kicker">META-XAI CLINICAL BREAKDOWN</span>
+            <h2 id="drawer-student-name">Select a Student</h2>
+            <div class="drawer-meta" id="drawer-student-meta">ID: — · Programme: —</div>
+          </div>
+          <button class="drawer-close-btn" id="drawer-close" aria-label="Close drawer">✕</button>
+        </div>
+
+        <div class="drawer-content">
+          <!-- Multi-modal Discordant Catch Alert (Shown when grades stable but stress/anomaly severe) -->
+          <div class="discordant-banner" id="drawer-discordant-banner" hidden>
+            <div class="discordant-icon">⚡</div>
+            <div>
+              <strong>MULTI-MODAL DISCORDANT CATCH</strong>
+              <p>Academic performance is stable/passing, but severe emotional stress or behavioral anomalies were detected. A standard LMS would miss this student completely.</p>
+            </div>
+          </div>
+
+          <!-- Priority & Knapsack Status Card -->
+          <div class="drawer-section priority-section">
+            <div class="priority-badges">
+              <span class="badge badge-priority" id="drawer-priority-badge">P1</span>
+              <span class="badge badge-effective" id="drawer-effective-badge">Allocated P1</span>
+              <span class="badge badge-confidence" id="drawer-confidence-badge">High Confidence</span>
+            </div>
+            <div class="priority-score-wrap">
+              <span class="metric-label">Urgency Score</span>
+              <strong id="drawer-priority-score">88%</strong>
+            </div>
+          </div>
+
+          <!-- Section 1: 3 Synchronized Sparklines -->
+          <div class="drawer-section">
+            <div class="section-header">
+              <h3>Multi-Modal Specialist Trajectories</h3>
+              <small>Synchronized Observation Window (Weeks 4 – 17)</small>
+            </div>
+
+            <!-- Sparkline 1: Academic Risk Curve -->
+            <div class="sparkline-card">
+              <div class="sparkline-header">
+                <span class="stream-tag tag-acad">Academic GRU</span>
+                <span class="sparkline-state" id="drawer-academic-state">stable_low</span>
+              </div>
+              <div class="svg-sparkline-wrap">
+                <svg id="svg-academic-sparkline" viewBox="0 0 280 60" preserveAspectRatio="none"></svg>
+              </div>
+              <div class="sparkline-labels">
+                <span>W4</span>
+                <span>W8</span>
+                <span>W12</span>
+                <span>W17 (Final)</span>
+              </div>
+            </div>
+
+            <!-- Sparkline 2: Behavioral Compliance & Anomaly -->
+            <div class="sparkline-card">
+              <div class="sparkline-header">
+                <span class="stream-tag tag-beh">Behavioral VAE</span>
+                <span class="sparkline-val" id="drawer-beh-val">Compliance: 85% · Anomaly: 0.18</span>
+              </div>
+              <div class="svg-sparkline-wrap">
+                <svg id="svg-behavior-sparkline" viewBox="0 0 280 40" preserveAspectRatio="none"></svg>
+              </div>
+              <div class="sparkline-labels">
+                <span>Anomaly Risk: Low</span>
+                <span id="drawer-compliance-trend">Trend: Positive (+0.18)</span>
+              </div>
+            </div>
+
+            <!-- Sparkline 3: Emotional Stress (NLP RoBERTa) -->
+            <div class="sparkline-card">
+              <div class="sparkline-header">
+                <span class="stream-tag tag-emo">Emotional RoBERTa</span>
+                <span class="sparkline-val" id="drawer-stress-label">Severe Stress (3.8 / 4.0)</span>
+              </div>
+              <div class="stress-meter" id="drawer-stress-meter">
+                <div class="stress-segment" data-level="1"></div>
+                <div class="stress-segment" data-level="2"></div>
+                <div class="stress-segment" data-level="3"></div>
+                <div class="stress-segment" data-level="4"></div>
+              </div>
+              <div class="sparkline-labels">
+                <span>0.0 Normal</span>
+                <span>2.0 Elevated</span>
+                <span>4.0 Severe</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: TreeSHAP "Why" Panel -->
+          <div class="drawer-section shap-section">
+            <div class="section-header">
+              <h3>The "Why" Panel (TreeSHAP Attribution)</h3>
+              <small>Mathematical feature impact on intervention urgency</small>
+            </div>
+
+            <div class="shap-summary-box" id="drawer-shap-summary">
+              <!-- Clinical text summary -->
+            </div>
+
+            <div class="shap-bars-container" id="drawer-shap-bars">
+              <!-- Feature impact bars injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Section 3: XGBoost Intervention Opportunity -->
+          <div class="drawer-section opp-section">
+            <div class="section-header">
+              <h3>Intervention Opportunity Model</h3>
+              <small>XGBoost estimate of intervention responsiveness</small>
+            </div>
+            <div class="opp-metric-row">
+              <div class="opp-gauge">
+                <span class="opp-number" id="drawer-opp-prob">84.2%</span>
+                <span class="opp-label">Success Likelihood</span>
+              </div>
+              <div class="opp-details">
+                <span class="opp-band-pill" id="drawer-opp-band">High Opportunity Band</span>
+                <p id="drawer-opp-expl">Timely academic & wellbeing intervention has high historical efficacy for students exhibiting this risk profile.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Closed-Loop Case Resolution Form -->
+          <div class="drawer-section resolve-section">
+            <div class="section-header">
+              <h3>Closed-Loop Case Resolution</h3>
+              <small>Action routes ground-truth data back to retrain the XGBoost model</small>
+            </div>
+
+            <form id="resolve-form" class="resolve-form">
+              <div class="outcome-selector-group">
+                <label class="outcome-radio-label">
+                  <input type="radio" name="intervention-outcome" value="Intervention Successful" checked />
+                  <span class="outcome-button btn-success">
+                    <span class="outcome-icon">✔</span>
+                    <div>
+                      <strong>Intervention Successful</strong>
+                      <small>Student re-engaged / risk reduced</small>
+                    </div>
+                  </span>
+                </label>
+                <label class="outcome-radio-label">
+                  <input type="radio" name="intervention-outcome" value="Student Withdrawn" />
+                  <span class="outcome-button btn-danger">
+                    <span class="outcome-icon">✖</span>
+                    <div>
+                      <strong>Student Withdrawn</strong>
+                      <small>Non-responsive / module drop</small>
+                    </div>
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label for="advisor-notes">Clinical Advisor Notes</label>
+                <textarea id="advisor-notes" rows="3" placeholder="Document check-in outcome, specific adjustments agreed, or module referral notes..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-save" id="btn-save-case">
+                <span>Save Outcome & Trigger Retraining Loop</span>
+              </button>
+            </form>
+
+            <div class="toast-message" id="toast-message" role="status" hidden></div>
+          </div>
+        </div>
+      </aside>
     </div>
-    <script>window.initialRecords = {{ records|tojson }};</script>
+
+    <!-- Inject initial records from server for fast hydration -->
+    <script>
+      window.initialRecords = {{ records|tojson }};
+      window.initialDataMode = {{ data_mode|tojson }};
+    </script>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
   </body>
 </html>

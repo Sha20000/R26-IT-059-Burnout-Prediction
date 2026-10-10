@@ -102,6 +102,8 @@ def load_behaviour(path: Path) -> SourceTable:
     for column in numeric_columns:
         frame[column] = pd.to_numeric(frame[column], errors="coerce")
 
+    if "week" in frame.columns:
+        frame = frame.sort_values(["student_id", "week"])
     grouped = frame.groupby("student_id", dropna=True)
     aggregate = grouped.agg(
         behavior_risk_mean=("behavioral_risk_score", "mean"),
@@ -115,6 +117,11 @@ def load_behaviour(path: Path) -> SourceTable:
         first = grouped["behavioral_risk_score"].first()
         last = grouped["behavioral_risk_score"].last()
         aggregate["behavior_risk_change"] = aggregate["student_id"].map(last - first)
+        first_comp = grouped["curriculum_compliance"].first()
+        last_comp = grouped["curriculum_compliance"].last()
+        aggregate["compliance_trend"] = aggregate["student_id"].map(last_comp - first_comp)
+    else:
+        aggregate["compliance_trend"] = 0.0
     records = aggregate.to_dict(orient="records")
     return SourceTable("behaviour", records, _check_ids(aggregate, "behaviour", issues), issues)
 
@@ -221,4 +228,37 @@ def report_as_dict(report: AlignmentReport) -> dict[str, Any]:
             }
             for issue in report.issues
         ],
+    }
+
+
+def resolve_student_identity(
+    student_id: str,
+    mapping_df: pd.DataFrame,
+) -> dict[str, str]:
+    """
+    Bridge OULAD_*, BEHAVIOR_*, and EMOTIONAL_* namespaces using student_mapping.csv.
+    Matches across canonical_student_id, academic_student_id, behavior_student_id, or emotional_student_id.
+    """
+    student_id = str(student_id).strip()
+    match = mapping_df[
+        (mapping_df["canonical_student_id"] == student_id)
+        | (mapping_df["academic_student_id"] == student_id)
+        | (mapping_df["behavior_student_id"] == student_id)
+        | (mapping_df["emotional_student_id"] == student_id)
+    ]
+    if match.empty:
+        return {
+            "canonical_student_id": student_id,
+            "academic_student_id": student_id,
+            "behavior_student_id": student_id,
+            "emotional_student_id": student_id,
+            "cohort_id": "UNKNOWN",
+        }
+    row = match.iloc[0]
+    return {
+        "canonical_student_id": str(row["canonical_student_id"]),
+        "academic_student_id": str(row["academic_student_id"]),
+        "behavior_student_id": str(row["behavior_student_id"]),
+        "emotional_student_id": str(row["emotional_student_id"]),
+        "cohort_id": str(row.get("cohort_id", "OULAD_COHORT_2026_01")),
     }

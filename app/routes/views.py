@@ -7,11 +7,13 @@ views_bp = Blueprint("views", __name__)
 
 
 @views_bp.get("/")
+@views_bp.get("/dashboard")
 def dashboard():
     records = current_app.config["WORKSPACE_RECORDS"]
+    initial_slice = records[:60] if len(records) > 60 else records
     return render_template(
         "dashboard.html",
-        records=records,
+        records=initial_slice,
         summary=overview(records, current_app.config["DATA_MODE"]),
         data_mode=current_app.config["DATA_MODE"],
     )

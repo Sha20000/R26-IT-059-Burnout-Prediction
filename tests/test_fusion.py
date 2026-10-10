@@ -21,7 +21,7 @@ class FusionTests(unittest.TestCase):
         self.assertEqual(len(profiles), 1000)
         self.assertTrue(report["ready_for_fusion"])
         self.assertEqual(report["fully_matched_ids"], 1000)
-        first = profiles[0]
+        first = next(p for p in profiles if p["student_id"] == "CANONICAL_000001")
         self.assertEqual(first["student_id"], "CANONICAL_000001")
         self.assertEqual(first["academic_risks"], [0.35, 0.37, 0.41, 0.47])
         self.assertAlmostEqual(first["behavior_risk"], 0.0875)
@@ -41,6 +41,20 @@ class FusionTests(unittest.TestCase):
             self.assertTrue(output_path.exists())
         finally:
             output_path.unlink(missing_ok=True)
+
+    def test_capacity_endpoint_reorders_queue(self):
+        app = create_app()
+        client = app.test_client()
+        res = client.post("/api/capacity", json={"limit": 5})
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertEqual(data["advisor_capacity"], 5)
+        self.assertEqual(data["p1_allocated"], 5)
+
+        res_students = client.get("/api/students?effective_priority=P1")
+        self.assertEqual(res_students.status_code, 200)
+        p1s = res_students.get_json()
+        self.assertEqual(len(p1s), 5)
 
 
 if __name__ == "__main__":
