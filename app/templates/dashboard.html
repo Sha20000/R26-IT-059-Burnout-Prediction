@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Burnout Guard | Clinical Student Triage Platform</title>
+    <title>Burnout Guard | Student Support & Triage Station</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
@@ -12,54 +12,54 @@
   <body class="dark-theme">
     <div class="app-shell">
       <!-- Enterprise Sidebar Navigation -->
-      <aside class="app-sidebar" aria-label="Application Sidebar">
+      <aside class="app-sidebar" aria-label="Advisor Workspace Navigation">
         <div class="sidebar-brand">
           <div class="brand-icon-box">
             <span class="brand-icon">✦</span>
           </div>
           <div class="brand-text">
             <span class="brand-name">Burnout Guard</span>
-            <span class="brand-subtitle">Clinical Triage AI · v2.0</span>
+            <span class="brand-subtitle">Student Support Station</span>
           </div>
         </div>
 
         <nav class="sidebar-nav">
-          <div class="nav-section-label">WORKSPACE</div>
+          <div class="nav-section-label">ADVISOR WORKSPACE</div>
           <a class="nav-link active" href="/dashboard" id="nav-queue">
             <span class="nav-icon">📋</span>
-            <span class="nav-text">Triage Kanban</span>
-            <span class="nav-badge" id="nav-p1-badge">{{ summary.p1_cases }} P1</span>
+            <span class="nav-text">Student Triage Queue</span>
+            <span class="nav-badge" id="nav-p1-badge">{{ summary.p1_cases }} Urgent</span>
           </a>
           <a class="nav-link" href="/analytics" id="nav-analytics">
             <span class="nav-icon">📊</span>
-            <span class="nav-text">Model Evidence</span>
-            <span class="nav-badge-sub">AUC .996</span>
+            <span class="nav-text">AI Accuracy & Evidence</span>
+            <span class="nav-badge-sub">99.6% Accuracy</span>
           </a>
           <a class="nav-link" href="/api/export/csv" download id="nav-export">
             <span class="nav-icon">⤓</span>
-            <span class="nav-text">Export CSV Queue</span>
+            <span class="nav-text">Download Weekly Report</span>
           </a>
 
-          <div class="nav-section-label">VIVA DEMO PRESETS</div>
-          <button class="nav-preset-btn" id="preset-discordant" type="button" title="Highlight a student with passing grades but critical emotional stress">
+          <div class="nav-section-label">DEMO SCENARIOS FOR EXAMINERS</div>
+          <button class="nav-preset-btn" id="preset-discordant" type="button" title="Showcase a student whose passing grades hide severe emotional distress">
             <span class="preset-icon">⚡</span>
             <div class="preset-desc">
-              <strong>Masked Burnout Catch</strong>
-              <small>Discordant Multi-Modal</small>
+              <strong>Hidden Burnout Case</strong>
+              <small>Good Grades, Critical Stress</small>
             </div>
           </button>
-          <button class="nav-preset-btn" id="preset-capacity" type="button" title="Simulate advisor constraint: squeeze capacity to 3 slots">
+          <button class="nav-preset-btn" id="preset-capacity" type="button" title="Simulate a busy advisor: restrict capacity to 3 students and watch queue re-rank">
             <span class="preset-icon">⚖</span>
             <div class="preset-desc">
-              <strong>Capacity Squeeze (3)</strong>
-              <small>Trigger Knapsack Deferral</small>
+              <strong>Busy Week (3 Meetings)</strong>
+              <small>Prioritize Most Receptive</small>
             </div>
           </button>
-          <button class="nav-preset-btn" id="preset-reset" type="button" title="Wipe queue clean to showcase empty-state cold start during viva">
+          <button class="nav-preset-btn" id="preset-reset" type="button" title="Wipe queue clean to demonstrate live student streaming from scratch">
             <span class="preset-icon">↺</span>
             <div class="preset-desc">
-              <strong>Cold Start Reset</strong>
-              <small>Wipe Queue for Live Stream</small>
+              <strong>Clear Board (Fresh Start)</strong>
+              <small>Ready for Live Demo Stream</small>
             </div>
           </button>
         </nav>
@@ -68,8 +68,8 @@
           <div class="system-status-indicator">
             <span class="pulse-indicator"></span>
             <div class="status-meta">
-              <strong>XGBoost + TreeSHAP</strong>
-              <small>Multi-Modal Engine Online</small>
+              <strong>Early Warning Engine</strong>
+              <small>Grades + Habits + Wellbeing Active</small>
             </div>
           </div>
         </div>
@@ -81,60 +81,60 @@
         <header class="topbar">
           <div class="topbar-heading">
             <div class="kicker-row">
-              <span class="status-pill status-pill-active">INSTITUTIONAL TRIAL ACTIVE</span>
+              <span class="status-pill status-pill-active">ADVISOR DECISION SUPPORT</span>
               <span class="data-mode-badge" id="data-mode-badge">{{ data_mode }}</span>
             </div>
-            <h1 class="page-title">Clinical Intervention & Triage Queue</h1>
-            <p class="page-subtitle">Real-time multi-modal risk synthesis across Academic GRU, Behavioral VAE, and Emotional RoBERTa specialists.</p>
+            <h1 class="page-title">Weekly Student Intervention Workspace</h1>
+            <p class="page-subtitle">Combines Coursework Trajectories, Online Study Habits, and Wellbeing Signals to tell advisors who to call, why, and how to help.</p>
           </div>
 
           <!-- Advisor Capacity Control Station -->
           <div class="capacity-control-card">
             <div class="capacity-header-row">
               <div class="capacity-title-wrap">
-                <span class="capacity-kicker">ADVISOR CASE CAPACITY</span>
-                <strong class="capacity-display-num" id="capacity-display">5 Slots Allocated</strong>
+                <span class="capacity-kicker">MY MEETING CAPACITY THIS WEEK</span>
+                <strong class="capacity-display-num" id="capacity-display">5 Meetings Available</strong>
               </div>
               <div class="capacity-status-chip" id="knapsack-status-chip">
-                <span>Knapsack:</span> <strong id="knapsack-overflow-count">0 Overflow Deferred</strong>
+                <span>Caseload Cap:</span> <strong id="knapsack-overflow-count">Top 5 Prioritized</strong>
               </div>
             </div>
 
             <div class="capacity-slider-row">
-              <button class="btn-step" id="btn-cap-decrement" type="button" title="Decrease capacity by 1">−</button>
+              <button class="btn-step" id="btn-cap-decrement" type="button" title="Reduce available meetings by 1">−</button>
               <div class="slider-track-wrap">
-                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" aria-label="Advisor weekly capacity" />
+                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" aria-label="Advisor weekly meeting capacity" />
                 <div class="slider-glow-bar" id="slider-glow-bar" style="width: 20%;"></div>
               </div>
-              <button class="btn-step" id="btn-cap-increment" type="button" title="Increase capacity by 1">+</button>
+              <button class="btn-step" id="btn-cap-increment" type="button" title="Increase available meetings by 1">+</button>
             </div>
 
             <div class="capacity-quick-pills">
-              <button type="button" class="pill-btn" data-cap="3">3 (Urgent)</button>
+              <button type="button" class="pill-btn" data-cap="3">3 (Busy Week)</button>
               <button type="button" class="pill-btn active" data-cap="5">5 (Standard)</button>
               <button type="button" class="pill-btn" data-cap="10">10 (Expanded)</button>
-              <button type="button" class="pill-btn" data-cap="20">20 (Maximum)</button>
+              <button type="button" class="pill-btn" data-cap="20">20 (All Urgent)</button>
             </div>
           </div>
 
           <!-- Live Stream Toggle -->
           <div class="stream-action-wrap">
-            <button class="btn-live-stream" id="btn-stream-toggle" type="button">
+            <button class="btn-live-stream" id="btn-stream-toggle" type="button" title="Continuously sync new incoming student LMS activity">
               <span class="live-dot pulse"></span>
-              <span id="stream-btn-text">Live Ingestion: Active</span>
+              <span id="stream-btn-text">Live Sync: Active</span>
             </button>
           </div>
         </header>
 
         <!-- Clinical Telemetry Metric Cards -->
-        <section class="telemetry-bar" aria-label="Triage Telemetry">
+        <section class="telemetry-bar" aria-label="Student Telemetry Overview">
           <div class="telemetry-card">
             <div class="telemetry-icon-box icon-students">👥</div>
             <div class="telemetry-body">
-              <span class="telemetry-label">COHORT MONITORED</span>
+              <span class="telemetry-label">ENROLLED COHORT</span>
               <div class="telemetry-value-row">
                 <strong id="stat-total">{{ summary.total_students }}</strong>
-                <span class="telemetry-sub">Students Fused</span>
+                <span class="telemetry-sub">Students Monitored</span>
               </div>
             </div>
           </div>
@@ -142,10 +142,10 @@
           <div class="telemetry-card card-p1">
             <div class="telemetry-icon-box icon-p1">🚨</div>
             <div class="telemetry-body">
-              <span class="telemetry-label">P1 IMMEDIATE ACTION</span>
+              <span class="telemetry-label">MEET THIS WEEK (URGENT)</span>
               <div class="telemetry-value-row">
                 <strong id="stat-p1">{{ summary.p1_cases }}</strong>
-                <span class="telemetry-tag" id="stat-p1-tag">Capacity Capped</span>
+                <span class="telemetry-tag" id="stat-p1-tag">Fits Your Caseload</span>
               </div>
             </div>
           </div>
@@ -153,10 +153,10 @@
           <div class="telemetry-card card-p2">
             <div class="telemetry-icon-box icon-p2">⏱</div>
             <div class="telemetry-body">
-              <span class="telemetry-label">MONITORING QUEUE</span>
+              <span class="telemetry-label">ON WATCHLIST</span>
               <div class="telemetry-value-row">
                 <strong id="stat-p2">{{ summary.p2_cases }}</strong>
-                <span class="telemetry-sub" id="stat-p2-sub">Active Review</span>
+                <span class="telemetry-sub" id="stat-p2-sub">Queued For Next Week</span>
               </div>
             </div>
           </div>
@@ -164,10 +164,10 @@
           <div class="telemetry-card card-resolved">
             <div class="telemetry-icon-box icon-resolved">✔</div>
             <div class="telemetry-body">
-              <span class="telemetry-label">RESOLVED & RETRAINED</span>
+              <span class="telemetry-label">HANDLED & RESOLVED</span>
               <div class="telemetry-value-row">
                 <strong id="stat-resolved">{{ summary.assigned_cases }}</strong>
-                <span class="telemetry-tag tag-green">Feedback Closed</span>
+                <span class="telemetry-tag tag-green">Support Logged</span>
               </div>
             </div>
           </div>
@@ -175,10 +175,10 @@
           <div class="telemetry-card card-fusion">
             <div class="telemetry-icon-box icon-fusion">⚡</div>
             <div class="telemetry-body">
-              <span class="telemetry-label">DISCORDANT CATCHES</span>
+              <span class="telemetry-label">HIDDEN BURNOUT CAUGHT</span>
               <div class="telemetry-value-row">
                 <strong id="stat-discordant">343</strong>
-                <span class="telemetry-sub">Hidden Stress</span>
+                <span class="telemetry-sub">High Stress / Good Marks</span>
               </div>
             </div>
           </div>
@@ -188,35 +188,35 @@
         <section class="toolbar-section">
           <div class="search-wrap">
             <span class="search-glyph">🔍</span>
-            <input type="search" id="search-input" placeholder="Search student by name, canonical ID, or programme..." />
+            <input type="search" id="search-input" placeholder="Search student by name, student ID, or programme..." />
             <button class="clear-search-btn" id="btn-clear-search" type="button" hidden>✕</button>
           </div>
 
           <!-- Filter Pills -->
           <div class="filter-pills-bar">
-            <button type="button" class="filter-pill active" data-filter="all">All Cases</button>
-            <button type="button" class="filter-pill pill-p1" data-filter="p1">🚨 P1 Action Only</button>
-            <button type="button" class="filter-pill pill-discordant" data-filter="discordant">⚡ Multi-Modal Catches</button>
-            <button type="button" class="filter-pill pill-stress" data-filter="high_stress">🔥 Severe Stress (≥3.0)</button>
-            <button type="button" class="filter-pill pill-opp" data-filter="high_opp">🎯 High Opp (≥70%)</button>
-            <button type="button" class="filter-pill pill-resolved" data-filter="resolved">✔ Resolved</button>
+            <button type="button" class="filter-pill active" data-filter="all">All Students</button>
+            <button type="button" class="filter-pill pill-p1" data-filter="p1">🚨 Call This Week</button>
+            <button type="button" class="filter-pill pill-discordant" data-filter="discordant">⚡ Hidden Distress Only</button>
+            <button type="button" class="filter-pill pill-stress" data-filter="high_stress">🔥 High Stress Signal</button>
+            <button type="button" class="filter-pill pill-opp" data-filter="high_opp">🎯 High Chance to Recover</button>
+            <button type="button" class="filter-pill pill-resolved" data-filter="resolved">✔ Already Resolved</button>
           </div>
 
           <!-- Secondary Dropdowns -->
           <div class="toolbar-selects">
-            <select id="filter-programme" aria-label="Filter by academic programme">
-              <option value="">All Programmes</option>
+            <select id="filter-programme" aria-label="Filter by degree programme">
+              <option value="">All Degree Programmes</option>
               <option value="Computing">Computing</option>
               <option value="Business">Business</option>
               <option value="STEM">STEM</option>
               <option value="Social Sciences">Social Sciences</option>
             </select>
 
-            <select id="sort-selector" aria-label="Sort queue">
-              <option value="opportunity_desc">Sort: Success Opp ↓</option>
-              <option value="priority_desc">Sort: Urgency Score ↓</option>
-              <option value="academic_risk_desc">Sort: Academic Risk ↓</option>
-              <option value="name_asc">Sort: Name (A-Z)</option>
+            <select id="sort-selector" aria-label="Sort student queue">
+              <option value="opportunity_desc">Sort: Highest Recovery Opportunity ↓</option>
+              <option value="priority_desc">Sort: Most Urgent First ↓</option>
+              <option value="academic_risk_desc">Sort: Highest Academic Risk ↓</option>
+              <option value="name_asc">Sort: Student Name (A-Z)</option>
             </select>
           </div>
         </section>
@@ -228,11 +228,11 @@
             <div class="column-header">
               <div class="col-title-group">
                 <span class="status-indicator ind-p1"></span>
-                <h2>P1 Queue · Action Required</h2>
+                <h2>Meet This Week · High Priority</h2>
               </div>
               <span class="col-count count-p1" id="count-p1">0</span>
             </div>
-            <div class="col-kicker">High triage urgency · Allocated by XGBoost opportunity probability</div>
+            <div class="col-kicker">Top priority students fitted to your available meeting slots. Reach out to these students first.</div>
             <div class="cards-container" id="cards-p1"></div>
           </div>
 
@@ -241,11 +241,11 @@
             <div class="column-header">
               <div class="col-title-group">
                 <span class="status-indicator ind-p2"></span>
-                <h2>Monitoring Queue</h2>
+                <h2>Watchlist · Queued for Follow-Up</h2>
               </div>
               <span class="col-count count-p2" id="count-p2">0</span>
             </div>
-            <div class="col-kicker">Scheduled review · Includes cases deferred by advisor capacity limit</div>
+            <div class="col-kicker">Students under regular observation, or queued for next week when your meeting calendar opens up.</div>
             <div class="cards-container" id="cards-p2"></div>
           </div>
 
@@ -254,11 +254,11 @@
             <div class="column-header">
               <div class="col-title-group">
                 <span class="status-indicator ind-resolved"></span>
-                <h2>Resolved Cases</h2>
+                <h2>Handled & Resolved Cases</h2>
               </div>
               <span class="col-count count-resolved" id="count-resolved">0</span>
             </div>
-            <div class="col-kicker">Intervention outcomes logged to retrain the heavy meta-model</div>
+            <div class="col-kicker">Support meetings held and documented. Outcome notes are saved to teach the AI what worked.</div>
             <div class="cards-container" id="cards-resolved"></div>
           </div>
         </section>
@@ -268,23 +268,23 @@
       <aside class="detail-drawer" id="detail-drawer" aria-hidden="true">
         <div class="drawer-header">
           <div class="drawer-title-group">
-            <span class="section-kicker">CLINICAL TRIAGE INSPECTOR</span>
+            <span class="section-kicker">STUDENT PROFILE & SUPPORT INTELLIGENCE</span>
             <h2 id="drawer-student-name">Select a Student</h2>
             <div class="drawer-meta" id="drawer-student-meta">ID: — · Programme: —</div>
           </div>
-          <button class="drawer-close-btn" id="drawer-close" aria-label="Close drawer" type="button">✕</button>
+          <button class="drawer-close-btn" id="drawer-close" aria-label="Close student drawer" type="button">✕</button>
         </div>
 
         <!-- Drawer Navigation Tabs -->
         <div class="drawer-tabs">
           <button class="drawer-tab active" data-tab="tab-trajectories" type="button">
-            <span>📈 Multi-Modal Signals</span>
+            <span>📈 Student Signals</span>
           </button>
           <button class="drawer-tab" data-tab="tab-shap" type="button">
-            <span>🧠 TreeSHAP "Why"</span>
+            <span>🧠 Why Flagged?</span>
           </button>
           <button class="drawer-tab" data-tab="tab-resolve" type="button">
-            <span>✍ Resolve & Retrain</span>
+            <span>✍ Log Support Action</span>
           </button>
         </div>
 
@@ -293,20 +293,20 @@
           <div class="discordant-banner" id="drawer-discordant-banner" hidden>
             <div class="discordant-icon">⚡</div>
             <div>
-              <strong>MULTI-MODAL DISCORDANT CATCH</strong>
-              <p>Academic performance is passing/stable, but severe emotional stress or behavioral anomalies were detected. Traditional single-source LMS dashboards miss this student entirely.</p>
+              <strong>WARNING: HIDDEN BURNOUT DETECTED</strong>
+              <p>This student is currently passing their assessments, but our wellbeing signals show acute emotional stress. Traditional grade-only systems would completely miss this student until they suddenly drop out.</p>
             </div>
           </div>
 
           <!-- Priority & Knapsack Status Card -->
           <div class="drawer-section priority-section">
             <div class="priority-badges">
-              <span class="badge badge-priority" id="drawer-priority-badge">P1</span>
-              <span class="badge badge-effective" id="drawer-effective-badge">Allocated P1</span>
+              <span class="badge badge-priority" id="drawer-priority-badge">Call This Week</span>
+              <span class="badge badge-effective" id="drawer-effective-badge">In Your Top 5</span>
               <span class="badge badge-confidence" id="drawer-confidence-badge">High Confidence</span>
             </div>
             <div class="priority-score-wrap">
-              <span class="metric-label">Urgency Score</span>
+              <span class="metric-label">Urgency Level</span>
               <strong id="drawer-priority-score">88%</strong>
             </div>
           </div>
@@ -314,46 +314,46 @@
           <!-- TAB 1: Multi-Modal Trajectories -->
           <div class="drawer-tab-pane active" id="tab-trajectories">
             <div class="section-header">
-              <h3>Multi-Modal Specialist Trajectories</h3>
-              <small>Synchronized Observation Window (Weeks 4 – 17)</small>
+              <h3>Student Progress Signals</h3>
+              <small>Observed across coursework, online study habits, and communications</small>
             </div>
 
             <!-- Sparkline 1: Academic Risk Curve -->
             <div class="sparkline-card">
               <div class="sparkline-header">
-                <span class="stream-tag tag-acad">Academic GRU</span>
-                <span class="sparkline-state" id="drawer-academic-state">stable_low</span>
+                <span class="stream-tag tag-acad">Coursework Risk Trend</span>
+                <span class="sparkline-state" id="drawer-academic-state">Grade Trajectory</span>
               </div>
               <div class="svg-sparkline-wrap">
                 <svg id="svg-academic-sparkline" viewBox="0 0 280 60" preserveAspectRatio="none"></svg>
               </div>
               <div class="sparkline-labels">
-                <span>W4</span>
-                <span>W8</span>
-                <span>W12</span>
-                <span>W17 (Final)</span>
+                <span>Week 4</span>
+                <span>Week 8 (Midterm)</span>
+                <span>Week 12</span>
+                <span>Week 17 (Finals)</span>
               </div>
             </div>
 
             <!-- Sparkline 2: Behavioral Compliance & Anomaly -->
             <div class="sparkline-card">
               <div class="sparkline-header">
-                <span class="stream-tag tag-beh">Behavioral VAE</span>
-                <span class="sparkline-val" id="drawer-beh-val">Compliance: 85% · Anomaly: 0.18</span>
+                <span class="stream-tag tag-beh">Online Study Habits</span>
+                <span class="sparkline-val" id="drawer-beh-val">LMS Activity: 85% · Disruption: 0.18</span>
               </div>
               <div class="svg-sparkline-wrap">
                 <svg id="svg-behavior-sparkline" viewBox="0 0 280 40" preserveAspectRatio="none"></svg>
               </div>
               <div class="sparkline-labels">
-                <span>Anomaly: Low</span>
-                <span id="drawer-compliance-trend">Trend: Positive (+0.18)</span>
+                <span>Study Pattern: Consistent</span>
+                <span id="drawer-compliance-trend">Momentum: Positive (+0.18)</span>
               </div>
             </div>
 
             <!-- Sparkline 3: Emotional Stress (NLP RoBERTa) -->
             <div class="sparkline-card">
               <div class="sparkline-header">
-                <span class="stream-tag tag-emo">Emotional RoBERTa</span>
+                <span class="stream-tag tag-emo">Wellbeing & Stress Level</span>
                 <span class="sparkline-val" id="drawer-stress-label">Severe Stress (3.8 / 4.0)</span>
               </div>
               <div class="stress-meter" id="drawer-stress-meter">
@@ -363,9 +363,10 @@
                 <div class="stress-segment" data-level="4"></div>
               </div>
               <div class="sparkline-labels">
-                <span>0.0 Normal</span>
-                <span>2.0 Elevated</span>
-                <span>4.0 Severe</span>
+                <span>Normal (0.0)</span>
+                <span>Mild</span>
+                <span>Elevated</span>
+                <span>Critical (4.0)</span>
               </div>
             </div>
           </div>
@@ -374,8 +375,8 @@
           <div class="drawer-tab-pane" id="tab-shap">
             <div class="drawer-section shap-section">
               <div class="section-header">
-                <h3>TreeSHAP Feature Attribution ("The Why")</h3>
-                <small>Signed mathematical impact on predicted intervention urgency</small>
+                <h3>Why Did the AI Flag This Student?</h3>
+                <small>Plain-English breakdown of factors influencing this student's risk</small>
               </div>
 
               <div class="shap-summary-box" id="drawer-shap-summary">
@@ -390,17 +391,17 @@
             <!-- XGBoost Intervention Opportunity Gauge -->
             <div class="drawer-section opp-section">
               <div class="section-header">
-                <h3>Intervention Opportunity Model</h3>
-                <small>XGBoost estimate of intervention responsiveness</small>
+                <h3>Will an Advisor Meeting Help?</h3>
+                <small>Historical likelihood of student recovering after a check-in</small>
               </div>
               <div class="opp-metric-row">
                 <div class="opp-gauge">
                   <span class="opp-number" id="drawer-opp-prob">84.2%</span>
-                  <span class="opp-label">Success Likelihood</span>
+                  <span class="opp-label">Likelihood to Recover</span>
                 </div>
                 <div class="opp-details">
                   <span class="opp-band-pill" id="drawer-opp-band">High Opportunity Band</span>
-                  <p id="drawer-opp-expl">Timely academic & wellbeing intervention has high historical efficacy for students exhibiting this risk profile.</p>
+                  <p id="drawer-opp-expl">Students exhibiting this exact pattern have responded exceptionally well to a quick 1-on-1 check-in and coursework adjustment.</p>
                 </div>
               </div>
             </div>
@@ -410,8 +411,8 @@
           <div class="drawer-tab-pane" id="tab-resolve">
             <div class="drawer-section resolve-section">
               <div class="section-header">
-                <h3>Closed-Loop Case Resolution</h3>
-                <small>Action routes ground-truth data back to retrain the XGBoost model</small>
+                <h3>Record Your Intervention</h3>
+                <small>Document your meeting with the student and mark the case as completed</small>
               </div>
 
               <form id="resolve-form" class="resolve-form">
@@ -421,8 +422,8 @@
                     <span class="outcome-button btn-success">
                       <span class="outcome-icon">✔</span>
                       <div>
-                        <strong>Intervention Successful</strong>
-                        <small>Student re-engaged / risk reduced</small>
+                        <strong>Meeting Held & Plan Agreed</strong>
+                        <small>Student re-engaged / pressure relieved</small>
                       </div>
                     </span>
                   </label>
@@ -431,27 +432,27 @@
                     <span class="outcome-button btn-danger">
                       <span class="outcome-icon">✖</span>
                       <div>
-                        <strong>Student Withdrawn</strong>
-                        <small>Non-responsive / module drop</small>
+                        <strong>Unable to Reach / Dropped</strong>
+                        <small>Non-responsive or left course</small>
                       </div>
                     </span>
                   </label>
                 </div>
 
                 <div class="form-group">
-                  <label for="advisor-notes">Clinical Advisor Notes</label>
-                  <textarea id="advisor-notes" rows="4" placeholder="Document check-in outcome, specific adjustments agreed, or module referral notes..."></textarea>
+                  <label for="advisor-notes">Advisor Meeting Notes</label>
+                  <textarea id="advisor-notes" rows="4" placeholder="Document what you discussed (e.g. agreed on quiz deadline extension, referred to counselling service, arranged peer tutoring)..."></textarea>
                 </div>
 
                 <div class="quick-notes-presets">
-                  <span class="preset-label">Quick Snippets:</span>
-                  <button type="button" class="btn-snippet" data-text="Scheduled 1-on-1 pastoral check-in. Student agreed to weekly touchpoints.">Pastoral Check-In</button>
-                  <button type="button" class="btn-snippet" data-text="Referred to Wellbeing and Counselling team due to severe stress signals.">Wellbeing Referral</button>
-                  <button type="button" class="btn-snippet" data-text="Arranged module deadline extension and tutoring support.">Academic Extension</button>
+                  <span class="preset-label">Quick Notes:</span>
+                  <button type="button" class="btn-snippet" data-text="Held 1-on-1 check-in. Student felt overwhelmed by workload; agreed to weekly touchpoints.">Pastoral Meeting Held</button>
+                  <button type="button" class="btn-snippet" data-text="Referred student to University Wellbeing & Mental Health Support Team.">Counselling Referral</button>
+                  <button type="button" class="btn-snippet" data-text="Arranged a 7-day coursework extension and connected student with teaching assistant.">Deadline Extension</button>
                 </div>
 
                 <button type="submit" class="btn btn-save" id="btn-save-case">
-                  <span>Save Outcome & Trigger Retraining Loop</span>
+                  <span>Save Notes & Mark Case as Handled</span>
                 </button>
               </form>
 
