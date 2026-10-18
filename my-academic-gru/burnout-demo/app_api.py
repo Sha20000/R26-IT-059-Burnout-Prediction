@@ -36,6 +36,63 @@ SLIIT_ANOMALY_CSV = "sliit_anomaly_scores_final.csv"
 # It now has its own dedicated API — see vae_api.py in
 # sliit-synthetic/Behavioral Anomaly Detection VAE/src/ (port 5003).
 
+# Week-specific decision thresholds tuned on validation (model8_unified_gru_results.json)
+HORIZON_THRESHOLDS = {4: 0.45, 8: 0.50, 12: 0.50, 17: 0.60}
+
+
+def _auc(y, prob):
+    """ROC-AUC via the Mann-Whitney rank statistic (same result as sklearn)."""
+    ranks = pd.Series(prob).rank(method='average').values
+    n_pos = int(y.sum()); n_neg = len(y) - n_pos
+    return float((ranks[y == 1].sum() - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
+
+
+def _binary_metrics(y, prob, thr):
+    pred = (prob >= thr).astype(int)
+    tp = int(((pred == 1) & (y == 1)).sum()); tn = int(((pred == 0) & (y == 0)).sum())
+    fp = int(((pred == 1) & (y == 0)).sum()); fn = int(((pred == 0) & (y == 1)).sum())
+    prec = tp / (tp + fp) if tp + fp else 0.0
+    rec = tp / (tp + fn) if tp + fn else 0.0
+    spec = tn / (tn + fp) if tn + fp else 0.0
+    return {
+        "accuracy": round((tp + tn) / len(y), 4),
+        "f1_score": round(2 * prec * rec / (prec + rec), 4) if prec + rec else 0.0,
+        "auc_roc": round(_auc(y, prob), 4),
+        "precision": round(prec, 4), "recall": round(rec, 4), "specificity": round(spec, 4),
+        "threshold": thr,
+    }
+
+
+def compute_test_performance(df):
+    """Model 8 test-set metrics computed live from model8_predictions.csv."""
+    if df is None or len(df) == 0:
+        return {"error": "model8_predictions.csv not loaded", "total_students": 0}
+    y = df['actual_label'].astype(int).values
+    per_h = []
+    for w, thr in HORIZON_THRESHOLDS.items():
+        m = _binary_metrics(y, df[f'week{w}_risk'].values, thr)
+        m["horizon"] = f"Week {w}"
+        per_h.append(m)
+    out = dict(per_h[-1])  # headline = Week 17
+    out.update({
+        "per_horizon": per_h,
+        "dataset_info": "Model 8 - OULAD Test Set (Week 17, threshold 0.60)",
+        "total_students": int(len(df)),
+        "n_at_risk": int(y.sum()),
+    })
+    return out
+
+
+def cross_year_balanced_accuracy():
+    path = CSV_DIR / "cross_year_predictions_2014.csv"
+    if not path.exists():
+        return None
+    cp = pd.read_csv(path)
+    tpr = ((cp.pred_week17 == 1) & (cp.y_true == 1)).sum() / max((cp.y_true == 1).sum(), 1)
+    tnr = ((cp.pred_week17 == 0) & (cp.y_true == 0)).sum() / max((cp.y_true == 0).sum(), 1)
+    return round(float((tpr + tnr) / 2), 4)
+
+
 def load_data():
     """Load CSV files on startup"""
     global TEST_STUDENTS_DF, PP2_STUDENTS_DF, CROSS_YEAR_VALIDATION, MODEL_PERFORMANCE, SLIIT_ANOMALY_DF
@@ -78,7 +135,8 @@ def load_data():
                     "auc_score": float(week17['auc_score']),
                     "accuracy": float(week17['accuracy']),
                     "precision": float(week17['precision']),
-                    "recall": float(week17['recall'])
+                    "recall": float(week17['recall']),
+                    "balanced_accuracy": cross_year_balanced_accuracy()
                 },
                 "per_horizon": cy_df.to_dict('records'),
                 "description": "Model trained on 2013 cohort, tested on 2014 cohort",
@@ -106,17 +164,8 @@ def load_data():
             }
             print("CROSS-YEAR validation CSV not found, using fallback hard-coded values")
 
-        # Model performance
-        MODEL_PERFORMANCE = {
-            "accuracy": 0.7227,
-            "f1_score": 0.7227,
-            "auc_roc": 0.8831,
-            "precision": 0.72,
-            "recall": 0.72,
-            "specificity": 0.72,
-            "dataset_info": "Model 8 - OULAD Test Set",
-            "total_students": len(TEST_STUDENTS_DF) if TEST_STUDENTS_DF is not None else 0
-        }
+        # Model performance -- computed from the test-students CSV (model8_predictions.csv)
+        MODEL_PERFORMANCE = compute_test_performance(TEST_STUDENTS_DF)
 
         # Load SLIIT synthetic-data anomaly scores
         sliit_path = SLIIT_METRICS_DIR / SLIIT_ANOMALY_CSV
@@ -160,6 +209,7 @@ def get_test_students():
 
     alert_level = request.args.get('alert_level', None)
     limit = request.args.get('limit', None, type=int)
+    page = request.args.get('page', 1, type=int)
 
     df = TEST_STUDENTS_DF.copy()
 
@@ -167,15 +217,25 @@ def get_test_students():
     if alert_level and alert_level in ['HIGH', 'MEDIUM', 'LOW']:
         df = df[df['alert_level'] == alert_level]
 
-    # Limit results
+    total = len(df)
+
+    # Paginate results
     if limit:
-        df = df.head(limit)
+        total_pages = max(1, -(-total // limit))  # ceil division
+        page = max(1, min(page, total_pages))
+        start = (page - 1) * limit
+        df = df.iloc[start:start + limit]
+    else:
+        total_pages = 1
+        page = 1
 
     # Convert to JSON-friendly format
     students = df.to_dict('records')
 
     return jsonify({
-        "total": len(students),
+        "total": total,
+        "page": page,
+        "total_pages": total_pages,
         "data": students,
         "filters": {
             "alert_level": alert_level,
@@ -235,6 +295,7 @@ def get_pp2_students():
     alert_level = request.args.get('alert_level', None)
     agreement = request.args.get('agreement', None)  # true/false
     limit = request.args.get('limit', None, type=int)
+    page = request.args.get('page', 1, type=int)
 
     df = PP2_STUDENTS_DF.copy()
 
@@ -247,9 +308,17 @@ def get_pp2_students():
         agree = agreement.lower() == 'true'
         df = df[df['predictions_agree'] == agree]
 
-    # Limit results
+    total = len(df)
+
+    # Paginate results
     if limit:
-        df = df.head(limit)
+        total_pages = max(1, -(-total // limit))  # ceil division
+        page = max(1, min(page, total_pages))
+        start = (page - 1) * limit
+        df = df.iloc[start:start + limit]
+    else:
+        total_pages = 1
+        page = 1
 
     # Rename columns for JSON response
     students = []
@@ -266,7 +335,9 @@ def get_pp2_students():
         students.append(student)
 
     return jsonify({
-        "total": len(students),
+        "total": total,
+        "page": page,
+        "total_pages": total_pages,
         "data": students,
         "filters": {
             "alert_level": alert_level,
@@ -336,6 +407,31 @@ def get_pp2_stats():
 def get_validation():
     """Get cross-year validation results"""
     return jsonify(CROSS_YEAR_VALIDATION)
+
+
+@app.route('/api/cross-year-students', methods=['GET'])
+def get_cross_year_students():
+    """Per-student 2014 cross-year predictions (cross_year_predictions_2014.csv)."""
+    path = CSV_DIR / "cross_year_predictions_2014.csv"
+    if not path.exists():
+        return jsonify({"error": "cross_year_predictions_2014.csv not found", "students": []}), 404
+    df = pd.read_csv(path)
+    df['correct_w17'] = df['pred_week17'] == df['y_true']
+    flt = request.args.get('filter', 'all')
+    if flt == 'flagged':
+        df = df[df.pred_week17 == 1]
+    elif flt == 'at_risk':
+        df = df[df.y_true == 1]
+    elif flt == 'missed':
+        df = df[(df.y_true == 1) & (df.pred_week17 == 0)]
+    elif flt == 'false_alarm':
+        df = df[(df.y_true == 0) & (df.pred_week17 == 1)]
+    total = len(df)
+    page = max(int(request.args.get('page', 1)), 1)
+    per = min(max(int(request.args.get('per_page', 50)), 1), 500)
+    rows = df.iloc[(page - 1) * per: page * per]
+    return jsonify({"total": total, "page": page, "per_page": per,
+                    "students": rows.to_dict(orient='records')})
 
 @app.route('/api/model-performance', methods=['GET'])
 def get_model_performance():

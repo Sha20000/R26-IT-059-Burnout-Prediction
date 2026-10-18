@@ -1,0 +1,86 @@
+{
+  "dataset_version": "v1_oulad_2026_10",
+  "data_mode": "synthetic_demo",
+  "cohort_name": "OULAD 2026 Primary Cohort",
+  "cohort_id": "OULAD_COHORT_2026_01",
+  "observation_period": {
+    "start_week": 4,
+    "end_week": 17,
+    "weeks": [
+      4,
+      8,
+      12,
+      17
+    ]
+  },
+  "prediction_date": "2026-10-08",
+  "sources": {
+    "academic": {
+      "file": "academic_predictions.csv",
+      "model_name": "Academic Trend Model",
+      "model_version": "academic-v1.2",
+      "score_meaning": "Probability-like academic risk score between 0 and 1"
+    },
+    "behavioural": {
+      "file": "behavior_predictions.csv",
+      "model_name": "Behavioural Anomaly Model",
+      "model_version": "behavioral-v1.4",
+      "score_meaning": "Weekly behavioural risk score between 0 and 1"
+    },
+    "emotional": {
+      "file": "emotional_predictions.csv",
+      "model_name": "Emotional Burnout Model",
+      "model_version": "emotional-v1.1",
+      "score_meaning": "Ordinal emotional stress signal from 0 to 4"
+    }
+  },
+  "reported_upstream_metrics": {
+    "status": "reported_by_source_branches_not_recomputed_in_meta_xai",
+    "academic": {
+      "model_version": "academic-v1.2",
+      "student_count": 1000,
+      "roc_auc": 0.842,
+      "precision": 0.791,
+      "recall": 0.764,
+      "f1": 0.777,
+      "operational_threshold": 0.5
+    },
+    "behavioural": {
+      "model_version": "behavioral-v1.4",
+      "student_count": 1000,
+      "roc_auc": 0.815,
+      "precision": 0.748,
+      "recall": 0.732,
+      "f1": 0.74,
+      "operational_threshold": 0.55
+    },
+    "emotional": {
+      "model_version": "emotional-v1.1",
+      "student_count": 1000,
+      "roc_auc": 0.789,
+      "precision": 0.72,
+      "recall": 0.705,
+      "f1": 0.712,
+      "operational_threshold": 3
+    }
+  },
+  "aggregation": {
+    "behavioural_risk": "mean weekly risk",
+    "behavioural_max_risk": "maximum weekly risk",
+    "behavioural_latest_risk": "latest observed weekly risk",
+    "compliance": "mean weekly curriculum compliance",
+    "anomaly": "mean weekly anomaly score",
+    "high_anomaly_weeks": "sum of high_anomaly_flag"
+  },
+  "identity": {
+    "mapping_file": "student_mapping.csv",
+    "mapping_verified": true,
+    "identity_method": "verified canonical student mapping"
+  },
+  "score_interpretation": {
+    "risk_scores": "Higher values indicate greater model-estimated risk.",
+    "compliance": "Higher values indicate stronger observed compliance.",
+    "anomaly_score": "Higher values indicate more unusual behaviour.",
+    "emotional_stress_score": "0 means no elevated signal; 4 means very elevated signal."
+  }
+}

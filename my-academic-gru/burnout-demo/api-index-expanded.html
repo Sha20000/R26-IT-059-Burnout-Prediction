@@ -394,14 +394,11 @@
       <button class="tab-btn" onclick="switchTab('metrics', this)">
         📈 Model Metrics
       </button>
-      <button class="tab-btn" onclick="switchTab('metafnn', this)">
-        🔗 Meta-FNN Risk
+      <button class="tab-btn" onclick="switchTab('crossyear', this)">
+        🔁 Cross-Year 2014
       </button>
       <button class="tab-btn" onclick="switchTab('emotion', this)">
         💬 Emotional Analysis
-      </button>
-      <button class="tab-btn" onclick="switchTab('academic', this)">
-        📚 Academic Risk
       </button>
       <button class="tab-btn" onclick="switchTab('behavioral', this)">
         🧠 Behavioral Anomaly
@@ -555,46 +552,35 @@
       </div>
     </div>
 
-    <!-- Meta-FNN Risk Tab -->
-    <div id="metafnn" class="tab-content">
+    <!-- Cross-Year 2014 Predictions Tab -->
+    <div id="crossyear" class="tab-content">
+      <h2 style="margin-bottom: 8px;">Cross-Year Predictions — trained on 2013, tested on 2014</h2>
+      <p style="margin-bottom: 16px; color:#666;">Per-student output of cross_year_validation.py (threshold 0.5). <span id="cyTotal"></span></p>
       <div class="controls">
         <div class="control-group">
-          <label>Filter by Alert Level</label>
-          <select id="filterMetaFNN" onchange="loadMetaFNNStudents()">
-            <option value="ALL">All Students</option>
-            <option value="HIGH">HIGH Risk</option>
-            <option value="MEDIUM">MEDIUM Risk</option>
-            <option value="LOW">LOW Risk</option>
+          <label>Filter</label>
+          <select id="cyFilter" onchange="cyPage=1;loadCrossYearStudents()">
+            <option value="all">All 2014 students</option>
+            <option value="flagged">Flagged at Week 17</option>
+            <option value="at_risk">Actually at risk</option>
+            <option value="missed">Missed (false negatives)</option>
+            <option value="false_alarm">False alarms</option>
           </select>
         </div>
       </div>
-
-      <div id="metafnnError"></div>
-
+      <div id="cyError"></div>
       <div class="table-wrapper">
-        <table id="metafnnTable">
+        <table>
           <thead>
-            <tr>
-              <th>Student ID</th>
-              <th>Academic Risk (GRU)</th>
-              <th>Week 4</th>
-              <th>Week 8</th>
-              <th>Week 12</th>
-              <th>Week 17</th>
-              <th>Behavioral Risk (VAE)</th>
-              <th>Emotional Risk (NLP)</th>
-              <th>Final Burnout Risk</th>
-              <th>Weighted Score</th>
-              <th>Alert Level</th>
-            </tr>
+            <tr><th>#</th><th>Week 4</th><th>Week 8</th><th>Week 12</th><th>Week 17</th><th>Flagged (W17)</th><th>Actual</th><th>Result</th></tr>
           </thead>
-          <tbody id="metafnnBody">
-            <tr>
-              <td colspan="11" class="loading">Loading Meta-FNN data...</td>
-            </tr>
-          </tbody>
-          <tfoot id="metafnnFooter"></tfoot>
+          <tbody id="cyBody"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody>
         </table>
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+        <button class="tab-btn" onclick="if(cyPage>1){cyPage--;loadCrossYearStudents()}">← Prev</button>
+        <span id="cyPageInfo"></span>
+        <button class="tab-btn" onclick="cyPage++;loadCrossYearStudents()">Next →</button>
       </div>
     </div>
 
@@ -628,45 +614,6 @@
           <div id="emotionBody"></div>
           <div id="emotionResult"></div>
         </main>
-      </div>
-    </div>
-
-    <!-- Academic Risk Tab -->
-    <div id="academic" class="tab-content">
-      <h2 style="margin-bottom: 16px;">Academic Risk Progression (Week-by-Week)</h2>
-
-      <div class="controls">
-        <div class="control-group">
-          <label>Sort by Risk Level</label>
-          <select id="sortAcademic" onchange="loadAcademicRisk()">
-            <option value="desc">Highest Risk First</option>
-            <option value="asc">Lowest Risk First</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="academicError"></div>
-
-      <div class="table-wrapper">
-        <table id="academicTable">
-          <thead>
-            <tr>
-              <th>Student ID</th>
-              <th>Week 4 Risk</th>
-              <th>Week 8 Risk</th>
-              <th>Week 12 Risk</th>
-              <th>Week 17 Risk</th>
-              <th>Trend</th>
-              <th>Current Alert</th>
-            </tr>
-          </thead>
-          <tbody id="academicBody">
-            <tr>
-              <td colspan="7" class="loading">Loading academic risk data...</td>
-            </tr>
-          </tbody>
-          <tfoot id="academicFooter"></tfoot>
-        </table>
       </div>
     </div>
 
@@ -797,10 +744,8 @@
         loadPP2Students();
       } else if (tabName === 'metrics') {
         loadMetrics();
-      } else if (tabName === 'metafnn') {
-        loadMetaFNNStudents();
-      } else if (tabName === 'academic') {
-        loadAcademicRisk();
+      } else if (tabName === 'crossyear') {
+        loadCrossYearStudents();
       } else if (tabName === 'behavioral') {
         loadBehavioralRisk();
       } else if (tabName === 'sliit') {
@@ -1123,119 +1068,10 @@
       }
     }
 
-    // ========== NEW: Meta-FNN Tab ==========
-    async function loadMetaFNNStudents() {
-      const alertLevel = document.getElementById('filterMetaFNN').value;
-      const url = alertLevel === 'ALL'
-        ? 'http://localhost:5002/students'
-        : `http://localhost:5002/students?alert=${alertLevel}`;
-
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`API Error: ${res.status}`);
-        const data = await res.json();
-        displayMetaFNNStudents(data.students || []);
-      } catch (e) {
-        document.getElementById('metafnnError').innerHTML =
-          `<div class="error">⚠️ Meta-FNN API not available (http://localhost:5002)<br/>${e.message}</div>`;
-      }
-    }
-
-    function displayMetaFNNStudents(students) {
-      const tbody = document.getElementById('metafnnBody');
-      tbody.innerHTML = '';
-
-      if (!students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="loading">No students found</td></tr>';
-        return;
-      }
-
-      const rows = students.map(s => {
-        const burnoutRisk = parseFloat(s.final_burnout_risk || 0);
-        const riskClass = burnoutRisk > 0.7 ? 'high' : burnoutRisk > 0.4 ? 'medium' : 'low';
-        const alertBadgeClass = `badge-${s.final_alert?.toLowerCase() || 'low'}`;
-
-        const weightedRisk = parseFloat(s.weighted_burnout_risk || 0);
-        const weightedClass = weightedRisk > 0.7 ? 'high' : weightedRisk > 0.4 ? 'medium' : 'low';
-        const weightedBadgeClass = `badge-${s.weighted_alert?.toLowerCase() || 'low'}`;
-        const emoScore = parseFloat(s.emotional_stress_score || 0);
-
-        return `
-          <tr>
-            <td class="student-id">${s.student_id || '—'}</td>
-            <td class="risk-score">${(parseFloat(s.academic_risk || 0) * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(parseFloat(s.week4_risk || 0) * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(parseFloat(s.week8_risk || 0) * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(parseFloat(s.week12_risk || 0) * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(parseFloat(s.week17_risk || 0) * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(parseFloat(s.behavior_risk_mean || 0) * 100).toFixed(1)}%</td>
-            <td class="risk-score">${emoScore.toFixed(1)} / 4</td>
-            <td class="risk-score ${riskClass}">${(burnoutRisk * 100).toFixed(1)}%</td>
-            <td class="risk-score ${weightedClass}">${(weightedRisk * 100).toFixed(1)}%</td>
-            <td>
-              <span class="badge ${alertBadgeClass}" title="FNN-learned">${s.final_alert || 'LOW'}</span>
-              <span class="badge ${weightedBadgeClass}" title="0.4 GRU + 0.3 VAE + 0.3 NLP" style="margin-left:4px;">${s.weighted_alert || 'LOW'}</span>
-            </td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = rows.join('');
-    }
-
     // ========== Emotional Analysis Tab — IT22196392 ==========
     // Ported to emotion-tab.js + emotion-app.js (attention heatmap, probability
     // bars, advisor, weekly progression, lead-time analysis). Loaded at the end
     // of this file; window.analyzeEmotion is defined there.
-
-    // ========== NEW: Academic Risk Tab ==========
-    async function loadAcademicRisk() {
-      try {
-        const res = await fetch('http://localhost:5002/students');
-        if (!res.ok) throw new Error(`API Error: ${res.status}`);
-        const data = await res.json();
-        displayAcademicRisk(data.students || []);
-      } catch (e) {
-        document.getElementById('academicError').innerHTML =
-          `<div class="error">⚠️ Meta-FNN API not available<br/>${e.message}</div>`;
-      }
-    }
-
-    function displayAcademicRisk(students) {
-      const tbody = document.getElementById('academicBody');
-      tbody.innerHTML = '';
-
-      if (!students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">No data available</td></tr>';
-        return;
-      }
-
-      const rows = students.map(s => {
-        const w4 = parseFloat(s.week4_risk || 0);
-        const w8 = parseFloat(s.week8_risk || 0);
-        const w12 = parseFloat(s.week12_risk || 0);
-        const w17 = parseFloat(s.week17_risk || 0);
-
-        let trend = '→';
-        if (w17 > w4) trend = '📈 Rising';
-        else if (w17 < w4) trend = '📉 Declining';
-        else trend = '→ Stable';
-
-        const alertBadgeClass = `badge-${s.final_alert?.toLowerCase() || 'low'}`;
-
-        return `
-          <tr>
-            <td class="student-id">${s.student_id || '—'}</td>
-            <td class="risk-score">${(w4 * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(w8 * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(w12 * 100).toFixed(1)}%</td>
-            <td class="risk-score">${(w17 * 100).toFixed(1)}%</td>
-            <td>${trend}</td>
-            <td><span class="badge ${alertBadgeClass}">${s.final_alert || 'LOW'}</span></td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = rows.join('');
-    }
 
     // ========== NEW: Behavioral Risk Tab ==========
     async function loadBehavioralRisk() {
@@ -1368,18 +1204,18 @@
 
       const metrics = data.metrics || {};
       const metricsArray = [
-        { name: 'F1 Score', value: metrics.f1_score, benchmark: 0.72 },
-        { name: 'AUC-ROC', value: metrics.auc_score, benchmark: 0.88 },
-        { name: 'Accuracy', value: metrics.accuracy, benchmark: 0.82 },
-        { name: 'Precision', value: metrics.precision, benchmark: 0.78 },
-        { name: 'Recall', value: metrics.recall, benchmark: 0.75 },
-        { name: 'Balanced Accuracy', value: metrics.balanced_accuracy, benchmark: 0.81 }
+        { name: 'F1 Score', value: metrics.f1_score },
+        { name: 'AUC-ROC', value: metrics.auc_score },
+        { name: 'Accuracy', value: metrics.accuracy },
+        { name: 'Precision', value: metrics.precision },
+        { name: 'Recall', value: metrics.recall },
+        { name: 'Balanced Accuracy', value: metrics.balanced_accuracy }
       ];
 
       metricsArray.forEach(m => {
         const val = parseFloat(m.value || 0);
         const pct = (val * 100).toFixed(2);
-        const status = val >= m.benchmark ? '✅ Excellent' : val >= m.benchmark * 0.9 ? '⚠️ Good' : '❌ Fair';
+        const status = val >= 0.80 ? '✅ Excellent' : val >= 0.70 ? '⚠️ Good' : '❌ Fair';
 
         const row = `
           <tr>
@@ -1393,11 +1229,12 @@
 
       tbody.innerHTML += `
         <tr style="background: #f9f9f9; border-top: 2px solid #e0e0e0; font-weight: 600;">
-          <td>📊 ${data.description || 'Cross-Year Validation'}</td>
-          <td></td>
-          <td>🎯 Outperformed ${data.baseline_models_beaten || 7}/${data.total_baselines || 7} baselines</td>
+          <td colspan="3">📊 ${data.description || 'Cross-Year Validation'} · Week 17 head, threshold 0.5</td>
         </tr>
       `;
+      (data.per_horizon || []).forEach(r => {
+        tbody.innerHTML += `<tr><td>${r.horizon}</td><td>F1 ${(r.f1_score*100).toFixed(2)}% · AUC ${(r.auc_score*100).toFixed(2)}%</td><td>Prec ${(r.precision*100).toFixed(1)}% · Rec ${(r.recall*100).toFixed(1)}% · Acc ${(r.accuracy*100).toFixed(1)}%</td></tr>`;
+      });
     }
 
     // Display Performance Metrics
@@ -1432,10 +1269,39 @@
       tbody.innerHTML += `
         <tr style="background: #f9f9f9; border-top: 2px solid #e0e0e0;">
           <td><strong>${data.dataset_info || 'Model Performance'}</strong></td>
-          <td><strong>${data.total_students || 2543}</strong> students</td>
-          <td>📈 Model 8</td>
+          <td><strong>${data.total_students || 0}</strong> students (${data.n_at_risk || 0} at risk)</td>
+          <td>📈 From test-students CSV</td>
         </tr>
       `;
+      (data.per_horizon || []).forEach(r => {
+        tbody.innerHTML += `<tr><td>${r.horizon} (thr ${r.threshold})</td><td>F1 ${(r.f1_score*100).toFixed(2)}% · AUC ${(r.auc_roc*100).toFixed(2)}%</td><td>Prec ${(r.precision*100).toFixed(1)}% · Rec ${(r.recall*100).toFixed(1)}% · Acc ${(r.accuracy*100).toFixed(1)}%</td></tr>`;
+      });
+    }
+
+    // ========== Cross-Year 2014 Predictions ==========
+    let cyPage = 1;
+    async function loadCrossYearStudents() {
+      const flt = document.getElementById('cyFilter').value;
+      try {
+        const res = await fetch(`${API_BASE}/api/cross-year-students?filter=${flt}&page=${cyPage}&per_page=50`);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const d = await res.json();
+        const pages = Math.max(1, Math.ceil(d.total / d.per_page));
+        if (cyPage > pages) { cyPage = pages; return loadCrossYearStudents(); }
+        document.getElementById('cyError').innerHTML = '';
+        document.getElementById('cyTotal').textContent = `${d.total.toLocaleString()} students in this view.`;
+        document.getElementById('cyPageInfo').textContent = `Page ${d.page} of ${pages}`;
+        const pct = v => (v * 100).toFixed(1) + '%';
+        document.getElementById('cyBody').innerHTML = d.students.map(s => {
+          const ok = s.pred_week17 === s.y_true;
+          const label = ok ? (s.y_true ? 'Correct catch' : 'Correct pass') : (s.y_true ? 'Missed' : 'False alarm');
+          return `<tr><td>${s.student_index}</td><td>${pct(s.prob_week4)}</td><td>${pct(s.prob_week8)}</td><td>${pct(s.prob_week12)}</td>
+            <td><strong>${pct(s.prob_week17)}</strong></td><td>${s.pred_week17 ? 'YES' : 'no'}</td>
+            <td>${s.y_true ? '⚠️ At risk' : '✅ Passed'}</td><td style="color:${ok ? '#2e7d32' : '#c62828'}">${label}</td></tr>`;
+        }).join('') || '<tr><td colspan="8">No students</td></tr>';
+      } catch (e) {
+        document.getElementById('cyError').innerHTML = `<div class="error">⚠️ ${e.message}</div>`;
+      }
     }
 
     // Initialize on page load
@@ -1455,6 +1321,7 @@
        emotion-tab.js: rendering primitives (heatmap, probability bars, risk chart)
        emotion-app.js: state, student persistence, sub-tabs, progression form -->
   <script src="emotion-demo-data.js"></script>
+  <script src="emotion-dataset-students.js"></script>
   <script src="emotion-tab.js"></script>
   <script src="emotion-app.js"></script>
 </body>

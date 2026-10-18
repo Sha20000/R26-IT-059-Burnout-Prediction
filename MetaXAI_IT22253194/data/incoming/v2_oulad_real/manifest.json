@@ -1,0 +1,70 @@
+{
+  "dataset_version": "v2_oulad_real_2026_10",
+  "data_mode": "real",
+  "cohort_name": "OULAD GRU test split (real id_student)",
+  "cohort_id": "OULAD_REAL_TEST_2026",
+  "observation_period": {
+    "start_week": 4,
+    "end_week": 17,
+    "weeks": [
+      4,
+      8,
+      12,
+      17
+    ]
+  },
+  "prediction_date": "2026-10-12",
+  "sources": {
+    "academic": {
+      "file": "academic_predictions.csv",
+      "model_name": "Multi-horizon GRU (Model 8)",
+      "model_version": "gru-model8",
+      "score_meaning": "Probability-like academic risk score between 0 and 1"
+    },
+    "behavioural": {
+      "file": "behavior_predictions.csv",
+      "model_name": "VAE behavioural anomaly model",
+      "model_version": "vae-v1",
+      "score_meaning": "Weekly behavioural risk score between 0 and 1"
+    },
+    "emotional": {
+      "file": "emotional_predictions.csv",
+      "model_name": "NOT LINKED - neutral placeholder",
+      "model_version": "none",
+      "score_meaning": "Placeholder 0 for every student: no OULAD-linked emotional data exists. Required because batch fusion needs all 3 sources."
+    }
+  },
+  "reported_upstream_metrics": {
+    "status": "reported_by_source_branches_not_recomputed_in_meta_xai",
+    "academic": {
+      "model_version": "gru-model8",
+      "student_count": 2543,
+      "roc_auc": 0.8831,
+      "f1": 0.7227,
+      "operational_threshold": 0.5
+    }
+  },
+  "aggregation": {
+    "behavioural_risk": "mean weekly risk",
+    "behavioural_max_risk": "maximum weekly risk",
+    "behavioural_latest_risk": "latest observed weekly risk",
+    "compliance": "mean weekly curriculum compliance",
+    "anomaly": "mean weekly anomaly score",
+    "high_anomaly_weeks": "sum of high_anomaly_flag"
+  },
+  "identity": {
+    "mapping_file": "student_mapping.csv",
+    "mapping_verified": true,
+    "identity_method": "OULAD id_student reconstructed from GRU preprocessing order (labels verified 100%)"
+  },
+  "score_interpretation": {
+    "risk_scores": "Higher values indicate greater model-estimated risk.",
+    "compliance": "Higher values indicate stronger observed compliance.",
+    "anomaly_score": "Higher values indicate more unusual behaviour.",
+    "emotional_stress_score": "0 means no elevated signal; 4 means very elevated signal."
+  },
+  "preprocessing_notes": {
+    "anomaly_score": "Raw VAE reconstruction error divided by cohort max (2.9048) to fit [0,1]",
+    "emotional": "Placeholder only; emotional evidence is not real for this cohort"
+  }
+}

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Burnout Guard | Meta-XAI Model Evidence & Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body class="dark-theme analytics-page">
+    <div class="app-shell">
+      <!-- Enterprise Sidebar Navigation -->
+      <aside class="app-sidebar" aria-label="Application Sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon-box">
+            <span class="brand-icon">✦</span>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">Burnout Guard</span>
+            <span class="brand-subtitle">Clinical Triage AI · v2.0</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">WORKSPACE</div>
+          <a class="nav-link" href="/dashboard" id="nav-queue">
+            <span class="nav-icon">📋</span>
+            <span class="nav-text">Triage Kanban</span>
+            <span class="nav-badge">Queue</span>
+          </a>
+          <a class="nav-link active" href="/analytics" id="nav-analytics">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Model Evidence</span>
+            <span class="nav-badge-sub">AUC .996</span>
+          </a>
+          <a class="nav-link" href="/api/export/csv" download id="nav-export">
+            <span class="nav-icon">⤓</span>
+            <span class="nav-text">Export CSV Queue</span>
+          </a>
+
+          <div class="nav-section-label">NAVIGATION</div>
+          <a class="nav-link" href="/dashboard">
+            <span class="nav-icon">←</span>
+            <span class="nav-text">Return to Kanban</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="system-status-indicator">
+            <span class="pulse-indicator"></span>
+            <div class="status-meta">
+              <strong>XGBoost + TreeSHAP</strong>
+              <small>Multi-Modal Engine Online</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="topbar">
+          <div class="topbar-heading">
+            <div class="kicker-row">
+              <span class="status-pill status-pill-active">RESEARCH & VIVA EVIDENCE</span>
+              <span class="data-badge"><span class="status-dot"></span>SYNTHETIC DEMO</span>
+            </div>
+            <h1 class="page-title">Model Evidence & Specialist Performance</h1>
+            <p class="page-subtitle">Multi-modal benchmark evaluation separating upstream specialist performance from Meta-XAI fusion and XGBoost opportunity predictions.</p>
+          </div>
+          <div class="topbar-actions">
+            <a class="btn btn-primary" href="/dashboard">← Back to Triage Queue</a>
+          </div>
+        </header>
+
+        <section class="intro-row analytics-intro">
+          <div>
+            <p class="intro-title">From Multi-Modal Signal to Clinical Support Decision</p>
+            <p class="intro-copy">This page validates upstream model performance, multi-modal evidence fusion alignment, and XGBoost intervention-opportunity results across temporal evaluation splits.</p>
+          </div>
+          <div class="dataset-stamp">
+            <strong>{{ analytics.dataset.cohort }}</strong>
+            <span>{{ analytics.dataset.students }} students · Weeks {{ analytics.dataset.observation_weeks|join(', ') }}</span>
+            <span>Dataset {{ analytics.dataset.version }}</span>
+          </div>
+        </section>
+
+        <section class="metrics-grid analytics-metrics">
+          <article class="metric-card metric-primary">
+            <span class="metric-label">Students Fused</span>
+            <strong>{{ analytics.dataset.students }}</strong>
+            <small>All 3 sources aligned (100%)</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Source Coverage</span>
+            <strong>100%</strong>
+            <small>Academic, Behaviour, Emotional</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Intervention Model AUC</span>
+            <strong>{{ analytics.intervention_model.roc_auc }}</strong>
+            <small>Held-out temporal test set</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Outcome-Positive Rate</span>
+            <strong>{{ (analytics.intervention_model.positive_rate * 100)|round|int }}%</strong>
+            <small>Ground truth label distribution</small>
+          </article>
+        </section>
+
+        <section class="analytics-grid">
+          <!-- Upstream Models -->
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Upstream Specialist Branches</p>
+                <h2>Reported ROC-AUC</h2>
+              </div>
+              <span class="mini-tag">SPECIALIST BENCHMARKS</span>
+            </div>
+            <p class="chart-note">Reported by the specialized temporal deep learning branches and stored in the dataset manifest.</p>
+            <div class="auc-chart">
+              {% for key, model in analytics.upstream_models.items() if key != 'status' %}
+              <div class="auc-row">
+                <div class="auc-label">
+                  <strong>{{ model.model_version }}</strong>
+                  <span>{{ key|capitalize }}</span>
+                </div>
+                <div class="bar-track">
+                  <span style="width: {{ model.roc_auc * 100 }}%"></span>
+                </div>
+                <strong class="auc-value">{{ model.roc_auc }}</strong>
+              </div>
+              {% endfor %}
+            </div>
+          </article>
+
+          <!-- Academic GRU Cross-Year Validation -->
+          {% if analytics.cross_year %}
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Academic GRU · Cross-Year Validation</p>
+                <h2>Train 2013 &rarr; Test 2014</h2>
+              </div>
+              <span class="mini-tag">{{ analytics.cross_year[0].n_test }} TEST STUDENTS</span>
+            </div>
+            <p class="chart-note">Unified Multi-Horizon GRU trained on the 2013 cohort ({{ analytics.cross_year[0].n_train }} students) and tested on the unseen 2014 cohort. Threshold 0.5.</p>
+            <div class="auc-chart">
+              {% for r in analytics.cross_year %}
+              <div class="auc-row">
+                <div class="auc-label">
+                  <strong>{{ r.horizon }}</strong>
+                  <span>F1 {{ r.f1_score }} · Rec {{ r.recall }}</span>
+                </div>
+                <div class="bar-track">
+                  <span style="width: {{ r.auc_score * 100 }}%"></span>
+                </div>
+                <strong class="auc-value">{{ r.auc_score }}</strong>
+              </div>
+              {% endfor %}
+            </div>
+          </article>
+          {% endif %}
+
+          <!-- Support Priority Mix -->
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Meta-XAI Output</p>
+                <h2>Support Priority Mix</h2>
+              </div>
+              <span class="mini-tag">{{ analytics.dataset.students }} CASES</span>
+            </div>
+            <div class="distribution">
+              <div class="distribution-ring" style="--p1: {{ (analytics.fusion.priority.P1 / analytics.dataset.students * 100)|round|int if analytics.dataset.students else 0 }}%; --p2: {{ (analytics.fusion.priority.P2 / analytics.dataset.students * 100)|round|int if analytics.dataset.students else 0 }}%">
+                <span>{{ analytics.fusion.priority.P1 + analytics.fusion.priority.P2 }}</span>
+                <small>flagged for review</small>
+              </div>
+              <div class="distribution-legend">
+                <div><i class="legend-dot p1"></i><span>P1 · Act soon</span><strong>{{ analytics.fusion.priority.P1 }}</strong></div>
+                <div><i class="legend-dot p2"></i><span>P2 · Review & plan</span><strong>{{ analytics.fusion.priority.P2 }}</strong></div>
+                <div><i class="legend-dot p3"></i><span>P3 · Monitor</span><strong>{{ analytics.fusion.priority.P3 }}</strong></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Held-out Evaluation -->
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Intervention Model</p>
+                <h2>Held-Out Evaluation</h2>
+              </div>
+              <span class="mini-tag">TEMPORAL 80/20</span>
+            </div>
+            <div class="metric-list">
+              <div><span>ROC-AUC</span><strong>{{ analytics.intervention_model.roc_auc }}</strong></div>
+              <div><span>Average Precision</span><strong>{{ analytics.intervention_model.average_precision }}</strong></div>
+              <div><span>F1 Score</span><strong>{{ analytics.intervention_model.f1 }}</strong></div>
+              <div><span>Test Students</span><strong>{{ analytics.intervention_model.test_rows }}</strong></div>
+            </div>
+            <p class="chart-note">The XGBoost classifier predicts intervention success opportunity, not mere burnout risk.</p>
+          </article>
+
+          <!-- Discrimination Curves -->
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-label">Discrimination Curves</p>
+                <h2>Predictive Separation</h2>
+              </div>
+              <span class="mini-tag">HELD-OUT TEST</span>
+            </div>
+            <div class="curve-grid">
+              <div>
+                <strong>ROC Curve · AUC {{ analytics.intervention_model.roc_auc }}</strong>
+                <svg class="metric-curve" viewBox="0 0 220 150" role="img" aria-label="ROC curve">
+                  <line x1="25" y1="125" x2="205" y2="25" class="curve-baseline" />
+                  <polyline points="{% for point in analytics.curves.roc %}{{ 25 + point.x * 180 }},{{ 125 - point.y * 100 }} {% endfor %}" class="curve-line" />
+                  <line x1="25" y1="125" x2="205" y2="125" class="curve-axis" />
+                  <line x1="25" y1="125" x2="25" y2="25" class="curve-axis" />
+                </svg>
+                <small>False-Positive Rate →</small>
+              </div>
+              <div>
+                <strong>Precision-Recall · AP {{ analytics.intervention_model.average_precision }}</strong>
+                <svg class="metric-curve" viewBox="0 0 220 150" role="img" aria-label="Precision recall curve">
+                  <polyline points="{% for point in analytics.curves.pr %}{{ 25 + point.x * 180 }},{{ 125 - point.y * 100 }} {% endfor %}" class="curve-line curve-line-alt" />
+                  <line x1="25" y1="125" x2="205" y2="125" class="curve-axis" />
+                  <line x1="25" y1="125" x2="25" y2="25" class="curve-axis" />
+                </svg>
+                <small>Recall →</small>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

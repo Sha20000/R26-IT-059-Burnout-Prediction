@@ -10,7 +10,7 @@
   'use strict';
 
   const T = window.EmotionTab;
-  const { esc, el, riskOf, topWords, WEEK_NUMS, RISK_SCORE, EMO_API } = T;
+  const { esc, el, riskOf, topWords, weeksOf, WEEK_NUMS, RISK_SCORE, EMO_API } = T;
 
   const STORE_KEY = 'burnout_students_integrated';
 
@@ -21,6 +21,7 @@
     students: [],
     selectedId: null,
     filter: 'All',         // sidebar risk filter
+    source: 'all',         // sidebar source filter: 'all' | 'dataset' | 'own'
     lastSingle: null,      // result of the quick single-text analysis
     busy: false,
   };
@@ -31,6 +32,11 @@
 
   const demoCohort = () =>
     (window.EMOTION_DEMO_STUDENTS || []).map((s) => JSON.parse(JSON.stringify(s)));
+
+  // Test-set students (emotion-dataset-students.js) are dataset records, like the
+  // student tables in the other tabs: always loaded from the file, never stored
+  // in localStorage, and not removed by "Clear All Students".
+  const datasetCohort = () => window.EMOTION_DATASET_STUDENTS || [];
 
   function loadStudents() {
     let saved = [];
@@ -52,8 +58,18 @@
       saved = demoCohort();
       saveStudents(saved);
       try { localStorage.setItem(SEEDED_KEY, '1'); } catch { /* ignore */ }
+    } else {
+      // Demo students are fixed sample data: take them from the current
+      // emotion-demo-data.js, so a browser that saved an older copy (from a
+      // previous model version) shows the latest results. User-added students
+      // and deleted demo students are left as they are.
+      const fresh = new Map(demoCohort().map((s) => [s.id, s]));
+      saved = saved.map((s) => (s.demo && fresh.has(s.id) ? fresh.get(s.id) : s));
+      saveStudents(saved);
     }
-    return saved;
+    const own = saved.filter((s) => !s.dataset);
+    const ownIds = new Set(own.map((s) => s.id));
+    return own.concat(datasetCohort().filter((s) => !ownIds.has(s.id)));
   }
 
   /** Re-add any demo students that are missing, leaving the user's own alone. */
@@ -68,7 +84,7 @@
 
   function saveStudents(students) {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(students));
+      localStorage.setItem(STORE_KEY, JSON.stringify(students.filter((s) => !s.dataset)));
     } catch (e) {
       console.warn('Could not persist students:', e.message);
     }
@@ -375,26 +391,35 @@
     const worst = student.worstResult || latest;
     if (!latest) return '<div class="emo-empty">No analysis data for this student.</div>';
 
-    const filled = WEEK_NUMS.filter((w) => student.weeks[w] && student.weeks[w].result);
+    const weekNums = weeksOf(student);
+    const filled = weekNums.filter((w) => student.weeks[w] && student.weeks[w].result);
     const latestWeek = filled[filled.length - 1];
     const isCritical = worst.risk_level === 'Critical';
 
+    // Test-set students carry the dataset label, so the model can be checked against it
+    const labelled = filled.filter((w) => student.weeks[w].label);
+    const matches = labelled.filter((w) => student.weeks[w].label === student.weeks[w].result.prediction);
+
     const summary = [
-      ['WEEKS ANALYZED', `${filled.length} / ${WEEK_NUMS.length}`],
+      ['WEEKS ANALYZED', `${filled.length} / ${weekNums.length}`],
       ['WORST PREDICTION', worst.prediction],
       ['WORST RISK', worst.risk_level],
       ['LATEST STRESS SCORE', `${latest.stress_score} / 100`],
+      ...(labelled.length ? [['MATCHES DATASET LABEL', `${matches.length} / ${labelled.length} weeks`]] : []),
     ].map(([label, value]) => `
       <div class="emo-tile">
         <div class="emo-tile-label">${esc(label)}</div>
         <div class="emo-tile-value">${esc(value)}</div>
       </div>`).join('');
 
-    const weekCards = WEEK_NUMS.map((w) => {
+    const weekCards = weekNums.map((w) => {
       const wd = student.weeks[w];
       if (!wd || !wd.result) return '';
       const r = wd.result;
       const col = riskOf(r.risk_level);
+      const labelChip = wd.label ? (wd.label === r.prediction
+        ? `<span class="emo-pill" style="color:#15803d;background:#f0fdf4;border:1px solid #86efac" title="Dataset label">✓ label: ${esc(wd.label)}</span>`
+        : `<span class="emo-pill" style="color:#64748b;background:#f8fafc;border:1px solid #cbd5e1" title="Dataset label">label: ${esc(wd.label)}</span>`) : '';
       return `
         <div class="emo-week-card" data-week-card="${w}">
           <div class="emo-week-card-head" data-toggle-week="${w}">
@@ -402,6 +427,7 @@
             <span class="emo-pill" style="color:${col};background:${col}15;border:1px solid ${col}40">${esc(r.risk_level.toUpperCase())}</span>
             <span style="color:${col};font-weight:700;font-size:13px">${esc(r.prediction)}</span>
             <span style="color:#64748b;font-size:12px">${(r.confidence * 100).toFixed(1)}%</span>
+            ${labelChip}
             <span class="emo-week-preview">"${esc(wd.text)}"</span>
             <span class="emo-chevron">▼</span>
           </div>
@@ -469,7 +495,7 @@
 
   function exportCsv(student) {
     const rows = ['student_name,week,predicted_label,confidence,risk_level,stress_score'];
-    WEEK_NUMS.forEach((w) => {
+    weeksOf(student).forEach((w) => {
       const r = student.weeks[w] && student.weeks[w].result;
       if (r) rows.push(`${student.name},${w},${r.prediction},${r.confidence},${r.risk_level},${r.stress_score}`);
     });
@@ -486,11 +512,14 @@
   const RISK_DOT = { Low: '#0891b2', Medium: '#b45309', High: '#dc2626', Critical: '#ff2020' };
   const RISK_ORDER = { Critical: 0, High: 1, Medium: 2, Low: 3 };
 
-  const initialsOf = (name) => name.trim().split(/\s+/)
-    .map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const initialsOf = (name) => {
+    const words = name.trim().split(/\s+/);
+    return (words.length > 1 ? words.map((w) => w[0]).join('') : words[0]).slice(0, 2).toUpperCase();
+  };
 
   function renderSidebar() {
     const filtered = state.students
+      .filter((s) => state.source === 'all' || (state.source === 'dataset') === !!s.dataset)
       .filter((s) => state.filter === 'All' ||
         ((s.latestResult || {}).risk_level === state.filter))
       .sort((a, b) => {
@@ -510,6 +539,15 @@
       `<option value="${v}"${state.filter === v ? ' selected' : ''}>${v === 'All' ? 'All Risk Levels' : v}</option>`
     ).join('');
 
+    const nDataset = state.students.filter((s) => s.dataset).length;
+    const sourceOptions = [
+      ['all', `All Students (${state.students.length})`],
+      ['dataset', `Test-Set Students (${nDataset})`],
+      ['own', `Demo & Added (${state.students.length - nDataset})`],
+    ].map(([v, label]) =>
+      `<option value="${v}"${state.source === v ? ' selected' : ''}>${label}</option>`
+    ).join('');
+
     const rows = filtered.map((s) => {
       const risk = (s.latestResult || {}).risk_level;
       const dot = RISK_DOT[risk] || '#cbd5e1';
@@ -520,7 +558,7 @@
             <div class="emo-avatar" style="border-color:${dot}40">${esc(initialsOf(s.name))}</div>
             <div>
               <div class="emo-student-name">${esc(s.name)}</div>
-              ${risk ? `<div class="emo-student-pred" style="color:${dot}">${esc(s.latestResult.prediction)}</div>` : ''}
+              ${risk ? `<div class="emo-student-pred" style="color:${dot}">${esc(s.latestResult.prediction)}${s.dataset ? ' <span style="color:#94a3b8">· test set</span>' : ''}</div>` : ''}
             </div>
           </div>
           ${risk ? `<div class="emo-student-dot" style="background:${dot};box-shadow:0 0 6px ${dot}"></div>` : ''}
@@ -551,6 +589,7 @@
         <button class="emo-add-btn" data-add-student>
           <span style="font-size:16px;line-height:1">+</span> Add New Student
         </button>
+        <select id="emoSourceFilter" class="emo-select">${sourceOptions}</select>
         <select id="emoRiskFilter" class="emo-select">${options}</select>
       </div>
 
@@ -563,7 +602,7 @@
           ${state.students.length ? countPills : '<span style="font-size:10px;color:#94a3b8">No students added</span>'}
         </div>
         ${demoMissing ? '<button class="emo-restore-btn" data-restore-demo>↺ Restore demo students</button>' : ''}
-        ${state.students.length ? '<button class="emo-clear-btn" data-clear-all>Clear All Students</button>' : ''}
+        ${state.students.length > nDataset ? '<button class="emo-clear-btn" data-clear-all>Clear Demo & Added Students</button>' : ''}
       </div>`;
   }
 
@@ -608,7 +647,9 @@
       <div class="emo-head">
         <div>
           <div class="emo-head-name">${esc(student.name)}</div>
-          <div class="emo-head-id">ID: ${esc(student.id)}</div>
+          <div class="emo-head-id">${student.dataset
+            ? 'Test-set student · not used in training · weeks 2, 4, 8, 12'
+            : `ID: ${esc(student.id)}`}</div>
         </div>
         ${worst ? renderRiskBadge(worst.risk_level) : ''}
       </div>`;
@@ -688,11 +729,11 @@
 
     each('[data-clear-all]', (b) => {
       b.addEventListener('click', () => {
-        if (!confirm('Remove all saved students? This cannot be undone.')) return;
-        state.students = [];
-        state.selectedId = null;
+        if (!confirm('Remove all demo and added students? Test-set students stay. This cannot be undone.')) return;
+        state.students = state.students.filter((s) => s.dataset);
         saveStudents([]);
-        state.view = 'single';
+        state.selectedId = state.students.length ? state.students[0].id : null;
+        state.view = state.selectedId ? 'analysis' : 'single';
         render();
       });
     });
@@ -709,6 +750,14 @@
     if (filterSel) {
       filterSel.addEventListener('change', (e) => {
         state.filter = e.target.value;
+        render();
+      });
+    }
+
+    const sourceSel = el('emoSourceFilter');
+    if (sourceSel) {
+      sourceSel.addEventListener('change', (e) => {
+        state.source = e.target.value;
         render();
       });
     }
@@ -751,6 +800,9 @@
 
     render();
     checkHealth();
+    // The models take ~30s to load, so a page opened during startup would
+    // otherwise show "offline" until reloaded.
+    setInterval(checkHealth, 15000);
   }
 
   if (document.readyState === 'loading') {
