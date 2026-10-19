@@ -220,8 +220,12 @@ function getFilteredRecords() {
     if (query) {
       const name = (rec.student_name || "").toLowerCase();
       const id = (rec.student_id || "").toLowerCase();
+      const uniId = (rec.university_id || "").toLowerCase();
       const p = (rec.programme || "").toLowerCase();
-      if (!name.includes(query) && !id.includes(query) && !p.includes(query)) {
+      const modulesStr = Array.isArray(rec.enrolled_modules) 
+        ? rec.enrolled_modules.map(m => `${m.code || ''} ${m.name || ''}`).join(' ').toLowerCase() 
+        : "";
+      if (!name.includes(query) && !id.includes(query) && !uniId.includes(query) && !p.includes(query) && !modulesStr.includes(query)) {
         return false;
       }
     }
@@ -366,11 +370,19 @@ function createCardHtml(r) {
           <div class="student-avatar ${avatarClass}">${initials}</div>
           <div class="card-identity">
             <strong>${r.student_name}</strong>
-            <small>${r.student_id} · ${r.programme}</small>
+            <small><span class="card-uni-id">${r.university_id || r.student_id}</span> · <span class="card-prog">${r.programme}</span></small>
           </div>
         </div>
         <span class="priority-pill ${priorityClass}">${priorityLabel}</span>
       </div>
+
+      <!-- Enrolled Modules Micro-Tags -->
+      ${r.enrolled_modules && r.enrolled_modules.length ? `
+        <div class="card-subjects-strip">
+          ${r.enrolled_modules.slice(0, 3).map(m => `<span class="subject-pill" title="${m.name} (${m.credits} Credits)">${m.code}</span>`).join('')}
+          ${r.enrolled_modules.length > 3 ? `<span class="subject-pill more" title="${r.enrolled_modules.slice(3).map(m => `${m.code} ${m.name}`).join(', ')}">+${r.enrolled_modules.length - 3} more</span>` : ''}
+        </div>
+      ` : ''}
 
       ${isDiscordant ? `<div class="discordant-badge">⚡ HIDDEN DISTRESS (High Stress, Passing Marks)</div>` : ""}
       ${isOverflow ? `<div class="overflow-badge">⏱ Queued for Next Week (Caseload Capped)</div>` : ""}
@@ -418,7 +430,43 @@ function selectStudent(studentId) {
 
   // Header info
   dom.drawerName.textContent = r.student_name;
-  dom.drawerMeta.textContent = `ID: ${r.student_id} · Degree: ${r.programme} · Cohort: ${r.cohort_id || "2026-S1"}`;
+  dom.drawerMeta.textContent = `University ID: ${r.university_id || r.student_id} · System Ref: ${r.student_id} · ${r.programme} · Cohort: ${r.cohort || "Year 3 Semester 2 (2022 Batch)"}`;
+
+  // Populate Enrolled Modules Tab
+  const drawerDegreeName = document.getElementById("drawer-degree-name");
+  const drawerUniId = document.getElementById("drawer-uni-id");
+  const drawerCreditLoad = document.getElementById("drawer-credit-load");
+  const drawerModulesList = document.getElementById("drawer-modules-list");
+  
+  if (drawerDegreeName) drawerDegreeName.textContent = r.programme || "BSc (Hons) in Information Technology";
+  if (drawerUniId) drawerUniId.textContent = r.university_id || r.student_id;
+  
+  const modules = Array.isArray(r.enrolled_modules) ? r.enrolled_modules : [];
+  const totalCredits = modules.reduce((acc, m) => acc + (m.credits || 0), 0);
+  if (drawerCreditLoad) drawerCreditLoad.textContent = `${totalCredits || 16} Total Semester Credits`;
+
+  if (drawerModulesList) {
+    if (modules.length === 0) {
+      drawerModulesList.innerHTML = `<p class="empty-column-msg">No module registration records on file for this student.</p>`;
+    } else {
+      drawerModulesList.innerHTML = modules.map(m => `
+        <div class="module-row-card">
+          <div class="module-row-left">
+            <span class="module-code-badge">${m.code}</span>
+            <div>
+              <strong class="module-title">${m.name}</strong>
+              <small class="module-credits">${m.credits} Academic Credits · Year 3 Semester 2</small>
+            </div>
+          </div>
+          <div class="module-row-right">
+            <span class="coursework-status-badge ${m.status && m.status.includes('Overdue') ? 'status-danger' : m.status && m.status.includes('Pending') ? 'status-warn' : 'status-success'}">
+              ${m.status || 'Active Registration'}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 
   // Discordant Alert
   if (r.is_multi_modal_override) {
@@ -474,7 +522,8 @@ function selectStudent(studentId) {
   dom.drawer.setAttribute("aria-hidden", "false");
 
   // Re-render board to show card selection highlight
-  renderKanbanBoard();
+  populateProgrammeDropdown();
+    renderKanbanBoard();
 }
 
 function closeDrawer() {
@@ -837,3 +886,21 @@ function init() {
 
 // Hydrate on DOM ready
 document.addEventListener("DOMContentLoaded", init);
+
+function populateProgrammeDropdown() {
+  if (!dom.filterProgramme) return;
+  const currentVal = dom.filterProgramme.value;
+  const programmes = new Set();
+  (state.records || []).forEach(r => {
+    if (r.programme) programmes.add(r.programme);
+  });
+  
+  if (programmes.size === 0) return;
+  
+  const sorted = Array.from(programmes).sort();
+  dom.filterProgramme.innerHTML = `<option value="">All Degree Programmes (${programmes.size})</option>` +
+    sorted.map(p => `<option value="${p}">${p}</option>`).join('');
+  if (currentVal && programmes.has(currentVal)) {
+    dom.filterProgramme.value = currentVal;
+  }
+}

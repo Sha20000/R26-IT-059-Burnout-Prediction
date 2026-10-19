@@ -1,218 +1,282 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Burnout Guard | Student Support & Triage Station</title>
+    <title>Burnout Guard | Student Triage & Decision Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              canvas: '#080B11',
+              sidebar: '#0C1019',
+              surface: '#0F1422',
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            }
+          }
+        }
+      }
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   </head>
-  <body class="dark-theme">
-    <div class="app-shell">
-      <!-- Enterprise Sidebar Navigation -->
-      <aside class="app-sidebar" aria-label="Advisor Workspace Navigation">
-        <div class="sidebar-brand">
-          <div class="brand-icon-box">
-            <span class="brand-icon">✦</span>
+  <body class="dark-theme bg-[#080B11] text-slate-100 antialiased font-sans">
+    <div class="app-shell flex min-h-screen">
+      <!-- 1. SLEEK MINIMAL SIDEBAR (Linear Style) -->
+      <aside class="app-sidebar w-64 bg-[#0C1019] border-r border-white/[0.07] flex flex-col shrink-0 sticky top-0 h-screen z-30" aria-label="Advisor Workspace Navigation">
+        <div class="sidebar-brand flex items-center gap-3 px-5 py-4 border-b border-white/[0.07]">
+          <div class="brand-icon-box w-7 h-7 rounded bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 font-bold shadow-[0_0_12px_rgba(99,102,241,0.2)]">
+            <svg class="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
           </div>
           <div class="brand-text">
-            <span class="brand-name">Burnout Guard</span>
-            <span class="brand-subtitle">Student Support Station</span>
+            <span class="brand-name text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
+              Burnout Guard
+            </span>
+            <span class="brand-subtitle text-[11px] text-slate-400 font-medium">Student Decision Platform</span>
           </div>
         </div>
 
-        <nav class="sidebar-nav">
-          <div class="nav-section-label">ADVISOR WORKSPACE</div>
-          <a class="nav-link active" href="/dashboard" id="nav-queue">
-            <span class="nav-icon">📋</span>
-            <span class="nav-text">Student Triage Queue</span>
-            <span class="nav-badge" id="nav-p1-badge">{{ summary.p1_cases }} Urgent</span>
+        <nav class="sidebar-nav flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
+          <div class="nav-section-label text-[10px] font-bold tracking-wider text-slate-500 uppercase px-2.5 pt-3 pb-1.5">Advisor Workspace</div>
+          <a class="nav-link active flex items-center gap-2.5 px-3 py-2 rounded text-slate-200 hover:text-white hover:bg-white/[0.04] text-[13px] font-medium transition-all" href="/dashboard" id="nav-queue">
+            <svg class="w-4 h-4 text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-6l-2 3h-4l-2-3H2"/>
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+            </svg>
+            <span class="nav-text flex-1">Student Triage Queue</span>
+            <span class="nav-badge text-[11px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/25" id="nav-p1-badge">{{ summary.p1_cases }} Urgent</span>
           </a>
-          <a class="nav-link" href="/analytics" id="nav-analytics">
-            <span class="nav-icon">📊</span>
-            <span class="nav-text">AI Accuracy & Evidence</span>
-            <span class="nav-badge-sub">99.6% Accuracy</span>
+          <a class="nav-link flex items-center gap-2.5 px-3 py-2 rounded text-slate-400 hover:text-white hover:bg-white/[0.04] text-[13px] font-medium transition-all" href="/analytics" id="nav-analytics">
+            <svg class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            <span class="nav-text flex-1">Model Evidence & ROC</span>
+            <span class="nav-badge-sub text-[11px] font-semibold text-emerald-400">99.6% ROC</span>
           </a>
-          <a class="nav-link" href="/api/export/csv" download id="nav-export">
-            <span class="nav-icon">⤓</span>
-            <span class="nav-text">Download Weekly Report</span>
+          <a class="nav-link flex items-center gap-2.5 px-3 py-2 rounded text-slate-400 hover:text-white hover:bg-white/[0.04] text-[13px] font-medium transition-all" href="/api/export/csv" download id="nav-export">
+            <svg class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="nav-text">Export Weekly Audit</span>
           </a>
 
-          <div class="nav-section-label">DEMO SCENARIOS FOR EXAMINERS</div>
-          <button class="nav-preset-btn" id="preset-discordant" type="button" title="Showcase a student whose passing grades hide severe emotional distress">
-            <span class="preset-icon">⚡</span>
+          <div class="nav-section-label text-[10px] font-bold tracking-wider text-slate-500 uppercase px-2.5 pt-5 pb-1.5">Viva Examiner Scenarios</div>
+          <button class="nav-preset-btn flex items-center gap-2.5 px-3 py-2 rounded hover:bg-white/[0.04] text-left transition-all w-full group" id="preset-discordant" type="button" title="Showcase a student whose passing grades hide severe emotional distress">
+            <svg class="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
             <div class="preset-desc">
-              <strong>Hidden Burnout Case</strong>
-              <small>Good Grades, Critical Stress</small>
+              <strong class="text-xs font-semibold text-slate-300 group-hover:text-white block">Hidden Distress Case</strong>
+              <small class="text-[10px] text-slate-500 block">Passing Marks, Acute Stress</small>
             </div>
           </button>
-          <button class="nav-preset-btn" id="preset-capacity" type="button" title="Simulate a busy advisor: restrict capacity to 3 students and watch queue re-rank">
-            <span class="preset-icon">⚖</span>
+          <button class="nav-preset-btn flex items-center gap-2.5 px-3 py-2 rounded hover:bg-white/[0.04] text-left transition-all w-full group" id="preset-capacity" type="button" title="Simulate a busy advisor: restrict capacity to 3 students and watch queue re-rank">
+            <svg class="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"/>
+              <line x1="4" y1="10" x2="4" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12" y2="3"/>
+              <line x1="20" y1="21" x2="20" y2="16"/>
+              <line x1="20" y1="12" x2="20" y2="3"/>
+              <line x1="1" y1="14" x2="7" y2="14"/>
+              <line x1="9" y1="8" x2="15" y2="8"/>
+              <line x1="17" y1="16" x2="23" y2="16"/>
+            </svg>
             <div class="preset-desc">
-              <strong>Busy Week (3 Meetings)</strong>
-              <small>Prioritize Most Receptive</small>
+              <strong class="text-xs font-semibold text-slate-300 group-hover:text-white block">Constrained Week (3 Slots)</strong>
+              <small class="text-[10px] text-slate-500 block">Opportunity Knapsack Re-ranking</small>
             </div>
           </button>
-          <button class="nav-preset-btn" id="preset-reset" type="button" title="Wipe queue clean to demonstrate live student streaming from scratch">
-            <span class="preset-icon">↺</span>
+          <button class="nav-preset-btn flex items-center gap-2.5 px-3 py-2 rounded hover:bg-white/[0.04] text-left transition-all w-full group" id="preset-reset" type="button" title="Wipe queue clean to demonstrate live student streaming from scratch">
+            <svg class="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
             <div class="preset-desc">
-              <strong>Clear Board (Fresh Start)</strong>
-              <small>Ready for Live Demo Stream</small>
+              <strong class="text-xs font-semibold text-slate-300 group-hover:text-white block">Fresh Cold Start</strong>
+              <small class="text-[10px] text-slate-500 block">Clear & Prepare Live Ingestion</small>
             </div>
           </button>
         </nav>
 
-        <div class="sidebar-footer">
-          <div class="system-status-indicator">
-            <span class="pulse-indicator"></span>
+        <div class="sidebar-footer p-4 border-t border-white/[0.07] bg-black/20">
+          <div class="system-status-indicator flex items-center gap-2.5">
+            <span class="pulse-indicator w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
             <div class="status-meta">
-              <strong>Early Warning Engine</strong>
-              <small>Grades + Habits + Wellbeing Active</small>
+              <strong class="text-[11px] font-semibold text-slate-200 block">SQLite Live Engine Active</strong>
+              <small class="text-[10px] text-slate-400 font-mono block">2,543 Cohort Records Unified</small>
             </div>
           </div>
         </div>
       </aside>
 
-      <!-- Main Clinical Workspace -->
-      <main class="main-content">
+      <!-- 2. MAIN WORKSPACE CANVAS -->
+      <main class="main-content flex-1 min-w-0 flex flex-col bg-[#080B11]">
         <!-- Topbar & Workstation Header -->
-        <header class="topbar">
-          <div class="topbar-heading">
-            <div class="kicker-row">
-              <span class="status-pill status-pill-active">ADVISOR DECISION SUPPORT</span>
-              <span class="data-mode-badge" id="data-mode-badge">{{ data_mode }}</span>
+        <header class="topbar flex items-center justify-between px-7 py-4 bg-[#0C1019]/80 backdrop-blur-md border-b border-white/[0.07] sticky top-0 z-20">
+          <div class="topbar-heading flex flex-col gap-1">
+            <div class="kicker-row flex items-center gap-2">
+              <span class="status-pill status-pill-active text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase bg-indigo-500/10 text-indigo-300 border border-indigo-500/25">
+                INTERVENTION CONTROL STATION
+              </span>
+              <span class="data-mode-badge text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25" id="data-mode-badge">
+                {{ data_mode }}
+              </span>
             </div>
-            <h1 class="page-title">Weekly Student Intervention Workspace</h1>
-            <p class="page-subtitle">Combines Coursework Trajectories, Online Study Habits, and Wellbeing Signals to tell advisors who to call, why, and how to help.</p>
+            <h1 class="page-title text-lg font-bold tracking-tight text-white">Student Triage & Opportunity Queue</h1>
+            <p class="page-subtitle text-xs text-slate-400">Dynamic Multi-Modal Fusion · VAE Behavioral Anomalies · RoBERTa Emotional Signals · XGBoost Opportunity Ranking</p>
           </div>
 
           <!-- Advisor Capacity Control Station -->
-          <div class="capacity-control-card">
-            <div class="capacity-header-row">
-              <div class="capacity-title-wrap">
-                <span class="capacity-kicker">MY MEETING CAPACITY THIS WEEK</span>
-                <strong class="capacity-display-num" id="capacity-display">5 Meetings Available</strong>
+          <div class="capacity-control-card flex items-center gap-4 bg-white/[0.02] border border-white/[0.08] rounded-lg px-3.5 py-1.5 shadow-sm">
+            <div class="capacity-header-row flex items-center gap-2.5">
+              <div class="capacity-title-wrap flex flex-col">
+                <span class="capacity-kicker text-[9px] font-bold tracking-wider text-slate-400 uppercase">Advisor Weekly Caseload</span>
+                <strong class="capacity-display-num text-xs font-semibold text-white" id="capacity-display">5 Meetings Available</strong>
               </div>
-              <div class="capacity-status-chip" id="knapsack-status-chip">
-                <span>Caseload Cap:</span> <strong id="knapsack-overflow-count">Top 5 Prioritized</strong>
+              <div class="capacity-status-chip text-[11px] text-slate-400 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.06]" id="knapsack-status-chip">
+                <span>Cap:</span> <strong class="text-cyan-400 font-mono" id="knapsack-overflow-count">Top 5 Slots</strong>
               </div>
             </div>
 
-            <div class="capacity-slider-row">
-              <button class="btn-step" id="btn-cap-decrement" type="button" title="Reduce available meetings by 1">−</button>
-              <div class="slider-track-wrap">
-                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" aria-label="Advisor weekly meeting capacity" />
-                <div class="slider-glow-bar" id="slider-glow-bar" style="width: 20%;"></div>
+            <div class="slider-stepper-wrap flex items-center gap-2">
+              <button class="btn-step w-6 h-6 rounded bg-white/[0.05] hover:bg-white/[0.12] border border-white/[0.08] text-white flex items-center justify-center text-xs transition-all" id="btn-cap-decrement" type="button" title="Reduce available meetings by 1">−</button>
+              <div class="slider-track-wrap relative w-20 flex items-center">
+                <input type="range" id="capacity-slider" min="1" max="25" value="5" step="1" aria-label="Advisor weekly meeting capacity" class="w-full h-1 bg-white/10 rounded appearance-none cursor-pointer accent-indigo-500" />
+                <div class="slider-glow-bar hidden" id="slider-glow-bar"></div>
               </div>
-              <button class="btn-step" id="btn-cap-increment" type="button" title="Increase available meetings by 1">+</button>
+              <button class="btn-step w-6 h-6 rounded bg-white/[0.05] hover:bg-white/[0.12] border border-white/[0.08] text-white flex items-center justify-center text-xs transition-all" id="btn-cap-increment" type="button" title="Increase available meetings by 1">+</button>
             </div>
 
-            <div class="capacity-quick-pills">
-              <button type="button" class="pill-btn" data-cap="3">3 (Busy Week)</button>
-              <button type="button" class="pill-btn active" data-cap="5">5 (Standard)</button>
-              <button type="button" class="pill-btn" data-cap="10">10 (Expanded)</button>
-              <button type="button" class="pill-btn" data-cap="20">20 (All Urgent)</button>
+            <div class="capacity-quick-pills flex gap-1">
+              <button type="button" class="pill-btn text-[11px] font-medium px-2 py-0.5 rounded border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/[0.04]" data-cap="3">3</button>
+              <button type="button" class="pill-btn active text-[11px] font-semibold px-2 py-0.5 rounded border border-indigo-500/40 bg-indigo-500/20 text-indigo-300" data-cap="5">5</button>
+              <button type="button" class="pill-btn text-[11px] font-medium px-2 py-0.5 rounded border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/[0.04]" data-cap="10">10</button>
+              <button type="button" class="pill-btn text-[11px] font-medium px-2 py-0.5 rounded border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/[0.04]" data-cap="20">20</button>
             </div>
           </div>
 
           <!-- Live Stream Toggle -->
           <div class="stream-action-wrap">
-            <button class="btn-live-stream" id="btn-stream-toggle" type="button" title="Continuously sync new incoming student LMS activity">
-              <span class="live-dot pulse"></span>
+            <button class="btn-live-stream flex items-center gap-2 px-3 py-1.5 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 text-xs font-semibold transition-all shadow-sm" id="btn-stream-toggle" type="button" title="Continuously sync new incoming student LMS activity">
+              <span class="live-dot pulse w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               <span id="stream-btn-text">Live Sync: Active</span>
             </button>
           </div>
         </header>
 
-        <!-- Clinical Telemetry Metric Cards -->
-        <section class="telemetry-bar" aria-label="Student Telemetry Overview">
-          <div class="telemetry-card">
-            <div class="telemetry-icon-box icon-students">👥</div>
-            <div class="telemetry-body">
-              <span class="telemetry-label">ENROLLED COHORT</span>
-              <div class="telemetry-value-row">
-                <strong id="stat-total">{{ summary.total_students }}</strong>
-                <span class="telemetry-sub">Students Monitored</span>
+        <!-- 3. BORDER-DELIMITED TELEMETRY STATS ROW (Linear/Vercel Aesthetic) -->
+        <section class="telemetry-bar grid grid-cols-5 bg-[#0C1019] border-b border-white/[0.07]" aria-label="Student Telemetry Overview">
+          <div class="telemetry-card px-6 py-3.5 border-r border-white/[0.07] flex items-center gap-3.5 hover:bg-white/[0.015] transition-colors">
+            <div class="telemetry-icon-box w-8 h-8 rounded bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-400 text-sm">
+              👥
+            </div>
+            <div class="telemetry-body flex flex-col">
+              <span class="telemetry-label text-[10px] font-bold tracking-wider text-slate-400 uppercase">TOTAL COHORT</span>
+              <div class="telemetry-value-row flex items-baseline gap-2">
+                <strong id="stat-total" class="text-xl font-bold tracking-tight text-white font-mono">{{ summary.total_students }}</strong>
+                <span class="telemetry-sub text-[11px] text-slate-400">Students Active</span>
               </div>
             </div>
           </div>
 
-          <div class="telemetry-card card-p1">
-            <div class="telemetry-icon-box icon-p1">🚨</div>
-            <div class="telemetry-body">
-              <span class="telemetry-label">MEET THIS WEEK (URGENT)</span>
-              <div class="telemetry-value-row">
-                <strong id="stat-p1">{{ summary.p1_cases }}</strong>
-                <span class="telemetry-tag" id="stat-p1-tag">Fits Your Caseload</span>
+          <div class="telemetry-card card-p1 px-6 py-3.5 border-r border-white/[0.07] flex items-center gap-3.5 hover:bg-white/[0.015] transition-colors">
+            <div class="telemetry-icon-box w-8 h-8 rounded bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-sm">
+              🚨
+            </div>
+            <div class="telemetry-body flex flex-col">
+              <span class="telemetry-label text-[10px] font-bold tracking-wider text-slate-400 uppercase">CALL THIS WEEK</span>
+              <div class="telemetry-value-row flex items-baseline gap-2">
+                <strong id="stat-p1" class="text-xl font-bold tracking-tight text-rose-400 font-mono">{{ summary.p1_cases }}</strong>
+                <span class="telemetry-tag text-[10px] font-semibold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/20" id="stat-p1-tag">Fits Caseload</span>
               </div>
             </div>
           </div>
 
-          <div class="telemetry-card card-p2">
-            <div class="telemetry-icon-box icon-p2">⏱</div>
-            <div class="telemetry-body">
-              <span class="telemetry-label">ON WATCHLIST</span>
-              <div class="telemetry-value-row">
-                <strong id="stat-p2">{{ summary.p2_cases }}</strong>
-                <span class="telemetry-sub" id="stat-p2-sub">Queued For Next Week</span>
+          <div class="telemetry-card card-p2 px-6 py-3.5 border-r border-white/[0.07] flex items-center gap-3.5 hover:bg-white/[0.015] transition-colors">
+            <div class="telemetry-icon-box w-8 h-8 rounded bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-sm">
+              ⏱
+            </div>
+            <div class="telemetry-body flex flex-col">
+              <span class="telemetry-label text-[10px] font-bold tracking-wider text-slate-400 uppercase">ON WATCHLIST</span>
+              <div class="telemetry-value-row flex items-baseline gap-2">
+                <strong id="stat-p2" class="text-xl font-bold tracking-tight text-amber-400 font-mono">{{ summary.p2_cases }}</strong>
+                <span class="telemetry-sub text-[11px] text-slate-400" id="stat-p2-sub">Queued For Next Week</span>
               </div>
             </div>
           </div>
 
-          <div class="telemetry-card card-resolved">
-            <div class="telemetry-icon-box icon-resolved">✔</div>
-            <div class="telemetry-body">
-              <span class="telemetry-label">HANDLED & RESOLVED</span>
-              <div class="telemetry-value-row">
-                <strong id="stat-resolved">{{ summary.assigned_cases }}</strong>
-                <span class="telemetry-tag tag-green">Support Logged</span>
+          <div class="telemetry-card card-resolved px-6 py-3.5 border-r border-white/[0.07] flex items-center gap-3.5 hover:bg-white/[0.015] transition-colors">
+            <div class="telemetry-icon-box w-8 h-8 rounded bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm">
+              ✔
+            </div>
+            <div class="telemetry-body flex flex-col">
+              <span class="telemetry-label text-[10px] font-bold tracking-wider text-slate-400 uppercase">HANDLED & LOGGED</span>
+              <div class="telemetry-value-row flex items-baseline gap-2">
+                <strong id="stat-resolved" class="text-xl font-bold tracking-tight text-emerald-400 font-mono">{{ summary.assigned_cases }}</strong>
+                <span class="telemetry-tag tag-green text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Audit Active</span>
               </div>
             </div>
           </div>
 
-          <div class="telemetry-card card-fusion">
-            <div class="telemetry-icon-box icon-fusion">⚡</div>
-            <div class="telemetry-body">
-              <span class="telemetry-label">HIDDEN BURNOUT CAUGHT</span>
-              <div class="telemetry-value-row">
-                <strong id="stat-discordant">343</strong>
-                <span class="telemetry-sub">High Stress / Good Marks</span>
+          <div class="telemetry-card card-fusion px-6 py-3.5 flex items-center gap-3.5 hover:bg-white/[0.015] transition-colors">
+            <div class="telemetry-icon-box w-8 h-8 rounded bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-sm">
+              ⚡
+            </div>
+            <div class="telemetry-body flex flex-col">
+              <span class="telemetry-label text-[10px] font-bold tracking-wider text-slate-400 uppercase">HIDDEN BURNOUT</span>
+              <div class="telemetry-value-row flex items-baseline gap-2">
+                <strong id="stat-discordant" class="text-xl font-bold tracking-tight text-purple-300 font-mono">343</strong>
+                <span class="telemetry-sub text-[11px] text-slate-400">High Stress / Good Marks</span>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Filter & Search Workstation Toolbar -->
-        <section class="toolbar-section">
-          <div class="search-wrap">
-            <span class="search-glyph">🔍</span>
-            <input type="search" id="search-input" placeholder="Search student by name, student ID, or programme..." />
-            <button class="clear-search-btn" id="btn-clear-search" type="button" hidden>✕</button>
+        <!-- 4. STREAMLINED UNIFIED ACTION TOOLBAR (Linear Command Bar) -->
+        <section class="toolbar-section flex items-center justify-between gap-4 px-7 py-3 bg-[#080B11] border-b border-white/[0.07] flex-wrap">
+          <div class="search-wrap relative flex items-center min-w-[300px] flex-1 max-w-md">
+            <span class="search-glyph absolute left-3 text-slate-500 text-xs pointer-events-none">🔍</span>
+            <input type="search" id="search-input" placeholder="Search by name, University ID (e.g. IT22...), module (e.g. IT3080)..." class="w-full h-9 bg-white/[0.03] focus:bg-white/[0.06] border border-white/[0.08] focus:border-indigo-500/60 rounded-md pl-8 pr-8 text-xs text-slate-100 placeholder-slate-400 outline-none transition-all shadow-inner font-sans" />
+            <button class="clear-search-btn absolute right-2.5 text-slate-400 hover:text-white text-xs cursor-pointer" id="btn-clear-search" type="button" hidden>✕</button>
           </div>
 
-          <!-- Filter Pills -->
-          <div class="filter-pills-bar">
-            <button type="button" class="filter-pill active" data-filter="all">All Students</button>
-            <button type="button" class="filter-pill pill-p1" data-filter="p1">🚨 Call This Week</button>
-            <button type="button" class="filter-pill pill-discordant" data-filter="discordant">⚡ Hidden Distress Only</button>
-            <button type="button" class="filter-pill pill-stress" data-filter="high_stress">🔥 High Stress Signal</button>
-            <button type="button" class="filter-pill pill-opp" data-filter="high_opp">🎯 High Chance to Recover</button>
-            <button type="button" class="filter-pill pill-resolved" data-filter="resolved">✔ Already Resolved</button>
+          <!-- Segmented Filter Pills -->
+          <div class="filter-pills-bar flex items-center gap-1 bg-white/[0.02] border border-white/[0.07] rounded-md p-1">
+            <button type="button" class="filter-pill active text-xs font-medium px-2.5 py-1 rounded text-slate-300 hover:text-white transition-all" data-filter="all">All Students</button>
+            <button type="button" class="filter-pill pill-p1 text-xs font-medium px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all" data-filter="p1">🚨 Call This Week</button>
+            <button type="button" class="filter-pill pill-discordant text-xs font-medium px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all" data-filter="discordant">⚡ Hidden Distress</button>
+            <button type="button" class="filter-pill pill-stress text-xs font-medium px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all" data-filter="high_stress">🔥 High Stress</button>
+            <button type="button" class="filter-pill pill-opp text-xs font-medium px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all" data-filter="high_opp">🎯 High Opportunity</button>
+            <button type="button" class="filter-pill pill-resolved text-xs font-medium px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all" data-filter="resolved">✔ Resolved</button>
           </div>
 
           <!-- Secondary Dropdowns -->
-          <div class="toolbar-selects">
-            <select id="filter-programme" aria-label="Filter by degree programme">
+          <div class="toolbar-selects flex items-center gap-2">
+            <select id="filter-programme" aria-label="Filter by degree programme" class="h-9 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] rounded-md px-3 text-xs text-slate-300 outline-none cursor-pointer transition-all">
               <option value="">All Degree Programmes</option>
-              <option value="Computing">Computing</option>
-              <option value="Business">Business</option>
-              <option value="STEM">STEM</option>
-              <option value="Social Sciences">Social Sciences</option>
+              <option value="BSc (Hons) in Software Engineering">BSc (Hons) in Software Engineering</option>
+              <option value="BSc (Hons) in Information Technology">BSc (Hons) in Information Technology</option>
+              <option value="BSc (Hons) in Data Science">BSc (Hons) in Data Science</option>
+              <option value="BSc (Hons) in Cybersecurity">BSc (Hons) in Cybersecurity</option>
+              <option value="BSc (Hons) in Computer Systems & Network Engineering">BSc (Hons) in Network Engineering</option>
+              <option value="BSc (Hons) in Interactive Media">BSc (Hons) in Interactive Media</option>
             </select>
 
-            <select id="sort-selector" aria-label="Sort student queue">
+            <select id="sort-selector" aria-label="Sort student queue" class="h-9 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] rounded-md px-3 text-xs text-slate-300 outline-none cursor-pointer transition-all">
               <option value="opportunity_desc">Sort: Highest Recovery Opportunity ↓</option>
               <option value="priority_desc">Sort: Most Urgent First ↓</option>
               <option value="academic_risk_desc">Sort: Highest Academic Risk ↓</option>
@@ -221,113 +285,116 @@
           </div>
         </section>
 
-        <!-- Clinical Kanban Triage Board -->
-        <section class="kanban-board" id="kanban-board">
+        <!-- 5. KANBAN TRIAGE BOARD & CARDS (Clean Linear Layout) -->
+        <section class="kanban-board flex-1 grid grid-cols-3 gap-5 p-7 overflow-x-auto items-start" id="kanban-board">
           <!-- Column 1: P1 Action Required -->
-          <div class="kanban-column col-p1" id="col-p1">
-            <div class="column-header">
-              <div class="col-title-group">
-                <span class="status-indicator ind-p1"></span>
-                <h2>Meet This Week · High Priority</h2>
+          <div class="kanban-column col-p1 flex flex-col min-h-[400px]" id="col-p1">
+            <div class="column-header flex items-center justify-between mb-1.5">
+              <div class="col-title-group flex items-center gap-2">
+                <span class="status-indicator ind-p1 w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.6)]"></span>
+                <h2 class="text-sm font-bold tracking-tight text-white">Meet This Week · High Priority</h2>
               </div>
-              <span class="col-count count-p1" id="count-p1">0</span>
+              <span class="col-count count-p1 text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-slate-300" id="count-p1">0</span>
             </div>
-            <div class="col-kicker">Top priority students fitted to your available meeting slots. Reach out to these students first.</div>
-            <div class="cards-container" id="cards-p1"></div>
+            <div class="col-kicker text-xs text-slate-400 mb-3">Top priority students allocated to your active capacity slots. Reach out to these first.</div>
+            <div class="cards-container flex flex-col gap-2.5 min-h-[120px]" id="cards-p1"></div>
           </div>
 
           <!-- Column 2: Monitoring (In Progress) -->
-          <div class="kanban-column col-p2" id="col-p2">
-            <div class="column-header">
-              <div class="col-title-group">
-                <span class="status-indicator ind-p2"></span>
-                <h2>Watchlist · Queued for Follow-Up</h2>
+          <div class="kanban-column col-p2 flex flex-col min-h-[400px]" id="col-p2">
+            <div class="column-header flex items-center justify-between mb-1.5">
+              <div class="col-title-group flex items-center gap-2">
+                <span class="status-indicator ind-p2 w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.5)]"></span>
+                <h2 class="text-sm font-bold tracking-tight text-white">Watchlist · Queued for Review</h2>
               </div>
-              <span class="col-count count-p2" id="count-p2">0</span>
+              <span class="col-count count-p2 text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-slate-300" id="count-p2">0</span>
             </div>
-            <div class="col-kicker">Students under regular observation, or queued for next week when your meeting calendar opens up.</div>
-            <div class="cards-container" id="cards-p2"></div>
+            <div class="col-kicker text-xs text-slate-400 mb-3">Students under active longitudinal observation, or queued for subsequent advisor cycles.</div>
+            <div class="cards-container flex flex-col gap-2.5 min-h-[120px]" id="cards-p2"></div>
           </div>
 
           <!-- Column 3: Resolved -->
-          <div class="kanban-column col-resolved" id="col-resolved">
-            <div class="column-header">
-              <div class="col-title-group">
-                <span class="status-indicator ind-resolved"></span>
-                <h2>Handled & Resolved Cases</h2>
+          <div class="kanban-column col-resolved flex flex-col min-h-[400px]" id="col-resolved">
+            <div class="column-header flex items-center justify-between mb-1.5">
+              <div class="col-title-group flex items-center gap-2">
+                <span class="status-indicator ind-resolved w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.5)]"></span>
+                <h2 class="text-sm font-bold tracking-tight text-white">Handled & Resolved Cases</h2>
               </div>
-              <span class="col-count count-resolved" id="count-resolved">0</span>
+              <span class="col-count count-resolved text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-slate-300" id="count-resolved">0</span>
             </div>
-            <div class="col-kicker">Support meetings held and documented. Outcome notes are saved to teach the AI what worked.</div>
-            <div class="cards-container" id="cards-resolved"></div>
+            <div class="col-kicker text-xs text-slate-400 mb-3">Support meetings completed and documented in SQLite. Data feeds back into ML retraining.</div>
+            <div class="cards-container flex flex-col gap-2.5 min-h-[120px]" id="cards-resolved"></div>
           </div>
         </section>
       </main>
 
-      <!-- Slide-over Clinical Detail & Meta-XAI Breakdown Drawer -->
-      <aside class="detail-drawer" id="detail-drawer" aria-hidden="true">
-        <div class="drawer-header">
-          <div class="drawer-title-group">
-            <span class="section-kicker">STUDENT PROFILE & SUPPORT INTELLIGENCE</span>
-            <h2 id="drawer-student-name">Select a Student</h2>
-            <div class="drawer-meta" id="drawer-student-meta">ID: — · Programme: —</div>
+      <!-- 6. SLIDE-OVER CLINICAL INSPECTOR DRAWER (Linear / Stripe Style) -->
+      <aside class="detail-drawer fixed top-0 right-0 bottom-0 w-[540px] max-w-[90vw] bg-[#0B0F19]/95 backdrop-blur-2xl border-l border-white/[0.08] shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out" id="detail-drawer" aria-hidden="true">
+        <div class="drawer-header flex items-start justify-between px-6 py-5 border-b border-white/[0.07]">
+          <div class="drawer-title-group flex flex-col gap-0.5">
+            <span class="section-kicker text-[10px] font-bold tracking-wider text-indigo-400 uppercase">STUDENT PROFILE & SUPPORT INTELLIGENCE</span>
+            <h2 id="drawer-student-name" class="text-lg font-bold text-white tracking-tight">Select a Student</h2>
+            <div class="drawer-meta text-xs text-slate-400" id="drawer-student-meta">ID: — · Programme: —</div>
           </div>
-          <button class="drawer-close-btn" id="drawer-close" aria-label="Close student drawer" type="button">✕</button>
+          <button class="drawer-close-btn w-7 h-7 rounded bg-white/[0.05] hover:bg-white/[0.12] border border-white/[0.08] text-slate-300 hover:text-white flex items-center justify-center text-xs transition-all" id="drawer-close" aria-label="Close student drawer" type="button">✕</button>
         </div>
 
         <!-- Drawer Navigation Tabs -->
-        <div class="drawer-tabs">
-          <button class="drawer-tab active" data-tab="tab-trajectories" type="button">
-            <span>📈 Student Signals</span>
+        <div class="drawer-tabs flex bg-black/20 border-b border-white/[0.07] px-4 gap-1">
+          <button class="drawer-tab active px-3.5 py-2.5 text-xs font-semibold text-slate-300 border-b-2 border-indigo-500 transition-all" data-tab="tab-trajectories" type="button">
+            <span>📈 Wellbeing Signals</span>
           </button>
-          <button class="drawer-tab" data-tab="tab-shap" type="button">
+          <button class="drawer-tab px-3.5 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent transition-all" data-tab="tab-subjects" type="button">
+            <span>📚 Enrolled Subjects</span>
+          </button>
+          <button class="drawer-tab px-3.5 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent transition-all" data-tab="tab-shap" type="button">
             <span>🧠 Why Flagged?</span>
           </button>
-          <button class="drawer-tab" data-tab="tab-resolve" type="button">
+          <button class="drawer-tab px-3.5 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent transition-all" data-tab="tab-resolve" type="button">
             <span>✍ Log Support Action</span>
           </button>
         </div>
 
-        <div class="drawer-content">
-          <!-- Multi-modal Discordant Catch Alert (Shown when grades stable but stress/anomaly severe) -->
-          <div class="discordant-banner" id="drawer-discordant-banner" hidden>
-            <div class="discordant-icon">⚡</div>
+        <div class="drawer-content flex-1 overflow-y-auto p-6 flex flex-col gap-5">
+          <!-- Multi-modal Discordant Catch Alert -->
+          <div class="discordant-banner flex gap-3 p-3.5 rounded-lg bg-purple-500/10 border border-purple-500/25 text-purple-200 text-xs" id="drawer-discordant-banner" hidden>
+            <div class="discordant-icon text-base text-purple-400">⚡</div>
             <div>
-              <strong>WARNING: HIDDEN BURNOUT DETECTED</strong>
-              <p>This student is currently passing their assessments, but our wellbeing signals show acute emotional stress. Traditional grade-only systems would completely miss this student until they suddenly drop out.</p>
+              <strong class="text-xs font-semibold text-white block mb-0.5">WARNING: HIDDEN BURNOUT DETECTED</strong>
+              <p class="text-slate-300 leading-relaxed">This student is currently passing their assessments, but our wellbeing signals show acute emotional stress. Traditional grade-only systems would completely miss this student until they suddenly drop out.</p>
             </div>
           </div>
 
           <!-- Priority & Knapsack Status Card -->
-          <div class="drawer-section priority-section">
-            <div class="priority-badges">
-              <span class="badge badge-priority" id="drawer-priority-badge">Call This Week</span>
-              <span class="badge badge-effective" id="drawer-effective-badge">In Your Top 5</span>
-              <span class="badge badge-confidence" id="drawer-confidence-badge">High Confidence</span>
+          <div class="drawer-section priority-section flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/[0.07] rounded-lg">
+            <div class="priority-badges flex gap-1.5 flex-wrap">
+              <span class="badge badge-priority text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30" id="drawer-priority-badge">Call This Week</span>
+              <span class="badge badge-effective text-xs font-semibold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/25" id="drawer-effective-badge">In Your Top 5</span>
+              <span class="badge badge-confidence text-xs font-medium px-2 py-0.5 rounded bg-white/[0.06] text-slate-300" id="drawer-confidence-badge">High Confidence</span>
             </div>
-            <div class="priority-score-wrap">
-              <span class="metric-label">Urgency Level</span>
-              <strong id="drawer-priority-score">88%</strong>
+            <div class="priority-score-wrap text-right">
+              <span class="metric-label text-[9px] font-bold tracking-wider text-slate-500 uppercase block">Urgency Score</span>
+              <strong id="drawer-priority-score" class="text-lg font-mono font-bold text-white">88%</strong>
             </div>
           </div>
 
           <!-- TAB 1: Multi-Modal Trajectories -->
-          <div class="drawer-tab-pane active" id="tab-trajectories">
+          <div class="drawer-tab-pane active flex flex-col gap-4" id="tab-trajectories">
             <div class="section-header">
-              <h3>Student Progress Signals</h3>
-              <small>Observed across coursework, online study habits, and communications</small>
+              <h3 class="text-sm font-bold text-white">Multi-Modal Progress Signals</h3>
+              <small class="text-xs text-slate-400">Observed across coursework, online study habits, and communications</small>
             </div>
 
             <!-- Sparkline 1: Academic Risk Curve -->
-            <div class="sparkline-card">
-              <div class="sparkline-header">
-                <span class="stream-tag tag-acad">Coursework Risk Trend</span>
-                <span class="sparkline-state" id="drawer-academic-state">Grade Trajectory</span>
+            <div class="sparkline-card p-3.5 bg-black/30 border border-white/[0.07] rounded-lg flex flex-col gap-2.5">
+              <div class="sparkline-header flex items-center justify-between">
+                <span class="stream-tag tag-acad text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 uppercase">Coursework Risk Trend</span>
+                <span class="sparkline-state font-mono text-xs font-semibold text-slate-300" id="drawer-academic-state">Grade Trajectory</span>
               </div>
               <div class="svg-sparkline-wrap">
-                <svg id="svg-academic-sparkline" viewBox="0 0 280 60" preserveAspectRatio="none"></svg>
+                <svg id="svg-academic-sparkline" viewBox="0 0 280 60" preserveAspectRatio="none" class="w-full h-14"></svg>
               </div>
-              <div class="sparkline-labels">
+              <div class="sparkline-labels flex justify-between text-[10px] text-slate-500">
                 <span>Week 4</span>
                 <span>Week 8 (Midterm)</span>
                 <span>Week 12</span>
@@ -335,34 +402,34 @@
               </div>
             </div>
 
-            <!-- Sparkline 2: Behavioral Compliance & Anomaly -->
-            <div class="sparkline-card">
-              <div class="sparkline-header">
-                <span class="stream-tag tag-beh">Online Study Habits</span>
-                <span class="sparkline-val" id="drawer-beh-val">LMS Activity: 85% · Disruption: 0.18</span>
+            <!-- Sparkline 2: Behavioral Study Rhythm & Anomaly -->
+            <div class="sparkline-card p-3.5 bg-black/30 border border-white/[0.07] rounded-lg flex flex-col gap-2.5">
+              <div class="sparkline-header flex items-center justify-between">
+                <span class="stream-tag tag-beh text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 uppercase">Behavioral Study Momentum (VAE)</span>
+                <span class="sparkline-state font-mono text-xs font-semibold text-slate-300" id="drawer-compliance-trend">Momentum: Positive</span>
               </div>
               <div class="svg-sparkline-wrap">
-                <svg id="svg-behavior-sparkline" viewBox="0 0 280 40" preserveAspectRatio="none"></svg>
+                <svg id="svg-behavior-sparkline" viewBox="0 0 280 60" preserveAspectRatio="none" class="w-full h-14"></svg>
               </div>
-              <div class="sparkline-labels">
-                <span>Study Pattern: Consistent</span>
-                <span id="drawer-compliance-trend">Momentum: Positive (+0.18)</span>
+              <div class="sparkline-meta-row flex justify-between text-xs text-slate-400">
+                <span id="drawer-beh-val">LMS Attendance: 80% · Disruption: 0.12</span>
+                <span>VAE Reconstruction Normal</span>
               </div>
             </div>
 
-            <!-- Sparkline 3: Emotional Stress (NLP RoBERTa) -->
-            <div class="sparkline-card">
-              <div class="sparkline-header">
-                <span class="stream-tag tag-emo">Wellbeing & Stress Level</span>
-                <span class="sparkline-val" id="drawer-stress-label">Severe Stress (3.8 / 4.0)</span>
+            <!-- Meter 3: Emotional Stress Signal -->
+            <div class="sparkline-card p-3.5 bg-black/30 border border-white/[0.07] rounded-lg flex flex-col gap-2.5">
+              <div class="sparkline-header flex items-center justify-between">
+                <span class="stream-tag tag-emo text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 uppercase">Wellbeing & Stress Level (NLP)</span>
+                <span class="sparkline-state font-mono text-xs font-semibold text-slate-300" id="drawer-stress-label">Mild Stress (1.0 / 4)</span>
               </div>
-              <div class="stress-meter" id="drawer-stress-meter">
-                <div class="stress-segment" data-level="1"></div>
+              <div class="segmented-meter grid grid-cols-4 gap-1 h-2.5" id="drawer-stress-meter">
+                <div class="stress-segment active-1" data-level="1"></div>
                 <div class="stress-segment" data-level="2"></div>
                 <div class="stress-segment" data-level="3"></div>
                 <div class="stress-segment" data-level="4"></div>
               </div>
-              <div class="sparkline-labels">
+              <div class="sparkline-labels flex justify-between text-[10px] text-slate-500">
                 <span>Normal (0.0)</span>
                 <span>Mild</span>
                 <span>Elevated</span>
@@ -371,92 +438,122 @@
             </div>
           </div>
 
-          <!-- TAB 2: TreeSHAP Explainability -->
-          <div class="drawer-tab-pane" id="tab-shap">
+          <!-- TAB 2: Enrolled Modules & Coursework Load -->
+          <div class="drawer-tab-pane flex flex-col gap-4" id="tab-subjects">
+            <div class="section-header">
+              <h3 class="text-sm font-bold text-white">Enrolled Subjects & Coursework Load</h3>
+              <small class="text-xs text-slate-400" id="drawer-modules-subtitle">Active semester registrations and coursework deliverables</small>
+            </div>
+
+            <div class="degree-info-card p-3.5 bg-white/[0.02] border border-white/[0.07] rounded-lg">
+              <div class="degree-info-row flex justify-between items-center mb-2.5">
+                <div>
+                  <span class="info-kicker text-[9px] font-bold tracking-wider text-slate-500 uppercase block">DEGREE PROGRAMME</span>
+                  <strong id="drawer-degree-name" class="text-xs font-semibold text-white">BSc (Hons) in Software Engineering</strong>
+                </div>
+                <div class="text-right">
+                  <span class="info-kicker text-[9px] font-bold tracking-wider text-slate-500 uppercase block">OFFICIAL UNIVERSITY ID</span>
+                  <strong class="uni-id-highlight font-mono text-sm text-cyan-400" id="drawer-uni-id">IT22041238</strong>
+                </div>
+              </div>
+              <div class="degree-tags-row flex gap-1.5 flex-wrap">
+                <span class="tag-badge text-xs px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Year 3 Semester 2</span>
+                <span class="tag-badge text-xs px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Batch 2022</span>
+                <span class="tag-badge text-xs px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-cyan-300" id="drawer-credit-load">16 Total Credits</span>
+              </div>
+            </div>
+
+            <div class="modules-list flex flex-col gap-2" id="drawer-modules-list">
+              <!-- Dynamically populated by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- TAB 3: TreeSHAP Explainability -->
+          <div class="drawer-tab-pane flex flex-col gap-4" id="tab-shap">
             <div class="drawer-section shap-section">
-              <div class="section-header">
-                <h3>Why Did the AI Flag This Student?</h3>
-                <small>Plain-English breakdown of factors influencing this student's risk</small>
+              <div class="section-header mb-3">
+                <h3 class="text-sm font-bold text-white">Why Did the AI Flag This Student?</h3>
+                <small class="text-xs text-slate-400">Plain-English breakdown of factors influencing this student's risk</small>
               </div>
 
-              <div class="shap-summary-box" id="drawer-shap-summary">
+              <div class="shap-summary-box p-3 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 text-xs leading-relaxed mb-3" id="drawer-shap-summary">
                 <!-- Clinical text summary -->
               </div>
 
-              <div class="shap-bars-container" id="drawer-shap-bars">
+              <div class="shap-bars-container flex flex-col gap-2" id="drawer-shap-bars">
                 <!-- Feature impact bars injected dynamically -->
               </div>
             </div>
 
             <!-- XGBoost Intervention Opportunity Gauge -->
-            <div class="drawer-section opp-section">
-              <div class="section-header">
-                <h3>Will an Advisor Meeting Help?</h3>
-                <small>Historical likelihood of student recovering after a check-in</small>
+            <div class="drawer-section opp-section p-3.5 bg-white/[0.02] border border-white/[0.07] rounded-lg mt-2">
+              <div class="section-header mb-2.5">
+                <h3 class="text-sm font-bold text-white">Intervention Opportunity Likelihood</h3>
+                <small class="text-xs text-slate-400">Historical likelihood of student recovering after an advisor session</small>
               </div>
-              <div class="opp-metric-row">
-                <div class="opp-gauge">
-                  <span class="opp-number" id="drawer-opp-prob">84.2%</span>
-                  <span class="opp-label">Likelihood to Recover</span>
+              <div class="opp-metric-row flex items-center gap-4">
+                <div class="opp-gauge flex flex-col items-center justify-center p-3 rounded-md bg-cyan-500/10 border border-cyan-500/25 min-w-[90px]">
+                  <span class="opp-number font-mono text-xl font-bold text-cyan-400" id="drawer-opp-prob">84.2%</span>
+                  <span class="opp-label text-[9px] font-bold text-slate-400 uppercase">Recovery</span>
                 </div>
-                <div class="opp-details">
-                  <span class="opp-band-pill" id="drawer-opp-band">High Opportunity Band</span>
-                  <p id="drawer-opp-expl">Students exhibiting this exact pattern have responded exceptionally well to a quick 1-on-1 check-in and coursework adjustment.</p>
+                <div class="opp-details flex-1">
+                  <span class="opp-band-pill text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 uppercase mb-1 inline-block" id="drawer-opp-band">High Opportunity Band</span>
+                  <p id="drawer-opp-expl" class="text-xs text-slate-300 leading-relaxed">Students exhibiting this exact pattern have responded exceptionally well to a quick 1-on-1 check-in and coursework adjustment.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- TAB 3: Closed-Loop Case Resolution Form -->
-          <div class="drawer-tab-pane" id="tab-resolve">
+          <!-- TAB 4: Case Resolution Form -->
+          <div class="drawer-tab-pane flex flex-col gap-4" id="tab-resolve">
             <div class="drawer-section resolve-section">
-              <div class="section-header">
-                <h3>Record Your Intervention</h3>
-                <small>Document your meeting with the student and mark the case as completed</small>
+              <div class="section-header mb-3">
+                <h3 class="text-sm font-bold text-white">Record Support Action</h3>
+                <small class="text-xs text-slate-400">Document your meeting with the student and mark the case as resolved</small>
               </div>
 
-              <form id="resolve-form" class="resolve-form">
-                <div class="outcome-selector-group">
-                  <label class="outcome-radio-label">
-                    <input type="radio" name="intervention-outcome" value="Intervention Successful" checked />
-                    <span class="outcome-button btn-success">
-                      <span class="outcome-icon">✔</span>
+              <form id="resolve-form" class="resolve-form flex flex-col gap-3.5">
+                <div class="outcome-selector-group grid grid-cols-2 gap-2.5">
+                  <label class="outcome-radio-label cursor-pointer">
+                    <input type="radio" name="intervention-outcome" value="Intervention Successful" checked class="hidden peer" />
+                    <span class="outcome-button btn-success flex items-center gap-2.5 p-3 rounded-md bg-white/[0.02] peer-checked:bg-emerald-500/15 border border-white/[0.08] peer-checked:border-emerald-500 text-slate-300 peer-checked:text-white transition-all">
+                      <span class="outcome-icon text-emerald-400">✔</span>
                       <div>
-                        <strong>Meeting Held & Plan Agreed</strong>
-                        <small>Student re-engaged / pressure relieved</small>
+                        <strong class="text-xs block">Meeting Held & Plan Agreed</strong>
+                        <small class="text-[10px] text-slate-400 block">Student re-engaged</small>
                       </div>
                     </span>
                   </label>
-                  <label class="outcome-radio-label">
-                    <input type="radio" name="intervention-outcome" value="Student Withdrawn" />
-                    <span class="outcome-button btn-danger">
-                      <span class="outcome-icon">✖</span>
+                  <label class="outcome-radio-label cursor-pointer">
+                    <input type="radio" name="intervention-outcome" value="Student Withdrawn" class="hidden peer" />
+                    <span class="outcome-button btn-danger flex items-center gap-2.5 p-3 rounded-md bg-white/[0.02] peer-checked:bg-rose-500/15 border border-white/[0.08] peer-checked:border-rose-500 text-slate-300 peer-checked:text-white transition-all">
+                      <span class="outcome-icon text-rose-400">✖</span>
                       <div>
-                        <strong>Unable to Reach / Dropped</strong>
-                        <small>Non-responsive or left course</small>
+                        <strong class="text-xs block">Unable to Reach / Dropped</strong>
+                        <small class="text-[10px] text-slate-400 block">Non-responsive</small>
                       </div>
                     </span>
                   </label>
                 </div>
 
-                <div class="form-group">
-                  <label for="advisor-notes">Advisor Meeting Notes</label>
-                  <textarea id="advisor-notes" rows="4" placeholder="Document what you discussed (e.g. agreed on quiz deadline extension, referred to counselling service, arranged peer tutoring)..."></textarea>
+                <div class="form-group flex flex-col gap-1.5">
+                  <label for="advisor-notes" class="text-xs font-semibold text-slate-300">Advisor Meeting Notes</label>
+                  <textarea id="advisor-notes" rows="4" placeholder="Document what you discussed (e.g. agreed on quiz deadline extension, referred to counselling service, arranged peer tutoring)..." class="w-full bg-black/40 border border-white/[0.08] focus:border-indigo-500 rounded-md p-3 text-xs text-white placeholder-slate-500 outline-none transition-all"></textarea>
                 </div>
 
-                <div class="quick-notes-presets">
-                  <span class="preset-label">Quick Notes:</span>
-                  <button type="button" class="btn-snippet" data-text="Held 1-on-1 check-in. Student felt overwhelmed by workload; agreed to weekly touchpoints.">Pastoral Meeting Held</button>
-                  <button type="button" class="btn-snippet" data-text="Referred student to University Wellbeing & Mental Health Support Team.">Counselling Referral</button>
-                  <button type="button" class="btn-snippet" data-text="Arranged a 7-day coursework extension and connected student with teaching assistant.">Deadline Extension</button>
+                <div class="quick-notes-presets flex flex-wrap items-center gap-1.5">
+                  <span class="preset-label text-[10px] font-bold text-slate-500 uppercase">Quick Notes:</span>
+                  <button type="button" class="btn-snippet text-[11px] px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-slate-300 transition-all" data-text="Held 1-on-1 check-in. Student felt overwhelmed by workload; agreed to weekly touchpoints.">Pastoral Meeting Held</button>
+                  <button type="button" class="btn-snippet text-[11px] px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-slate-300 transition-all" data-text="Referred student to University Wellbeing & Mental Health Support Team.">Counselling Referral</button>
+                  <button type="button" class="btn-snippet text-[11px] px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-slate-300 transition-all" data-text="Arranged a 7-day coursework extension and connected student with teaching assistant.">Deadline Extension</button>
                 </div>
 
-                <button type="submit" class="btn btn-save" id="btn-save-case">
+                <button type="submit" class="btn btn-save py-2.5 px-4 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-[0_0_16px_rgba(99,102,241,0.3)] mt-2" id="btn-save-case">
                   <span>Save Notes & Mark Case as Handled</span>
                 </button>
               </form>
 
-              <div class="toast-message" id="toast-message" role="status" hidden></div>
+              <div class="toast-message p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs mt-3" id="toast-message" role="status" hidden></div>
             </div>
           </div>
         </div>

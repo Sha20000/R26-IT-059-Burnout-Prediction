@@ -104,15 +104,29 @@ def build_evidence_profiles(
             high_anomaly_weeks=float(behaviour_row.get("high_anomaly_weeks", 0.0)),
             behavior_risk=float(behaviour_row["behavior_risk_mean"]),
         )
+        raw_modules = row.get("enrolled_modules", "[]")
+        if isinstance(raw_modules, str) and raw_modules:
+            try:
+                enrolled_mods = json.loads(raw_modules)
+            except Exception:
+                enrolled_mods = []
+        elif isinstance(raw_modules, list):
+            enrolled_mods = raw_modules
+        else:
+            enrolled_mods = []
+
         profile = {
             "student_id": str(row["canonical_student_id"]),
-            "student_name": f"Student {str(row['canonical_student_id']).split('_')[-1]}",
+            "university_id": str(row.get("university_id", f"IT22{str(row['canonical_student_id']).split('_')[-1]}")),
+            "student_name": str(row.get("student_name", f"Student {str(row['canonical_student_id']).split('_')[-1]}")),
             "canonical_student_id": str(row["canonical_student_id"]),
             "academic_student_id": str(row["academic_student_id"]),
             "behavior_student_id": str(row["behavior_student_id"]),
             "emotional_student_id": str(row["emotional_student_id"]),
             "cohort_id": str(row["cohort_id"]),
-            "programme": str(academic_row.get("programme", "OULAD cohort")),
+            "cohort": "Year 3 Semester 2 (Batch 2022)",
+            "programme": str(row.get("programme", academic_row.get("programme", "BSc (Hons) in Software Engineering"))),
+            "enrolled_modules": enrolled_mods,
             "academic_risks": risks,
             "academic_risk": float(academic_row["academic_risk"]),
             "behavior_risk": float(behaviour_row["behavior_risk_mean"]),

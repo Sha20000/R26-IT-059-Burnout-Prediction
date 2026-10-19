@@ -4,17 +4,31 @@ from pathlib import Path
 
 from flask import Blueprint, current_app, jsonify, request, send_file
 
+from app.db import (
+    clear_students_in_db,
+    fetch_all_students,
+    fetch_intervention_logs,
+    get_db_stats,
+    save_or_update_students,
+    update_case_in_db,
+)
+from app.services.analytics import build_analytics
+from app.services.workspace import analyze_record, overview, update_case
 from meta_xai.fusion import build_evidence_profiles, ingest_student_payload, write_profiles_csv
 from meta_xai.ingestion import load_identity_mapping
 from meta_xai.reasoning import rank_triage_queue
-from app.services.analytics import build_analytics
-from app.services.workspace import analyze_record, overview, update_case
 
 api_bp = Blueprint("api", __name__)
 
 
 def _get_records() -> list[dict]:
-    return current_app.config["WORKSPACE_RECORDS"]
+    db_path = current_app.config.get("DB_PATH")
+    if db_path and db_path.exists():
+        db_records = fetch_all_students(db_path)
+        if db_records:
+            current_app.config["WORKSPACE_RECORDS"] = db_records
+            return db_records
+    return current_app.config.get("WORKSPACE_RECORDS", [])
 
 
 @api_bp.get("/students")
@@ -38,7 +52,10 @@ def list_students():
     if query:
         records = [
             row for row in records
-            if query in row.get("student_id", "").lower() or query in row.get("student_name", "").lower()
+            if query in row.get("student_id", "").lower()
+            or query in row.get("university_id", "").lower()
+            or query in row.get("student_name", "").lower()
+            or query in row.get("programme", "").lower()
         ]
     return jsonify(records)
 
@@ -46,7 +63,11 @@ def list_students():
 @api_bp.get("/students/<student_id>")
 def get_student(student_id: str):
     for record in _get_records():
-        if record["student_id"] == student_id:
+        if (
+            record.get("student_id") == student_id
+            or record.get("university_id") == student_id
+            or record.get("canonical_student_id") == student_id
+        ):
             return jsonify(record)
     return jsonify({"error": "Student not found"}), 404
 
@@ -62,6 +83,9 @@ def manage_capacity():
         capacity_int = 5
 
     ranked_records, summary = rank_triage_queue(records, advisor_capacity=capacity_int)
+    db_path = current_app.config.get("DB_PATH")
+    if db_path and db_path.exists():
+        save_or_update_students(ranked_records, db_path)
     current_app.config["WORKSPACE_RECORDS"] = ranked_records
     current_app.config["ADVISOR_CAPACITY"] = capacity_int
     return jsonify(summary)
@@ -100,6 +124,10 @@ def ingest_event():
             records.append(profile)
 
     ranked_records, summary = rank_triage_queue(records, advisor_capacity=capacity)
+    db_path = current_app.config.get("DB_PATH")
+    if db_path and db_path.exists():
+        save_or_update_students(ranked_records, db_path)
+
     current_app.config["WORKSPACE_RECORDS"] = ranked_records
     current_app.config["DATA_MODE"] = "LIVE STREAM"
 
@@ -114,6 +142,9 @@ def ingest_event():
 
 @api_bp.post("/reset")
 def reset_workspace():
+    db_path = current_app.config.get("DB_PATH")
+    if db_path and db_path.exists():
+        clear_students_in_db(db_path)
     current_app.config["WORKSPACE_RECORDS"] = []
     current_app.config["DATA_MODE"] = "COLD START (LIVE READY)"
     return jsonify({
@@ -172,7 +203,20 @@ def analyze_batch():
 
 @api_bp.patch("/students/<student_id>/case")
 def update_student_case(student_id: str):
-    record = update_case(_get_records(), student_id, request.get_json(silent=True) or {})
+    payload = request.get_json(silent=True) or {}
+    db_path = current_app.config.get("DB_PATH")
+    if db_path and db_path.exists():
+        updated = update_case_in_db(student_id, payload, db_path)
+        if updated:
+            # Also sync with in-memory records
+            records = current_app.config.get("WORKSPACE_RECORDS", [])
+            for i, r in enumerate(records):
+                if r["student_id"] == student_id:
+                    records[i] = updated
+                    break
+            return jsonify(updated)
+
+    record = update_case(_get_records(), student_id, payload)
     if record is None:
         return jsonify({"error": "Student not found"}), 404
     return jsonify(record)
@@ -195,3 +239,19 @@ def export_csv():
         as_attachment=True,
         download_name="meta_xai_intervention_queue.csv",
     )
+
+
+@api_bp.get("/database/status")
+def database_status():
+    db_path = current_app.config.get("DB_PATH")
+    if not db_path:
+        return jsonify({"exists": False, "message": "DB_PATH not configured"}), 404
+    return jsonify(get_db_stats(db_path))
+
+
+@api_bp.get("/database/logs")
+def database_logs():
+    db_path = current_app.config.get("DB_PATH")
+    if not db_path:
+        return jsonify([])
+    return jsonify(fetch_intervention_logs(db_path))

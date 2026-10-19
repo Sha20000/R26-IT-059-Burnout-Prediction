@@ -1,3 +1,4 @@
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -10,8 +11,16 @@ INPUT_DIR = ROOT / "data" / "incoming" / "v1_oulad"
 
 class IngestionApiTests(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
+        self.temp_dir = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
+        self.test_db = Path(self.temp_dir.name) / "test_ingest.db"
+        self.app = create_app(db_path=self.test_db)
         self.client = self.app.test_client()
+
+    def tearDown(self):
+        try:
+            self.temp_dir.cleanup()
+        except Exception:
+            pass
 
     def test_identity_resolution_across_namespaces(self):
         mapping_df, _ = load_identity_mapping(INPUT_DIR / "student_mapping.csv")

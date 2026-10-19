@@ -234,17 +234,19 @@ def report_as_dict(report: AlignmentReport) -> dict[str, Any]:
 def resolve_student_identity(
     student_id: str,
     mapping_df: pd.DataFrame,
-) -> dict[str, str]:
+) -> dict[str, Any]:
     """
     Bridge OULAD_*, BEHAVIOR_*, and EMOTIONAL_* namespaces using student_mapping.csv.
-    Matches across canonical_student_id, academic_student_id, behavior_student_id, or emotional_student_id.
+    Matches across canonical_student_id, academic_student_id, behavior_student_id, emotional_student_id, or university_id.
     """
     student_id = str(student_id).strip()
+    uni_matches = (mapping_df["university_id"] == student_id) if "university_id" in mapping_df.columns else pd.Series(False, index=mapping_df.index)
     match = mapping_df[
         (mapping_df["canonical_student_id"] == student_id)
         | (mapping_df["academic_student_id"] == student_id)
         | (mapping_df["behavior_student_id"] == student_id)
         | (mapping_df["emotional_student_id"] == student_id)
+        | uni_matches
     ]
     if match.empty:
         return {
@@ -260,5 +262,8 @@ def resolve_student_identity(
         "academic_student_id": str(row["academic_student_id"]),
         "behavior_student_id": str(row["behavior_student_id"]),
         "emotional_student_id": str(row["emotional_student_id"]),
-        "cohort_id": str(row.get("cohort_id", "OULAD_COHORT_2026_01")),
+        "cohort_id": str(row.get("cohort_id", "OULAD-2026-REAL")),
+        "university_id": str(row.get("university_id", "")),
+        "student_name": str(row.get("student_name", "")),
+        "programme": str(row.get("programme", "")),
     }
